@@ -1,0 +1,21 @@
+.header-links a {
+    display: inline;
+    color: #000;
+    font-size: 16px;
+    font-weight: 500;
+    border-bottom: rgba(0, 0, 0, 1) 1px solid;
+}
+
+.header-links a:hover {
+    color: var(--main, #FF5C01);
+    border-color: var(--main, #FF5C01);
+}
+
+.header-links a + a {
+    margin-left: 25px;
+}
+
+.header-links a.active {
+    color: var(--main, #FF5C01);
+    border: none;
+}
