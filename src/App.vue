@@ -1,4 +1,35 @@
 <script setup>
+import {getUser}  from "./user.js";
+import {ref}      from "vue";
+import {supabase} from "./supabase.js";
+
+const account = ref(getUser())
+
+supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN') {
+        account.value = session.user;
+    }
+})
+
+async function signInWithGoogle() {
+    const {user, error} = await supabase.auth.signIn({
+        provider: 'google',
+    })
+    if (error) {
+        console.error(error);
+        return
+    }
+    account.value = user;
+}
+
+async function signOut() {
+    const {error} = await supabase.auth.signOut()
+    if (error) {
+        console.error(error);
+        return;
+    }
+    account.value = null;
+}
 </script>
 
 <template>
@@ -9,7 +40,6 @@
             </a>
             <div class="header-links flex-grow-all pdng-l-20px pdng-r-20px mil-notdisplay">
                 <a href="">Аб праекце</a>
-                <a href=""></a>
             </div>
             <!-- mobile nav -->
             <div class="section flex-grow-all pdng-l-20px pdng-r-30px notdisplay mil-show">
@@ -59,6 +89,13 @@
         </div>
     </div>
     <div class="scene mrgn-t-170px mil-mrgn-t-120px">
+        <div v-if="account && account.email">
+            <span>{{ account.email }}</span>
+            <button @click="signOut">Выход</button>
+        </div>
+        <div v-else>
+            <button @click="signInWithGoogle">Sign in with Google</button>
+        </div>
     </div>
 </template>
 
