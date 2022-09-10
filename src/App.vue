@@ -112,11 +112,10 @@ async function signOut() {
     <div class="scene pdng-0">
         <div v-if="account && account.email">
             <span>{{ account.email }}</span>
-            <button @click="signOut">Выход</button>
+            <el-button @click="signOut">Выход</el-button>
         </div>
         <div v-else>
-            <el-button>Login</el-button>
-            <button @click="signInWithGoogle">Sign in with Google</button>
+            <el-button @click="signInWithGoogle">Sign in with Google</el-button>
         </div>
     </div>
     <div class="scene mil-mrgn-t-170px">
