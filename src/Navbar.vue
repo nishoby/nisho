@@ -21,8 +21,14 @@
                     </div>
                 </div>
             </div>
-            <div class="pdng-t-20px pdng-l-20px pdng-r-30px mil-notdisplay">
-                <el-input v-model="search"></el-input>
+            <div class="pdng-t-20px pdng-l-20px pdng-r-30px mil-notdisplay flex-row">
+                <el-input v-model="search"
+                          size="large"
+                          class="mrgn-r-15px"
+                          placeholder="Пачніце ўвадзіць слова"></el-input>
+                <el-button :icon="Plus" circle size="large"></el-button>
+                <el-button :icon="Refresh" circle size="large"></el-button>
+                <el-button :icon="Refresh" circle size="large"></el-button>
             </div>
             <!-- mobile nav -->
             <div class="section flex-grow-all pdng-l-20px pdng-r-30px notdisplay mil-show">
@@ -60,6 +66,7 @@
 import {ref}      from "vue";
 import {getUser}  from "./user.js";
 import {supabase} from "./supabase.js";
+import {Plus, Refresh}    from '@element-plus/icons-vue'
 
 const account = ref(getUser())
 const search  = ref('')
