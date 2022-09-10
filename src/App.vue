@@ -115,6 +115,7 @@ async function signOut() {
             <button @click="signOut">Выход</button>
         </div>
         <div v-else>
+            <el-button>Login</el-button>
             <button @click="signInWithGoogle">Sign in with Google</button>
         </div>
     </div>
