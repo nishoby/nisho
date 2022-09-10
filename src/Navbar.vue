@@ -31,11 +31,11 @@
                 </label>
                 <div class="brgr-nav notdisplay mil-show">
                     <div class="header-links pdng-l-20px pdng-r-20px">
-                        <div class="pdng-t-30px" v-for="route of routes">
+<!--                        <div class="pdng-t-30px" v-for="route of routes">-->
                             <!--                            <router-link :to="route.to" :active-class="'active'">-->
                             <!--                                {{ route.name }}-->
                             <!--                            </router-link>-->
-                        </div>
+<!--                        </div>-->
                         <div class="pdng-t-30px">
                             <a href="https://t.me/zubr_info_bot">Связаться с нами</a>
                         </div>
@@ -66,6 +66,7 @@ import {getUser}  from "./user.js";
 import {supabase} from "./supabase.js";
 
 const account = ref(getUser())
+const search = ref('')
 supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN') {
         account.value = session.user;

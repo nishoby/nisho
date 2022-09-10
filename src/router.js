@@ -1,5 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router'
-import Terms                             from './Terms.vue';
+import Terms                            from './Terms.vue';
+import Term                             from './Term.vue';
 
 const main   = [
     {
@@ -7,6 +8,11 @@ const main   = [
         name     : 'terms',
         exclude  : true,
         component: Terms,
+    },
+    {
+        path     : '/term/:id',
+        name     : 'term',
+        component: Term,
     },
 ]
 const routes = [...main]
