@@ -1,8 +1,9 @@
 <template>
     <navbar></navbar>
-    <div class="scene mrgn-t-170px">
+    <sidebar></sidebar>
+    <div class="scene mrgn-t-170px mil-mrgn-t-80px">
         <template v-if="terms">
-            <div class="committee-list size-50 mil-size-100 mil-flex-column is-center">
+            <div class="committee-list size-70 mil-size-100 mil-flex-column is-center">
                 <div class="committee-unit mil-flex-column"
                      v-for="item of terms">
                     <div
@@ -36,6 +37,7 @@ import {onMounted, ref} from "vue";
 import {supabase}       from "./supabase.js";
 import {Top, Bottom}    from '@element-plus/icons-vue'
 import Navbar           from "./Navbar.vue";
+import Sidebar          from "./Sidebar.vue";
 
 const terms  = ref([]);
 const search = ref()

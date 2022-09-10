@@ -1,15 +1,12 @@
 <template>
     <div class="header-wrp fixedhrd bg-color-main">
-        <div class="header size-60 mrgn-auto mil-size-100 bg-color-main">
+        <div class="header size-70 mrgn-auto mil-size-100 bg-color-main">
             <div class="flex-row flex-algn-itms-c mil-notdisplay">
                 <a href="/" class="section pdng-l-20px pdng-r-20px">
-                    <img src="/img/woman.png" width="200" height="150">
+                    <img src="/img/woman.png" width="100" height="70">
                 </a>
                 <div class="header-links flex-grow-all pdng-l-20px pdng-r-20px mil-notdisplay">
-                    <!--                <router-link :to="route.to" v-for="route of routes" :active-class="'active'">-->
-                    <!--                    {{ route.name }}-->
-                    <!--                </router-link>-->
-                    <a href="#">Аб праекце</a>
+                    <router-link :to="{'name': 'about'}">Аб праекце</router-link>
                 </div>
                 <div class="pdng-r-30px mil-notdisplay">
                     <div v-if="account && account.email">
@@ -46,16 +43,27 @@
                         <!--                            </router-link>-->
                         <!--                        </div>-->
                         <div class="pdng-t-30px">
-                            <a href="https://t.me/zubr_info_bot">Связаться с нами</a>
+                            <router-link :to="{'name': 'about'}">Аб праекце</router-link>
+                        </div>
+                        <div v-if="account && account.email">
+                            <span>{{ account.email }}</span>
+                            <el-button @click="signOut" type="success">Выхад</el-button>
+                        </div>
+                        <div v-else>
+                            <el-button @click="signInWithGoogle" type="success">Логін з Google</el-button>
                         </div>
                     </div>
+
                 </div>
-                <div v-if="account && account.email">
-                    <span>{{ account.email }}</span>
-                    <el-button @click="signOut">Выход</el-button>
-                </div>
-                <div v-else>
-                    <el-button @click="signInWithGoogle">Sign in with Google</el-button>
+
+                <div class="pdng-t-20px pdng-r-30px flex-row">
+                    <el-input v-model="search"
+                              size="large"
+                              class="mrgn-r-15px"
+                              placeholder="Пачніце ўвадзіць слова"></el-input>
+                    <el-button :icon="Plus" circle size="large"></el-button>
+                    <el-button :icon="Refresh" circle size="large"></el-button>
+                    <el-button :icon="Refresh" circle size="large"></el-button>
                 </div>
             </div>
         </div>
@@ -63,10 +71,10 @@
 </template>
 
 <script setup>
-import {ref}      from "vue";
-import {getUser}  from "./user.js";
-import {supabase} from "./supabase.js";
-import {Plus, Refresh}    from '@element-plus/icons-vue'
+import {ref}           from "vue";
+import {getUser}       from "./user.js";
+import {supabase}      from "./supabase.js";
+import {Plus, Refresh} from '@element-plus/icons-vue'
 
 const account = ref(getUser())
 const search  = ref('')

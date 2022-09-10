@@ -524,9 +524,15 @@
     z-index: 20;
 }
 
+.sidebar-container {
+    position: fixed;
+    top: 250px;
+    right: 30%;
+    z-index: 20;
+}
+
 .header {
     padding: 10px 0;
-    background: #fff;
 }
 
 .header-subnav {
