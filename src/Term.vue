@@ -31,6 +31,7 @@ import {useRoute}       from 'vue-router'
 import {onMounted, ref} from "vue";
 import {supabase}       from "./supabase.js";
 import Navbar           from "./Navbar.vue";
+import {Top, Bottom}    from '@element-plus/icons-vue'
 
 onMounted(async () => {
     const route = useRoute()

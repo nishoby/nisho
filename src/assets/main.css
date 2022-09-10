@@ -784,7 +784,8 @@ REMOVED STYLES
     position: absolute;
     width: 30px;
     height: 4px;
-    background: var(--main, #FF5C01);
+    /*background: var(--main, #FF5C01);*/
+    background: #ffffff;
     border-radius: 10px;
     transition: all 0.3s ease-in;
 }
