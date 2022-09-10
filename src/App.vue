@@ -111,15 +111,15 @@ async function signOut() {
     </div>
     <div class="scene pdng-t-0">
         <template v-if="terms">
-            <div class="committee-list mil-flex-column">
+            <div class="committee-list size-50 mil-size-100 mil-flex-column">
                 <a class="committee-unit mil-flex-column"
                    v-for="item of terms">
                     <div
                         class="section size-100 pdng-r-20px pdng-l-30px pdng-t-20px pdng-b-20px mil-size-100 mil-pdng-15px">
-                        <h2 class="txt-color-1 txt-size-20px txt-medium mil-txt-size-16px">
+                        <h2 class="txt-color-1 txt-size-28pxpx txt-medium mil-txt-size-16px">
                             {{ item.term }}
                         </h2>
-                        <div class="txt-color-2 txt-size-14px">
+                        <div class="txt-color-2 txt-size-18px pdng-t-15px">
                             {{ item.definition[0].content }}
                         </div>
                     </div>
