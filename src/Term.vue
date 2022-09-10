@@ -19,7 +19,7 @@
                     </div>
                     <div class="pdng-t-20px">
                         <el-button-group>
-                            <el-button type="success" :icon="Top">0</el-button>
+                            <el-button type="primary" :icon="Top">0</el-button>
                             <el-button type="danger" :icon="Bottom">0</el-button>
                         </el-button-group>
                     </div>

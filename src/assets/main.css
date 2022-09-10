@@ -526,9 +526,22 @@
 
 .sidebar-container {
     position: fixed;
-    top: 250px;
-    right: 30%;
-    z-index: 20;
+    top: 225px;
+    right: 23%;
+    z-index: 21;
+    width: 250px;
+    background: #fff;
+    border: #DEDEDE 1px solid;
+}
+
+.adv-container {
+    position: fixed;
+    top: 350px;
+    right: 23%;
+    z-index: 21;
+    width: 250px;
+    background: #fff;
+    border: #DEDEDE 1px solid;
 }
 
 .header {

@@ -1,7 +1,7 @@
 <template>
     <navbar></navbar>
     <sidebar></sidebar>
-    <div class="scene mrgn-t-170px mil-mrgn-t-80px">
+    <div class="scene mrgn-t-130px mil-mrgn-t-80px">
         <template v-if="terms">
             <div class="committee-list size-70 mil-size-100 mil-flex-column is-center">
                 <div class="committee-unit mil-flex-column"
@@ -21,7 +21,7 @@
                         </div>
                         <div class="pdng-t-25px">
                             <el-button-group>
-                                <el-button type="success" :icon="Top">0</el-button>
+                                <el-button type="primary" :icon="Top">0</el-button>
                                 <el-button type="danger" :icon="Bottom">0</el-button>
                             </el-button-group>
                         </div>
@@ -48,6 +48,7 @@ const fetchTerms = async () => {
         .select(`*, definition(*)`)
         .order('created_at', {ascending: false, foreignTable: 'definition'})
         .limit(1, {foreignTable: 'definition'})
+        .limit(5)
     if (error) {
         throw error
     }
