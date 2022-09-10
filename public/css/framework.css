@@ -1259,6 +1259,9 @@ blockquote:after {
 .bg-color-1 {
     background: #fff;
 }
+.bg-color-main {
+    background: var(--main, #fff);
+}
 
 /* Borders */
 .border-1px {

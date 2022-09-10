@@ -1,6 +1,6 @@
 <template>
-    <div class="header-wrp fixedhrd" style="background-color: #e82929">
-        <div class="header size-60 mrgn-auto mil-size-100" style="background-color: #e82929">
+    <div class="header-wrp fixedhrd bg-color-main">
+        <div class="header size-60 mrgn-auto mil-size-100 bg-color-main">
             <div class="flex-row flex-algn-itms-c mil-notdisplay">
                 <a href="/" class="section pdng-l-20px pdng-r-20px">
                     <img src="/img/woman.png" width="200" height="150">
