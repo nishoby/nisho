@@ -12,9 +12,13 @@ supabase.auth.onAuthStateChange((event, session) => {
 })
 
 async function signInWithGoogle() {
-    const {user, error} = await supabase.auth.signIn({
-        provider: 'google',
-    })
+    const options       = import.meta.env.VITE_REDIRECT_URL
+        ? {redirectTo: import.meta.env.VITE_REDIRECT_URL}
+        : {}
+    const {user, error} = await supabase.auth.signIn(
+        {provider: 'google'},
+        options
+    )
     if (error) {
         console.error(error);
         return
