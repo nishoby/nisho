@@ -2,6 +2,7 @@
 import {getUser}        from "./user.js";
 import {onMounted, ref} from "vue";
 import {supabase}       from "./supabase.js";
+import {Top, Bottom} from '@element-plus/icons-vue'
 
 const account = ref(getUser())
 const terms   = ref([]);
@@ -112,7 +113,7 @@ async function signOut() {
     <div class="scene pdng-t-0">
         <template v-if="terms">
             <div class="committee-list size-50 mil-size-100 mil-flex-column">
-                <a class="committee-unit mil-flex-column"
+                <div class="committee-unit mil-flex-column"
                    v-for="item of terms">
                     <div
                         class="section size-100 pdng-r-20px pdng-l-30px pdng-t-20px pdng-b-20px mil-size-100 mil-pdng-15px">
@@ -122,8 +123,14 @@ async function signOut() {
                         <div class="txt-color-2 txt-size-18px pdng-t-15px">
                             {{ item.definition[0].content }}
                         </div>
+                        <div class="pdng-t-20px">
+                            <el-button-group>
+                                <el-button type="success" :icon="Top">0</el-button>
+                                <el-button type="danger" :icon="Bottom">0</el-button>
+                            </el-button-group>
+                        </div>
                     </div>
-                </a>
+                </div>
             </div>
         </template>
     </div>
