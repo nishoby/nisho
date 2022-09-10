@@ -32,9 +32,11 @@
                         <span class="pdng-l-5px">{{ item.definition[0].content }}</span>
                     </template>
                 </el-autocomplete>
-                <el-button :icon="Plus" circle size="large"></el-button>
-                <el-button :icon="Refresh" circle size="large"></el-button>
-                <el-button :icon="Refresh" circle size="large"></el-button>
+                <router-link :to="{name: 'add'}">
+                    <el-button :icon="Plus" circle size="large"></el-button>
+                </router-link>
+                <el-button :icon="Refresh" circle size="large" class="mrgn-l-5px"></el-button>
+                <el-button :icon="Refresh" circle size="large" class="mrgn-l-5px"></el-button>
             </div>
             <!-- mobile nav -->
             <div class="section flex-grow-all pdng-l-20px pdng-r-30px notdisplay mil-show">

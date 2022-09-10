@@ -1,7 +1,9 @@
 <template>
     <div class="sidebar-container mil-notdisplay bg-color-1 pdng-15px">
         <div>
-            <el-button :icon="Plus" round size="large" type="danger">Дадаць</el-button>
+            <router-link :to="{name: 'add'}">
+                <el-button :icon="Plus" round size="large" type="danger">Дадаць</el-button>
+            </router-link>
             <div class="pdng-t-20px">
                 Твая мова - твае правілы
             </div>
