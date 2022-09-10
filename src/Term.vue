@@ -14,6 +14,9 @@
                     <div class="txt-color-2 txt-size-18px pdng-t-15px">
                         {{ item.content }}
                     </div>
+                    <div class="txt-color-2 txt-size-18px pdng-t-15px txt-italic">
+                        {{ item.example }}
+                    </div>
                     <div class="pdng-t-20px">
                         <el-button-group>
                             <el-button type="success" :icon="Top">0</el-button>

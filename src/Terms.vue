@@ -12,10 +12,13 @@
                                 {{ item.term }}
                             </router-link>
                         </h2>
-                        <div class="txt-color-2 txt-size-18px pdng-t-15px">
+                        <div class="txt-color-2 txt-size-18px pdng-t-25px">
                             {{ item.definition[0].content }}
                         </div>
-                        <div class="pdng-t-20px">
+                        <div class="txt-color-2 txt-size-18px pdng-t-25px txt-italic">
+                            {{ item.definition[0].example }}
+                        </div>
+                        <div class="pdng-t-25px">
                             <el-button-group>
                                 <el-button type="success" :icon="Top">0</el-button>
                                 <el-button type="danger" :icon="Bottom">0</el-button>
