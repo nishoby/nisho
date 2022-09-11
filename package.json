@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.9",
+    "@sentry/tracing": "^7.12.1",
+    "@sentry/vue": "^7.12.1",
     "@supabase/supabase-js": "1.35.4",
     "element-plus": "2.2.9",
     "vue": "3.2.37",
