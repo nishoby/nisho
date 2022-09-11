@@ -28,16 +28,19 @@
                     </div>
                     <div class="pdng-t-20px">
                         <el-button-group>
-                            <el-button type="primary"
-                                       :icon="Top"
-                                       :plain="item.vote_results.length && item.vote_results[0].is_upvoted">
-                                {{item.vote_results.length > 0 ? item.vote_results[0].upvotes : 0}}
+                            <el-button
+                                type="primary"
+                                @click="update(item, 'upvote')"
+                                :plain="item.vote_results.length > 0 && (item.vote_results[0].is_upvoted)"
+                                :icon="Top">
+                                {{ item.vote_results.length > 0 ? item.vote_results[0].upvotes : 0 }}
                             </el-button>
                             <el-button
-                                        type="danger"
-                                        :plain="item.vote_results.length && item.vote_results[0].is_downvoted"
-                                        :icon="Bottom">
-                                {{item.vote_results.length > 0 ? item.vote_results[0].downvotes : 0}}
+                                type="danger"
+                                @click="update(item, 'downvote')"
+                                :plain="item.vote_results.length > 0 && (item.vote_results[0].is_downvoted)"
+                                :icon="Bottom">
+                                {{ item.vote_results.length > 0 ? item.vote_results[0].downvotes : 0 }}
                             </el-button>
                         </el-button-group>
                     </div>
@@ -55,16 +58,26 @@ import Navbar           from "./Navbar.vue";
 import {Top, Bottom}    from '@element-plus/icons-vue'
 import Sidebar          from "./Sidebar.vue";
 import {formatDate}     from "./date.js";
+import {vote}           from './vote.js'
 
-onMounted(async () => {
-    const route = useRoute()
-    let id      = route.params.id;
-    await fetchTerm(id)
-})
 
-const term = ref(null)
+const route = useRoute()
+let id      = route.params.id;
 
-async function fetchTerm(id) {
+onMounted(
+    async () => {
+        await fetchTerm()
+    }
+)
+
+const update = async (definition, type) => {
+    await vote(definition, type)
+    await fetchTerm()
+}
+const term   = ref(null)
+
+async function fetchTerm() {
+
     let {data, error} = await supabase
         .from("term")
         .select(`*, definition(*, user:user_profile(*),vote_results(*))`)

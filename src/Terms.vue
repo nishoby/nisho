@@ -23,7 +23,7 @@
                             <b>
                                 Аўтар: {{ item.definition[0].user.name }}
                                 <span :title="item.definition[0].created_at">
-                                {{ formatDate(item.definition[0].created_at) }}
+                                    {{ formatDate(item.definition[0].created_at) }}
                                 </span>
                             </b>
                         </div>
@@ -31,14 +31,16 @@
                             <el-button-group>
                                 <el-button type="primary"
                                            :icon="Top"
-                                           :plain="item.definition[0].vote_results.length && item.definition[0].vote_results[0].is_upvoted">
-                                    {{item.definition[0].vote_results.length > 0 ? item.definition[0].vote_results[0].upvotes : 0}}
+                                           @click="update(item.definition[0], 'upvote')"
+                                           :plain="item.definition[0].vote_results.length > 0 && item.definition[0].vote_results[0].is_upvoted">
+                                    {{ item.definition[0].vote_results.length > 0 ? item.definition[0].vote_results[0].upvotes : 0 }}
                                 </el-button>
                                 <el-button
                                     type="danger"
-                                    :plain="item.definition[0].vote_results.length && item.definition[0].vote_results[0].is_downvoted"
+                                    @click="update(item.definition[0], 'downvote')"
+                                    :plain="item.definition[0].vote_results.length > 0 && item.definition[0].vote_results[0].is_downvoted"
                                     :icon="Bottom">
-                                    {{item.definition[0].vote_results.length > 0 ? item.definition[0].vote_results[0].downvotes : 0}}
+                                    {{ item.definition[0].vote_results.length > 0 ? item.definition[0].vote_results[0].downvotes : 0 }}
                                 </el-button>
                             </el-button-group>
                         </div>
@@ -56,8 +58,14 @@ import {Top, Bottom}    from '@element-plus/icons-vue'
 import Navbar           from "./Navbar.vue";
 import Sidebar          from "./Sidebar.vue";
 import {formatDate}     from "./date.js";
+import {vote}           from "./vote.js";
 
 const terms = ref([]);
+
+const update = async (definition, type) => {
+    await vote(definition, type)
+    await fetchTerms()
+}
 
 const fetchTerms = async () => {
     let {data, error} = await supabase
