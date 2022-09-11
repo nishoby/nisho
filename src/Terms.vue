@@ -29,8 +29,17 @@
                         </div>
                         <div class="pdng-t-25px">
                             <el-button-group>
-                                <el-button type="primary" :icon="Top">0</el-button>
-                                <el-button type="danger" :icon="Bottom">0</el-button>
+                                <el-button type="primary"
+                                           :icon="Top"
+                                           :plain="item.definition[0].vote_results.length && item.definition[0].vote_results[0].is_upvoted">
+                                    {{item.definition[0].vote_results.length > 0 ? item.definition[0].vote_results[0].upvotes : 0}}
+                                </el-button>
+                                <el-button
+                                    type="danger"
+                                    :plain="item.definition[0].vote_results.length && item.definition[0].vote_results[0].is_downvoted"
+                                    :icon="Bottom">
+                                    {{item.definition[0].vote_results.length > 0 ? item.definition[0].vote_results[0].downvotes : 0}}
+                                </el-button>
                             </el-button-group>
                         </div>
                     </div>
@@ -53,7 +62,7 @@ const terms = ref([]);
 const fetchTerms = async () => {
     let {data, error} = await supabase
         .from("term")
-        .select(`*, definition(*,user:user_profile(*))`)
+        .select(`*, definition(*,user:user_profile(*),vote_results(*))`)
         .order('created_at', {ascending: false, foreignTable: 'definition'})
         .limit(1, {foreignTable: 'definition'})
         .limit(10)
