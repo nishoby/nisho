@@ -18,6 +18,14 @@
                     <div class="txt-color-2 txt-size-18px pdng-t-15px txt-italic">
                         {{ item.example }}
                     </div>
+                    <div class="pdng-t-25px">
+                        <b>
+                            Аўтар: {{ item.user.name }}
+                            <span :title="item.created_at">
+                                {{ formatDate(item.created_at) }}
+                            </span>
+                        </b>
+                    </div>
                     <div class="pdng-t-20px">
                         <el-button-group>
                             <el-button type="primary" :icon="Top">0</el-button>
@@ -37,6 +45,7 @@ import {supabase}       from "./supabase.js";
 import Navbar           from "./Navbar.vue";
 import {Top, Bottom}    from '@element-plus/icons-vue'
 import Sidebar          from "./Sidebar.vue";
+import {formatDate}     from "./date.js";
 
 onMounted(async () => {
     const route = useRoute()
@@ -49,7 +58,7 @@ const term = ref(null)
 async function fetchTerm(id) {
     let {data, error} = await supabase
         .from("term")
-        .select(`*, definition(*)`)
+        .select(`*, definition(*, user:user_profile(*))`)
         .order('created_at', {ascending: false, foreignTable: 'definition'})
         .filter('id', 'eq', id)
         .single()
