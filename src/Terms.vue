@@ -20,6 +20,9 @@
                             {{ item.definition[0].example }}
                         </div>
                         <div class="pdng-t-25px">
+                            <b>Аўтар: {{ item.definition[0].user.name }} {{ formatDate(item.definition[0].created_at) }}</b>
+                        </div>
+                        <div class="pdng-t-25px">
                             <el-button-group>
                                 <el-button type="primary" :icon="Top">0</el-button>
                                 <el-button type="danger" :icon="Bottom">0</el-button>
@@ -38,13 +41,14 @@ import {supabase}       from "./supabase.js";
 import {Top, Bottom}    from '@element-plus/icons-vue'
 import Navbar           from "./Navbar.vue";
 import Sidebar          from "./Sidebar.vue";
+import {formatDate}     from "./date.js";
 
-const terms  = ref([]);
+const terms = ref([]);
 
 const fetchTerms = async () => {
     let {data, error} = await supabase
         .from("term")
-        .select(`*, definition(*)`)
+        .select(`*, definition(*,user:user_profile(*))`)
         .order('created_at', {ascending: false, foreignTable: 'definition'})
         .limit(1, {foreignTable: 'definition'})
         .limit(5)

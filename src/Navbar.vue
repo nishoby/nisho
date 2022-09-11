@@ -11,7 +11,7 @@
                 <div class="pdng-r-30px mil-notdisplay">
                     <div v-if="account && account.email">
                         <span class="pdng-r-10px">{{ account.email }}</span>
-                        <el-button @click="signOut">Выход</el-button>
+                        <el-button @click="signOut">Выхад</el-button>
                     </div>
                     <div v-else>
                         <el-button @click="signInWithGoogle">Логін з Google</el-button>
