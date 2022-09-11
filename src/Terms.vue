@@ -20,7 +20,12 @@
                             {{ item.definition[0].example }}
                         </div>
                         <div class="pdng-t-25px">
-                            <b>Аўтар: {{ item.definition[0].user.name }} {{ formatDate(item.definition[0].created_at) }}</b>
+                            <b>
+                                Аўтар: {{ item.definition[0].user.name }}
+                                <span :title="item.definition[0].created_at">
+                                {{ formatDate(item.definition[0].created_at) }}
+                                </span>
+                            </b>
                         </div>
                         <div class="pdng-t-25px">
                             <el-button-group>
