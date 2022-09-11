@@ -1,16 +1,16 @@
 <template>
     <navbar></navbar>
     <sidebar></sidebar>
-    <div class="scene mrgn-t-130px mil-mrgn-t-80px">
+    <div class="scene mrgn-t-90px mil-mrgn-t-80px">
         <template v-if="terms">
-            <div class="committee-list size-70 mil-size-100 mil-flex-column is-center">
+            <div class="committee-list size-60 mil-size-100 mil-flex-column is-center">
                 <div class="committee-unit mil-flex-column"
                      v-for="item of terms">
                     <div
                         class="section size-100 pdng-r-20px pdng-l-30px pdng-t-20px pdng-b-20px mil-size-100 mil-pdng-15px">
                         <h2 class="txt-color-1 txt-size-28pxpx txt-medium mil-txt-size-16px">
                             <router-link :to="{'name': 'term', params: {id: item.id}}">
-                                {{ item.term }}
+                                {{ item.name }}
                             </router-link>
                         </h2>
                         <div class="txt-color-2 txt-size-18px pdng-t-25px">
@@ -40,7 +40,6 @@ import Navbar           from "./Navbar.vue";
 import Sidebar          from "./Sidebar.vue";
 
 const terms  = ref([]);
-const search = ref()
 
 const fetchTerms = async () => {
     let {data, error} = await supabase

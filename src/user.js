@@ -3,9 +3,9 @@ import {supabase} from './supabase'
 function getUser() {
     try {
         let user = supabase.auth.user()
-        return user ? user : {email: ''}
+        return user ? user : null
     } catch {
-        return {email: ''}
+        return null
     }
 }
 

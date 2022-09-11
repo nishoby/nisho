@@ -526,8 +526,8 @@
 
 .sidebar-container {
     position: fixed;
-    top: 225px;
-    right: 23%;
+    top: 145px;
+    right: 22%;
     z-index: 21;
     width: 250px;
     background: #fff;
@@ -536,8 +536,8 @@
 
 .adv-container {
     position: fixed;
-    top: 350px;
-    right: 23%;
+    top: 275px;
+    right: 22%;
     z-index: 21;
     width: 250px;
     background: #fff;

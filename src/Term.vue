@@ -1,14 +1,15 @@
 <template>
     <navbar></navbar>
-    <div class="scene mrgn-t-170px">
-        <div class="committee-list size-50 mil-size-100 mil-flex-column is-center" v-if="term">
+    <sidebar></sidebar>
+    <div class="scene mrgn-t-130px mil-mrgn-t-80px">
+        <div class="committee-list size-70 mil-size-100 mil-flex-column is-center" v-if="term">
             <div class="committee-unit mil-flex-column"
                  v-for="item of term.definition">
                 <div
                     class="section size-100 pdng-r-20px pdng-l-30px pdng-t-20px pdng-b-20px mil-size-100 mil-pdng-15px">
                     <h2 class="txt-color-1 txt-size-28pxpx txt-medium mil-txt-size-16px">
                         <router-link :to="{'name': 'term', params: {id: term.id}}">
-                            {{ term.term }}
+                            {{ term.name }}
                         </router-link>
                     </h2>
                     <div class="txt-color-2 txt-size-18px pdng-t-15px">
@@ -35,6 +36,7 @@ import {onMounted, ref} from "vue";
 import {supabase}       from "./supabase.js";
 import Navbar           from "./Navbar.vue";
 import {Top, Bottom}    from '@element-plus/icons-vue'
+import Sidebar          from "./Sidebar.vue";
 
 onMounted(async () => {
     const route = useRoute()
