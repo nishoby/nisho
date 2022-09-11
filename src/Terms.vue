@@ -1,7 +1,7 @@
 <template>
     <navbar></navbar>
     <sidebar></sidebar>
-    <div class="scene mrgn-t-90px mil-mrgn-t-80px">
+    <div class="scene pdng-0 mrgn-t-170px mil-mrgn-t-80px pdng-b-50px" style="width: 1200px">
         <template v-if="terms">
             <div class="committee-list size-60 mil-size-100 mil-flex-column is-center">
                 <div class="committee-unit mil-flex-column"

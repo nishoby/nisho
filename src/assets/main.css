@@ -526,7 +526,7 @@
 
 .sidebar-container {
     position: fixed;
-    top: 145px;
+    top: 170px;
     right: 22%;
     z-index: 21;
     width: 250px;
@@ -536,7 +536,7 @@
 
 .adv-container {
     position: fixed;
-    top: 275px;
+    top: 300px;
     right: 22%;
     z-index: 21;
     width: 250px;

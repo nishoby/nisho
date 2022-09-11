@@ -1,8 +1,8 @@
 <template>
     <navbar></navbar>
     <sidebar></sidebar>
-    <div class="scene mrgn-t-130px mil-mrgn-t-80px">
-        <div class="committee-list size-70 mil-size-100 mil-flex-column is-center" v-if="term">
+    <div class="scene pdng-0 mrgn-t-170px mil-mrgn-t-80px pdng-b-50px" style="width: 1200px">
+        <div class="committee-list size-60 mil-size-100 mil-flex-column is-center" v-if="term">
             <div class="committee-unit mil-flex-column"
                  v-for="item of term.definition">
                 <div
