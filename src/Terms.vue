@@ -73,7 +73,7 @@ const fetchTerms = async () => {
         .select(`*, definition(*,user:user_profile(*),vote_results(*))`)
         .order('created_at', {ascending: false, foreignTable: 'definition'})
         .limit(1, {foreignTable: 'definition'})
-        .limit(10)
+        .limit(20)
     if (error) {
         throw error
     }
