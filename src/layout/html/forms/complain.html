@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/style-forms.css">
+    <link rel="shortcut icon" href="/assets/img/logo.svg" type="image/x-icon">
+    <title>Нішо</title>
+</head>
+<body  class="complaint-wrapper">
+  <h1 class="title title-white">Паскарзіцца мадэратару</h1> 
+  <form class="complaint_form" id="complaint" action="">
+    <div class="complaint-block">
+      <p class="complaint-subtitle">Мы выдаляем такія тлумачэнні...</p>
+      <div class="complaint-desc">
+        <ol>
+          <li>Унутраныя жарты без кантэксту</li>
+          <li>Тэрміны якія не з’яўляюцца рэальнымі</li>
+          <li>Сапраўдныя імёны і іншыя асабістыя дадзенныя</li>
+          <li>Выказванні нянавісці, здзекі, дыскрымінацыя, падбухторванне да гвалту</li>
+          <li>Тэксты,  што парушаюць іншыя нашыя <a href="/html/rules.html">гайдлайны</a></li>
+        </ol>
+      </div>
+    </div>
+    <div class="complaint-block">
+      <p class="complaint-subtitle">Вы выбралі:</p>
+      <div class="complaint-desc">
+        <a class="card-title" href="">
+          Some title
+        </a>
+        <div class="card-description">
+          some description or definition about this title.
+        </div>
+        <div class="card-example">
+          oh, this word is the most funny word in the whole world
+        </div>
+      </div>
+    </div>
+    <div class="complaint-block">
+      <p class="complaint-subtitle">Чаму трэба выдаліць тлумачэнне:</p>
+      <div class="complaint-desc">
+        <input type="radio" id="inner" name="complaint" value="inner" checked>
+        <label for="inner">унутраны жарт без кантэксту ці не рэальны тэрмін</label><br>
+        <input type="radio" id="personal" name="complaint" value="personal">
+        <label for="personal">імя ці іншыя асабістыя дадзеныя</label><br>
+        <input type="radio" id="javascript" name="complaint" value="javascript">
+        <label for="javascript">мова варожасці</label><br>
+        <input type="radio" id="other" name="complaint" value="other">
+        <label for="other">іншае</label> 
+      </div>
+      <textarea class="complaint-comment" placeholder="пакіньце свой каментар..." form="complaint" ></textarea>
+    </div>
+    <input class="submit-btn" type="submit" value="Паскардзіцца">
+  </form>
+</body>
+</html>
+</body>
+</html>
