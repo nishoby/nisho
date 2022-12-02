@@ -1,107 +1,31 @@
 <template>
-    <div class="header-wrp fixedhrd bg-color-main">
-        <div class="header size-70 mrgn-auto mil-size-100 bg-color-main">
-            <div class="flex-row flex-algn-itms-c mil-notdisplay">
-                <router-link :to="{name: 'terms'}" class="section pdng-l-20px pdng-r-20px">
-                    <img src="/img/logo.svg" height="40" alt="logo">
-                </router-link>
-                <div class="header-links flex-grow-all pdng-l-20px pdng-r-20px mil-notdisplay">
-                    <router-link :to="{'name': 'about'}">Аб праекце</router-link>
-                </div>
-                <div class="pdng-r-30px mil-notdisplay">
-                    <div v-if="account && account.email">
-                        <span class="pdng-r-10px">{{ account.email }}</span>
-                        <el-button @click="signOut">Выхад</el-button>
-                    </div>
-                    <div v-else>
-                        <el-button @click="signInWithGoogle">Логін з Google</el-button>
-                    </div>
-                </div>
-            </div>
-            <div class="pdng-t-20px pdng-l-20px pdng-r-30px mil-notdisplay flex-row">
-                <el-autocomplete
-                    v-model="search"
-                    :fetch-suggestions="querySearchAsync"
-                    size="large"
-                    :fit-input-width="true"
-                    @select="handleSelect"
-                    class="mrgn-r-15px size-100"
-                    placeholder="Пачніце ўвадзіць слова">
-                    <template #default="{ item }">
-                        <span><b>{{ item.name }}</b></span>
-                        <span class="pdng-l-5px">{{ item.definition[0].content }}</span>
-                    </template>
-                </el-autocomplete>
-                <el-button :icon="Plus" circle size="large" @click="goToAdding"></el-button>
-                <!--                <el-button :icon="Refresh" circle size="large" class="mrgn-l-5px"></el-button>-->
-                <el-popover placement="bottom" :width="270" trigger="click">
-                    <template #reference>
-                        <el-button :icon="User" circle size="large"></el-button>
-                    </template>
-                    <div v-if="account">
-                        <span class="txt-color-2 pdng-r-15px">{{ account.email }}</span>
-                        <el-button @click="signOut" type="success">Выхад</el-button>
-                    </div>
-                    <div v-else>
-                        <el-button @click="signInWithGoogle" type="success">Логін з Google</el-button>
-                    </div>
-                </el-popover>
-            </div>
-            <!-- mobile nav -->
-            <div class="section flex-grow-all pdng-l-20px pdng-r-30px notdisplay mil-show">
-                <router-link :to="{name: 'terms'}" class="section pdng-l-20px pdng-r-20px">
-                    <img src="/img/logo.svg" height="30" alt="logo">
-                </router-link>
-                <input id="brgrbtn" class="notdisplay mil-show" type="checkbox">
-                <label for="brgrbtn" class="notdisplay burger-button mil-show">
-                    <div class="burger-button-line"></div>
-                    <div class="burger-button-line"></div>
-                    <div class="burger-button-line"></div>
-                </label>
-                <div class="brgr-nav notdisplay mil-show">
-                    <div class="header-links pdng-l-20px pdng-r-20px">
-                        <div class="pdng-t-30px">
-                            <router-link :to="{'name': 'about'}">Аб праекце</router-link>
-                        </div>
-                    </div>
-                </div>
-                <div class="pdng-r-30px flex-row">
-                    <el-autocomplete
-                        v-model="search"
-                        :fetch-suggestions="querySearchAsync"
-                        size="large"
-                        :fit-input-width="false"
-                        @select="handleSelect"
-                        class="mrgn-r-15px size-100"
-                        placeholder="Пачніце ўвадзіць слова">
-                        <template #default="{ item }">
-                            <span><b>{{ item.name }}</b></span>
-                            <span class="pdng-l-5px" style="max-width: 250px">{{ item.definition[0].content }}</span>
-                        </template>
-                    </el-autocomplete>
-                    <el-button :icon="Plus"
-                               circle
-                               role="link"
-                               size="large"
-                               @click="goToAdding"></el-button>
-                    <!--                    <el-button :icon="Refresh" circle size="large"></el-button>-->
-                    <el-popover placement="bottom" :width="270" trigger="click">
-                        <template #reference>
-                            <el-button :icon="User" circle size="large"></el-button>
-                        </template>
-                        <div v-if="account">
-                            <span class="txt-color-2 pdng-r-15px">{{ account.email }}</span>
-                            <el-button @click="signOut" type="success">Выхад</el-button>
-                        </div>
-                        <div v-else>
-                            <el-button @click="signInWithGoogle" type="success">Логін з Google</el-button>
-                        </div>
-                    </el-popover>
+    <Teleport to="header">
+        <button class="header-logo-btn">
+            <img class="header-logo-img" src="/assets/img/logo.svg" alt="">
+        </button>
+        <div class="header-form-container container">
+            <form class="header-form" action="">
+                <button class="form-search-btn">
+                    <img class="form-search-btn-img" src="/assets/img/search.svg" alt="">
+                </button>
 
-                </div>
-            </div>
+                <input type="text" class="search-input">
+
+                <button class="form-random-btn">
+                    <img class="form-random-btn-img" src="/assets/img/random.svg" alt="">
+                </button>
+            </form>
         </div>
-    </div>
+        <div class="header-btns">
+            <a class="add-btn" href="/html/add-word.html">
+                <img class="add-btn-img" src="/assets/img/add.svg" alt="">
+            </a>
+
+            <button class="person-btn">
+                <img class="person-btn-img" src="/assets/img/person.svg" alt="">
+            </button>
+        </div>
+    </Teleport>
 </template>
 
 <script setup>

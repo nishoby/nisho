@@ -1,53 +1,67 @@
 <template>
     <navbar></navbar>
-    <sidebar></sidebar>
-    <div class="scene pdng-0 mrgn-t-170px mil-mrgn-t-80px pdng-b-50px" style="width: 1200px">
-        <template v-if="terms">
-            <div class="committee-list size-60 mil-size-100 mil-flex-column is-center">
-                <div class="committee-unit mil-flex-column"
-                     v-for="item of terms">
-                    <div
-                        class="section size-100 pdng-r-20px pdng-l-30px pdng-t-20px pdng-b-20px mil-size-100 mil-pdng-15px">
-                        <h2 class="txt-color-1 txt-size-28pxpx txt-medium mil-txt-size-16px">
-                            <router-link :to="{'name': 'term', params: {id: item.id}}">
-                                {{ item.name }}
-                            </router-link>
-                        </h2>
-                        <div class="txt-color-2 txt-size-18px pdng-t-25px">
-                            {{ item.definition[0].content }}
-                        </div>
-                        <div class="txt-color-2 txt-size-18px pdng-t-25px txt-italic">
-                            {{ item.definition[0].example }}
-                        </div>
-                        <div class="pdng-t-25px">
-                            <b>
-                                Аўтар: {{ item.definition[0].user.name }}
-                                <span :title="item.definition[0].created_at">
-                                    {{ formatDate(item.definition[0].created_at) }}
-                                </span>
-                            </b>
-                        </div>
-                        <div class="pdng-t-25px">
-                            <el-button-group>
-                                <el-button type="primary"
-                                           :icon="Top"
-                                           @click="update(item.definition[0], 'upvote')"
-                                           :plain="item.definition[0].vote_results.length > 0 && item.definition[0].vote_results[0].is_upvoted">
-                                    {{ item.definition[0].vote_results.length > 0 ? item.definition[0].vote_results[0].upvotes : 0 }}
-                                </el-button>
-                                <el-button
-                                    type="danger"
-                                    @click="update(item.definition[0], 'downvote')"
-                                    :plain="item.definition[0].vote_results.length > 0 && item.definition[0].vote_results[0].is_downvoted"
-                                    :icon="Bottom">
-                                    {{ item.definition[0].vote_results.length > 0 ? item.definition[0].vote_results[0].downvotes : 0 }}
-                                </el-button>
-                            </el-button-group>
-                        </div>
+    <div class="main-container container">
+        <div class="cards-div">
+            <div class="card" v-for="item of terms">
+                <router-link class="card-title" :to="{'name': 'term', params: {id: item.id}}">
+                    {{ item.name }}
+                </router-link>
+                <div class="card-description">
+                    {{ item.definition[0].content }}
+                </div>
+                <div class="card-example">
+                    {{ item.definition[0].example }}
+                </div>
+                <div class="card-tags" v-if="false">
+                    <span class="user-tag">Tag1</span>
+                    <span class="embedded-tag">Tag2</span>
+                </div>
+                <div class="card-info">
+
+                    <a class="card-info_link">
+                        {{ item.definition[0].user.name }}
+                    </a>
+                    <div class="card-info_date">
+                        <span :title="item.definition[0].created_at">
+                            {{ formatDate(item.definition[0].created_at) }}
+                        </span>
                     </div>
                 </div>
+                <div class="card-buttons">
+                    <div class="card-buttons_actions">
+                        <!--                        TODO нужен статус для обозначения, что сам пользователь пролайкал-->
+                        <button @click="update(item.definition[0], 'downvote')" class="card-buttons-actions_dislike">
+                            <img class="dislike-img" src="/assets/img/dislike.svg" alt="">
+                        </button>
+                        <div class="dislikes-amount">
+                            {{ item.definition[0].vote_results.length > 0 ? item.definition[0].vote_results[0].downvotes : 0 }}
+                        </div>
+                        /
+                        <button class="card-buttons-actions_like" @click="update(item.definition[0], 'upvote')">
+                            <img class="like-img" src="/assets/img/like.svg" alt="">
+                        </button>
+                        <div class="likes-amount">
+                            {{ item.definition[0].vote_results.length > 0 ? item.definition[0].vote_results[0].upvotes : 0 }}
+
+                        </div>
+
+                        <button class="card-buttons-actions_flag">
+                            <img class="flag-img" src="/assets/img/flag.svg" alt="">
+                        </button>
+                    </div>
+                    <a href="/html/edit-word.html" class="card-buttons_addnew-btn">
+                        + Новае значэнне
+                    </a>
+                </div>
             </div>
-        </template>
+        </div>
+        <div class="pages-list">
+            <a class="previous-page-btn" href=""></a>
+            <a class="active-page" href="">
+                1
+            </a>
+            <a class="next-page-btn" href="">></a>
+        </div>
     </div>
 </template>
 
