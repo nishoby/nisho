@@ -55,7 +55,7 @@
                 </div>
             </div>
         </div>
-        <div class="pages-list">
+        <div class="pages-list" v-if="count > 15">
             <a class="previous-page-btn" href=""></a>
             <a class="active-page" href="">
                 1
@@ -68,13 +68,12 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import {supabase}       from "./supabase.js";
-import {Top, Bottom}    from '@element-plus/icons-vue'
 import Navbar           from "./Navbar.vue";
-import Sidebar          from "./Sidebar.vue";
 import {formatDate}     from "./date.js";
 import {vote}           from "./vote.js";
 
 const terms = ref([]);
+const count = ref(0)
 
 const update = async (definition, type) => {
     await vote(definition, type)
@@ -87,11 +86,20 @@ const fetchTerms = async () => {
         .select(`*, definition(*,user:user_profile(*),vote_results(*))`)
         .order('created_at', {ascending: false, foreignTable: 'definition'})
         .limit(1, {foreignTable: 'definition'})
-        .limit(20)
+        .limit(15)
     if (error) {
         throw error
     }
     terms.value = data;
+}
+async function fetchCount() {
+    let {count: data, error} = await supabase
+        .from("term")
+        .select(`*`, { count: 'exact', head: true })
+    if (error) {
+        throw error
+    }
+    count.value = data;
 }
 
 onMounted(() => {

@@ -1,8 +1,8 @@
 <template>
     <Teleport to="header">
-        <button class="header-logo-btn">
+        <router-link :to="{name: 'terms'}" class="header-logo-btn">
             <img class="header-logo-img" src="/assets/img/logo.svg" alt="">
-        </button>
+        </router-link>
         <div class="header-form-container container">
             <form class="header-form" action="">
                 <button class="form-search-btn">
