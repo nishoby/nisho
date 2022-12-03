@@ -51,11 +51,14 @@
             </div>
         </div>
         <div class="pages-list" v-if="count > 15">
-            <a class="previous-page-btn" href=""></a>
-            <a class="active-page" href="">
-                1
-            </a>
-            <a class="next-page-btn" href="">></a>
+            <el-pagination
+                :background="true"
+                :current-page="currentPage"
+                @update:current-page="onPageChange"
+                :page-size="15"
+                layout="prev, pager, next"
+                :total="count"
+            />
         </div>
     </div>
 </template>
@@ -77,6 +80,12 @@ onMounted(
         await fetchCount()
     }
 )
+
+const currentPage = ref(1)
+const onPageChange = async (page) => {
+    currentPage.value = page;
+    await fetchTerm()
+}
 
 const update = async (definition, type) => {
     await vote(definition, type)
@@ -115,5 +124,12 @@ async function fetchCount() {
 </script>
 
 <style scoped>
+
+</style>
+<style>
+:root {
+    --el-color-primary: #D6FB89;
+    --el-color-white: black;
+}
 
 </style>

@@ -56,11 +56,19 @@
             </div>
         </div>
         <div class="pages-list" v-if="count > 15">
-            <a class="previous-page-btn" href=""></a>
-            <a class="active-page" href="">
-                1
-            </a>
-            <a class="next-page-btn" href="">></a>
+            <el-pagination
+                :background="true"
+                :current-page="currentPage"
+                @update:current-page="onPageChange"
+                :page-size="15"
+                layout="prev, pager, next"
+                :total="count"
+            />
+<!--            <a class="previous-page-btn" href=""></a>-->
+<!--            <a class="active-page" href="">-->
+<!--                1-->
+<!--            </a>-->
+<!--            <a class="next-page-btn" href="">></a>-->
         </div>
     </div>
 </template>
@@ -72,11 +80,18 @@ import Navbar           from "./Navbar.vue";
 import {formatDate}     from "./date.js";
 import {vote}           from "./vote.js";
 
-const terms = ref([]);
-const count = ref(0)
+const terms       = ref([]);
+const count       = ref(0)
 
 const update = async (definition, type) => {
     await vote(definition, type)
+    await fetchTerms()
+    await fetchCount()
+}
+
+const currentPage = ref(1)
+const onPageChange = async (page) => {
+    currentPage.value = page;
     await fetchTerms()
 }
 
@@ -86,28 +101,38 @@ const fetchTerms = async () => {
         .select(`*, definition(*,user:user_profile(*),vote_results(*))`)
         .order('created_at', {ascending: false, foreignTable: 'definition'})
         .limit(1, {foreignTable: 'definition'})
-        .limit(15)
+        .range((currentPage.value - 1) * 15, (currentPage.value * 15) - 1)
+
     if (error) {
         throw error
     }
     terms.value = data;
 }
+
 async function fetchCount() {
     let {count: data, error} = await supabase
         .from("term")
-        .select(`*`, { count: 'exact', head: true })
+        .select(`*`, {count: 'exact', head: true})
     if (error) {
         throw error
     }
     count.value = data;
 }
 
-onMounted(() => {
-    fetchTerms()
+onMounted(async () => {
+    await fetchTerms()
+    await fetchCount()
 })
 
 </script>
 
 <style scoped>
+
+</style>
+<style>
+:root {
+    --el-color-primary: #D6FB89;
+    --el-color-white: black;
+}
 
 </style>
