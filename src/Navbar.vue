@@ -20,10 +20,20 @@
             <a class="add-btn" href="/html/add-word.html">
                 <img class="add-btn-img" src="/assets/img/add.svg" alt="">
             </a>
-
-            <button class="person-btn">
-                <img class="person-btn-img" src="/assets/img/person.svg" alt="">
-            </button>
+            <el-popover placement="bottom" :width="270" trigger="click">
+                <template #reference>
+                    <button class="person-btn">
+                        <img class="person-btn-img" src="/assets/img/person.svg" alt="">
+                    </button>
+                </template>
+                <div v-if="account">
+                    <span class="txt-color-2 pdng-r-15px">{{ account.email }}</span>
+                    <el-button @click="signOut" type="success">Выхад</el-button>
+                </div>
+                <div v-else>
+                    <el-button @click="signInWithGoogle" type="success">Логін з Google</el-button>
+                </div>
+            </el-popover>
         </div>
     </Teleport>
 </template>
