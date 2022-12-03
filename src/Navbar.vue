@@ -30,9 +30,21 @@
             </form>
         </div>
         <div class="header-btns">
-            <a class="add-btn" href="/html/add-word.html">
-                <img class="add-btn-img" src="/assets/img/add.svg" alt="">
-            </a>
+            <router-link to="add" custom v-slot="{ href, navigate }">
+                <a class="add-btn"
+                   v-if="!account"
+                   @click="ElMessage.warning('Каб дадаць слова, вам трэба залагініцца')"
+                   href="#">
+                    <img class="add-btn-img" src="/assets/img/add.svg" alt="">
+                </a>
+                <a
+                    class="add-btn"
+                    v-else
+                    :href="href"
+                    @click="navigate">
+                    <img class="add-btn-img" src="/assets/img/add.svg" alt="">
+                </a>
+            </router-link>
             <el-popover placement="bottom" :width="270" trigger="click">
                 <template #reference>
                     <button class="person-btn">
@@ -68,13 +80,6 @@ supabase.auth.onAuthStateChange((event, session) => {
     }
 })
 const router           = useRouter();
-const goToAdding       = () => {
-    if (!account.value) {
-        ElMessage.warning('Каб дадаць слова, вам трэба залагініцца');
-        return
-    }
-    router.push({'name': 'add'})
-}
 const querySearchAsync = async (queryString, cb) => {
     if (!queryString) {
         cb([]);
