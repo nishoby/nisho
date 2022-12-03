@@ -9,9 +9,22 @@
                     <img class="form-search-btn-img" src="/assets/img/search.svg" alt="">
                 </button>
 
-                <input type="text" class="search-input">
-
-                <button class="form-random-btn">
+                <el-autocomplete
+                    v-model="search"
+                    :fetch-suggestions="querySearchAsync"
+                    size="large"
+                    :fit-input-width="false"
+                    @select="handleSelect"
+                    style="width: 100%;padding-right: 5px"
+                    placeholder="Пачніце ўвадзіць слова">
+                    <template #default="{ item }">
+                        <span><b>{{ item.name }}</b></span>
+                        <span style="max-width: 250px;padding-left: 5px">
+                            {{ item.definition[0].content }}
+                        </span>
+                    </template>
+                </el-autocomplete>
+                <button class="form-random-btn" type="button">
                     <img class="form-random-btn-img" src="/assets/img/random.svg" alt="">
                 </button>
             </form>
