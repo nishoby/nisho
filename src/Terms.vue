@@ -49,9 +49,6 @@
                             <img class="flag-img" src="/assets/img/flag.svg" alt="">
                         </button>
                     </div>
-                    <a href="/html/edit-word.html" class="card-buttons_addnew-btn">
-                        + Новае значэнне
-                    </a>
                 </div>
             </div>
         </div>
