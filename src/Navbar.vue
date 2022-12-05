@@ -101,7 +101,7 @@ const handleSelect = (item) => {
 async function signInWithGoogle() {
     const options       = import.meta.env.VITE_REDIRECT_URL
         ? {redirectTo: import.meta.env.VITE_REDIRECT_URL}
-        : {}
+        : {redirectTo: window.location}
     const {user, error} = await supabase.auth.signIn(
         {provider: 'google'},
         options
