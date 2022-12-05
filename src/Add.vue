@@ -42,7 +42,6 @@ import {supabase}      from "./supabase.js";
 import {ElMessage}     from "element-plus";
 import {useRouter}     from 'vue-router'
 import {getUser}       from "./user.js";
-import './assets/main.css'
 
 const router = useRouter();
 
