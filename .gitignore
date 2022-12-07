@@ -22,3 +22,4 @@ var
 *.njsproj
 *.sln
 *.sw?
+.env
