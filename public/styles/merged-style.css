@@ -115,10 +115,12 @@ body{
 }
 .add-word_form,
 .complaint_form{
+  position: relative;
   width: 55.625rem;
 }
 .login_form,
 .registration_form {
+  position: relative;
   box-sizing: border-box;
   width: 34.75rem;
   font-size: 1.25rem;
@@ -648,6 +650,31 @@ button {
   width: 28.5rem;
   height: 23rem;
 }
+.cross {
+  position: absolute;
+  right: 1.5rem;
+  top: 1.5rem;
+  width: 1.5rem;
+}
+.cross:hover {
+  cursor: pointer;
+}
+.cross:before, .cross:after {
+  position: absolute;
+  left: 1rem;
+  content: ' ';
+  height: 1.5rem;
+  width: 0.3rem;
+  border-radius: 0.2rem;
+  background-color: #3A3A3A;
+}
+.cross:before {
+  transform: rotate(45deg);
+}
+.cross:after {
+  transform: rotate(-45deg);
+}
+
 
 @media screen and (max-width: 700px) {
   .container{
