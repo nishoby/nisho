@@ -381,6 +381,8 @@ button {
   background-color: white;
 }
 .main{
+}
+#app{
   min-height: calc(100vh - 23.8rem);
   padding: 0;
   border-bottom: 0.1rem solid white;
@@ -443,7 +445,7 @@ button {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin: 1rem 0;
+  margin: 2rem 0;
   gap: 1.875rem;
 }
 .my-card-wrapper{
@@ -456,8 +458,6 @@ button {
   width: 100%;
   height: 100%;
   padding: 2rem;
-  margin-bottom: 2rem;
-  margin-top: 2rem;
   background-color: white;
 }
 .my-card{
@@ -660,6 +660,7 @@ button {
     grid-template-rows: repeat(2, 1fr);
   }
   .header-logo-btn{
+    display: none;
     justify-self: start;
   }
   .header-form-container{
@@ -685,6 +686,9 @@ button {
   .search-input{
     width: 50%;
   }
+  .card, .my-card{
+    margin: 0;
+  }
   .card-buttons{
     margin-left: -2rem;
     padding: 0;
@@ -700,5 +704,8 @@ button {
   }
   .flag-img{
     margin: 0 1rem;
+  }
+  .social-links{
+    padding: 0;
   }
 }
