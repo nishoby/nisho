@@ -31,6 +31,22 @@
   --reg-grad: linear-gradient(180deg, #9FFC70 0%, #D6FB89 42.71%);
 }
 
+/*----------scroll styles start------------ */
+body::-webkit-scrollbar {
+  width: 1rem;
+}
+
+body::-webkit-scrollbar-track {
+  background: whitesmoke;    
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color:#B3A5FF ;    
+  border-radius: 1.25rem;       
+  border: 0.2rem solid white;
+}
+/*----------scroll styles end------------ */
+
 input[type="password"] {
 	font-family: "fontello";
 	font-style: normal;
@@ -634,9 +650,6 @@ button {
 }
 
 @media screen and (max-width: 700px) {
-  body{
-    overflow-y: hidden;
-  }
   .container{
     margin: 0;
     width: 100vw;
