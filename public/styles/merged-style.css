@@ -674,6 +674,9 @@ button {
 .cross:after {
   transform: rotate(-45deg);
 }
+.back-btn{
+  display: none;
+}
 
 
 @media screen and (max-width: 700px) {
@@ -735,4 +738,39 @@ button {
   .social-links{
     padding: 0;
   }
+
+  .back-btn{
+    margin: 0 1rem;
+    display: inline;
+  }
+  /*----mobile for login,registration----*/
+  .title-white{
+    text-align: left;
+  }
+  .login_form,
+  .registration_form{
+    width: 100vw;
+    padding: 1.4rem;
+  }
+  .registration-submit-btn, .login-submit-btn {
+    margin: 2rem auto;
+  }
+  .gmail-registration{
+    width: 18rem;
+    margin: 1.75rem auto;
+  }
+  .gmail-registration-btn {
+    font-size: 1.25rem;
+  }
+  .login-submit-btn{
+    height: 3.75rem;
+    font-size: 1.5rem;
+  }
+  .cross{
+    display: none;
+  }
+
+
+
+  /*----mobile for login----*/
 }
