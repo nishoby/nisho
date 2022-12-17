@@ -679,7 +679,7 @@ button {
 }
 
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 650px) {
   .container{
     margin: 0;
     width: 100vw;
@@ -715,6 +715,9 @@ button {
   }
   .search-input{
     width: 50%;
+  }
+  .title{
+    font-size: 1.4rem;
   }
   .card, .my-card{
     margin: 0;
@@ -769,8 +772,26 @@ button {
   .cross{
     display: none;
   }
+  /*---- end of mobile for login, registration----*/
+  /*---- mobile for complaint ----*/
+  .complaint_form{
+    box-sizing: border-box;
+    width: 100vw;
+    margin: 0;
+    padding: 2.5rem 1.25rem;
+  }
+  .complaint-subtitle{
+    font-size: 1.6rem;
+  }
+  .card-title{
+    font-size: 1.75rem;
+  }
+  .complaint-comment{
+    resize: none;
+    overflow: hidden;
+    height: 2.6rem;
+  }
+  /*---- end of mobile for complaint ----*/
 
 
-
-  /*----mobile for login----*/
 }
