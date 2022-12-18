@@ -842,6 +842,25 @@ button {
     height: 11.5rem;
   }
   /*---- end of mobile for error ----*/
+  /*---- mobile for hero ----*/
+  .hero-wrapper{
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: -5rem;
+  }
+  .hero-img{
+    margin-left: 2rem;
+    margin-right: 0;
+  }
+  .hero-logo{
+    width: 10rem;
+    height: 5.25rem;
+    margin-top: 5rem;
+  }
+  .hero-caption{
+    font-size: 1.25rem;
+  }
+  /*---- end of mobile for hero ----*/
 
 
 }
