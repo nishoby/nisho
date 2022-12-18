@@ -9,20 +9,25 @@
 </head>
 <body>
   <div class="bcg-green">
-    <h1 class="title">Рэдагаваць слова</h1> 
+    <h1 class="title">
+      <a class="back-btn" href="">
+        <img src="/public/assets/img/back.svg" alt="">
+      </a>
+      Рэдагаваць слова
+    </h1> 
     <form class="add-word_form" action="">
       <div class="cross"></div>
       <p class="note">Усе тлумачэнні ў Нішо напісаныя звычайнымі людзьмі. Ты таксама можаш 
       дадаць у слоўнік свае. <br>
-      Зазірні ў <a href="/html/guidelines.html">гайдлайны</a> перад тым як даваць новаe слова ці яго тлумачэнне.</p> 
+      Зазірні ў <a href="/html/guidelines.html">гайдлайны</a> перад тым, як даваць новаe слова ці яго тлумачэнне.</p> 
       <label class="add-word_label" for="word">Слова:</label>
       <input class="add-word_input" type="text" name="word">
       <label class="add-word_label" for="definition">Тлумачэнне:</label>
       <input class="add-word_input" type="text" name="definition">
       <label class="add-word_label" for="example">Прыклад:</label>
-      <input style="height: 4.4rem;" class="add-word_input" type="text" name="example">
+      <input class="add-word_input add-word_input--example" type="text" name="example">
       <label class="add-word_label" for="tags">Тэгі:</label>
-      <input style="height: 4.8rem;" class="add-word_input tags" type="text" name="tags">
+      <input class="add-word_input add-word_input--tags" type="text" name="tags">
       <input class="submit-btn" type="submit" value="Гатова">
     </form>
   </div>

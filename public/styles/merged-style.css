@@ -214,6 +214,12 @@ body{
   border: none;
   border-radius: 0.5rem;
 }
+.add-word_input--example{
+  height: 4.4rem;
+}
+.add-word_input--tags{
+  height: 4.8rem;
+}
 .password_input{
   width: 90%;
   height: 100%;
@@ -747,7 +753,7 @@ button {
     display: inline;
   }
   /*----mobile for login,registration----*/
-  .title-white{
+  .title{
     text-align: left;
   }
   .login_form,
@@ -792,6 +798,29 @@ button {
     height: 2.6rem;
   }
   /*---- end of mobile for complaint ----*/
+  /*---- mobile for add, edit ----*/
+  .add-word_form{
+    box-sizing: border-box;
+    width: 100vw;
+    padding: 2rem 1.3rem;
+  }
+  .note{
+    margin-bottom: 1.9rem;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 400;
+  }
+  .add-word_input{
+    height: 3rem;
+    margin-bottom: 1.9rem;
+  }
+  .add-word_input--example{
+    height: 4.4rem;
+  }
+  .add-word_input--tags{
+    height: 4.6rem;
+  }
+  /*---- end of mobile for add, edit ----*/
 
 
 }
