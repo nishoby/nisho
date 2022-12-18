@@ -821,6 +821,27 @@ button {
     height: 4.6rem;
   }
   /*---- end of mobile for add, edit ----*/
+  /*---- mobile for error ----*/
+  .error-wrapper{
+    width: 100%;
+    margin-top: 10rem;
+  }
+  .back-btn--error{
+    position: absolute;
+    top: 1.5rem;
+    left: 0.5rem;
+  }
+  .error-title{
+    font-size: 3rem;
+  }
+  .error-caption{
+    font-size: 1.25rem;
+  }
+  .error-img{
+    width: 14.5rem;
+    height: 11.5rem;
+  }
+  /*---- end of mobile for error ----*/
 
 
 }
