@@ -43,7 +43,7 @@ body::-webkit-scrollbar-track {
 body::-webkit-scrollbar-thumb {
   background-color:#B3A5FF ;    
   border-radius: 1.25rem;       
-  border: 0.2rem solid white;
+  border: 0.2rem solid whitesmoke;
 }
 /*----------scroll styles end------------ */
 
