@@ -683,17 +683,11 @@ button {
 .back-btn{
   display: none;
 }
+
 @media screen and (max-width: 992px) {
   .header-logo-btn{
     display: none;
     justify-self: start;
-  }
-}
-
-@media screen and (max-width: 650px) {
-  .container{
-    margin: 0;
-    width: 100vw;
   }
   .header{
     height: 100%;
@@ -701,8 +695,8 @@ button {
     grid-template-rows: repeat(2, 1fr);
   }
   .header-form-container{
-    margin-left: 1rem;
-    width: calc(100vw - 8rem);
+    margin-left: 3rem;
+    width: calc(100vw - 11rem);
   }
   .header-btns{
     width: 7rem;
@@ -720,6 +714,18 @@ button {
   .header-btns>*{
     height: 100%;
   }
+}
+
+@media screen and (max-width: 650px) {
+  .container{
+    margin: 0;
+    width: 100vw;
+  }
+  .header-form-container{
+    margin-left: 1rem;
+    width: calc(100vw - 8rem);
+  }
+  
   .search-input{
     width: 50%;
   }
