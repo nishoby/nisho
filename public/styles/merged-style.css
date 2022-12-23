@@ -683,7 +683,12 @@ button {
 .back-btn{
   display: none;
 }
-
+@media screen and (max-width: 992px) {
+  .header-logo-btn{
+    display: none;
+    justify-self: start;
+  }
+}
 
 @media screen and (max-width: 650px) {
   .container{
@@ -694,10 +699,6 @@ button {
     height: 100%;
     padding-bottom: 1rem;
     grid-template-rows: repeat(2, 1fr);
-  }
-  .header-logo-btn{
-    display: none;
-    justify-self: start;
   }
   .header-form-container{
     margin-left: 1rem;
