@@ -43,7 +43,7 @@ body::-webkit-scrollbar-track {
 body::-webkit-scrollbar-thumb {
   background-color:#B3A5FF ;    
   border-radius: 1.25rem;       
-  border: 0.2rem solid white;
+  border: 0.2rem solid whitesmoke;
 }
 /*----------scroll styles end------------ */
 
@@ -213,6 +213,12 @@ body{
   background-color: rgba(234, 234, 234, 1);
   border: none;
   border-radius: 0.5rem;
+}
+.add-word_input--example{
+  height: 4.4rem;
+}
+.add-word_input--tags{
+  height: 4.8rem;
 }
 .password_input{
   width: 90%;
@@ -678,24 +684,19 @@ button {
   display: none;
 }
 
-
-@media screen and (max-width: 650px) {
-  .container{
-    margin: 0;
-    width: 100vw;
+@media screen and (max-width: 992px) {
+  .header-logo-btn{
+    display: none;
+    justify-self: start;
   }
   .header{
     height: 100%;
     padding-bottom: 1rem;
     grid-template-rows: repeat(2, 1fr);
   }
-  .header-logo-btn{
-    display: none;
-    justify-self: start;
-  }
   .header-form-container{
-    margin-left: 1rem;
-    width: calc(100vw - 8rem);
+    margin-left: 3rem;
+    width: calc(100vw - 11rem);
   }
   .header-btns{
     width: 7rem;
@@ -713,6 +714,18 @@ button {
   .header-btns>*{
     height: 100%;
   }
+}
+
+@media screen and (max-width: 650px) {
+  .container{
+    margin: 0;
+    width: 100vw;
+  }
+  .header-form-container{
+    margin-left: 1rem;
+    width: calc(100vw - 8rem);
+  }
+  
   .search-input{
     width: 50%;
   }
@@ -747,7 +760,7 @@ button {
     display: inline;
   }
   /*----mobile for login,registration----*/
-  .title-white{
+  .title{
     text-align: left;
   }
   .login_form,
@@ -792,6 +805,67 @@ button {
     height: 2.6rem;
   }
   /*---- end of mobile for complaint ----*/
-
-
+  /*---- mobile for add, edit ----*/
+  .add-word_form{
+    box-sizing: border-box;
+    width: 100vw;
+    padding: 2rem 1.3rem;
+  }
+  .note{
+    margin-bottom: 1.9rem;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 400;
+  }
+  .add-word_input{
+    height: 3rem;
+    margin-bottom: 1.9rem;
+  }
+  .add-word_input--example{
+    height: 4.4rem;
+  }
+  .add-word_input--tags{
+    height: 4.6rem;
+  }
+  /*---- end of mobile for add, edit ----*/
+  /*---- mobile for error ----*/
+  .error-wrapper{
+    width: 100%;
+    margin-top: 10rem;
+  }
+  .back-btn--error{
+    position: absolute;
+    top: 1.5rem;
+    left: 0.5rem;
+  }
+  .error-title{
+    font-size: 3rem;
+  }
+  .error-caption{
+    font-size: 1.25rem;
+  }
+  .error-img{
+    width: 14.5rem;
+    height: 11.5rem;
+  }
+  /*---- end of mobile for error ----*/
+  /*---- mobile for hero ----*/
+  .hero-wrapper{
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: -5rem;
+  }
+  .hero-img{
+    margin-left: 2rem;
+    margin-right: 0;
+  }
+  .hero-logo{
+    width: 10rem;
+    height: 5.25rem;
+    margin-top: 5rem;
+  }
+  .hero-caption{
+    font-size: 1.25rem;
+  }
+  /*---- end of mobile for hero ----*/
 }
