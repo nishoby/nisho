@@ -93,6 +93,7 @@ const onPageChange = async (page) => {
 }
 
 const fetchTerms = async () => {
+    //TODO сделать view вместо выборки
     let {data, error} = await supabase
         .from("term")
         .select(`*, definition(*,user:user_profile(*),vote_results(*))`)
@@ -103,7 +104,7 @@ const fetchTerms = async () => {
     if (error) {
         throw error
     }
-    terms.value = data;
+    terms.value = data.filter((t) => t.definition.length > 0);
 }
 
 async function fetchCount() {
