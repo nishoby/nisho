@@ -13,8 +13,8 @@ const main   = [
         component: DefaultLayout,
         children : [
             {
-                path     : '',
                 name     : 'terms',
+                path     : '',
                 component: Terms,
             }
         ],
@@ -24,8 +24,8 @@ const main   = [
         component: DefaultLayout,
         children : [
             {
-                path     : '',
                 name     : 'term',
+                path     : '',
                 component: Term,
             }
         ],
@@ -46,8 +46,8 @@ const main   = [
         component: SimplifiedLayout,
         children : [
             {
-                path     : '',
                 name     : 'add',
+                path     : '',
                 component: Add,
             }
         ],

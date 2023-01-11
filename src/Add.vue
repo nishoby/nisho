@@ -41,7 +41,7 @@
         Дадаць слова
     </h1>
     <form class="add-word_form" action="" @submit.prevent>
-        <div class="cross"></div>
+        <button class="cross" @click="router.back()"></button>
         <p class="note">Усе тлумачэнні ў Нішо напісаныя звычайнымі людзьмі. Ты таксама можаш
             дадаць у слоўнік свае. <br>
             Зазірні ў <a href="/html/guidelines.html">гайдлайны</a> перад тым як даваць новаe слова ці яго тлумачэнне.</p>

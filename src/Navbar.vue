@@ -9,7 +9,6 @@
             <button class="form-search-btn">
                 <img class="form-search-btn-img" src="/assets/img/search.svg" alt="">
             </button>
-
             <el-autocomplete
                 v-model="search"
                 :fetch-suggestions="querySearchAsync"
@@ -31,7 +30,7 @@
         </form>
     </div>
     <div class="header-btns">
-        <router-link to="add" custom v-slot="{ href, navigate }">
+        <router-link :to="{name: 'add'}" custom v-slot="{ href, navigate }">
             <a class="add-btn"
                v-if="!account"
                @click="ElMessage.warning('Каб дадаць слова, вам трэба залагініцца')"
