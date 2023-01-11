@@ -1,5 +1,4 @@
 <template>
-    <navbar></navbar>
     <div class="scene mrgn-t-130px">
         <router-link :to="{name: 'terms'}">
             <el-button>Вярнуцца</el-button>

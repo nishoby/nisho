@@ -1,5 +1,4 @@
 <template>
-    <navbar></navbar>
     <div class="main-container container">
         <div class="cards-div">
             <div class="card" v-for="item of terms">
@@ -61,11 +60,6 @@
                 layout="prev, pager, next"
                 :total="count"
             />
-<!--            <a class="previous-page-btn" href=""></a>-->
-<!--            <a class="active-page" href="">-->
-<!--                1-->
-<!--            </a>-->
-<!--            <a class="next-page-btn" href="">></a>-->
         </div>
     </div>
 </template>
@@ -73,7 +67,7 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import {supabase}       from "./supabase.js";
-import Navbar           from "./Navbar.vue";
+
 import {formatDate}     from "./date.js";
 import {vote}           from "./vote.js";
 

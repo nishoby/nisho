@@ -1,5 +1,4 @@
 <template>
-    <navbar></navbar>
     <div class="main-container container">
         <div class="cards-div" v-if="term">
             <div class="card" v-for="item of term.definition">
@@ -67,7 +66,6 @@
 import {useRoute}       from 'vue-router'
 import {onMounted, ref} from "vue";
 import {supabase}       from "./supabase.js";
-import Navbar           from "./Navbar.vue";
 import {formatDate}     from "./date.js";
 import {vote}           from './vote.js'
 
