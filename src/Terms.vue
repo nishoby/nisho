@@ -41,7 +41,6 @@
                         </button>
                         <div class="likes-amount">
                             {{ item.definition[0].vote_results.length > 0 ? item.definition[0].vote_results[0].upvotes : 0 }}
-
                         </div>
 
                         <button class="card-buttons-actions_flag">
@@ -70,11 +69,19 @@ import {supabase}       from "./supabase.js";
 
 import {formatDate}     from "./date.js";
 import {vote}           from "./vote.js";
+import {getUser}        from "./user.js";
+import {ElMessage} from "element-plus";
 
 const terms       = ref([]);
 const count       = ref(0)
+const account     = ref(getUser())
 
 const update = async (definition, type) => {
+    if (!account.value) {
+        ElMessage.warning('Каб прагаласаваць, вам трэба залагініцца');
+        return;
+    }
+
     await vote(definition, type)
     await fetchTerms()
     await fetchCount()

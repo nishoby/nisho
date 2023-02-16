@@ -65,12 +65,14 @@
 <script setup>
 import {useRoute}       from 'vue-router'
 import {onMounted, ref} from "vue";
+import {ElMessage}      from "element-plus";
 import {supabase}       from "./supabase.js";
 import {formatDate}     from "./date.js";
-import {vote}           from './vote.js'
+import {vote}           from './vote.js';
+import {getUser}        from "./user.js";
 
 const route = useRoute()
-let id      = route.params.id;
+const id    = route.params.id;
 
 onMounted(
     async () => {
@@ -85,7 +87,13 @@ const onPageChange = async (page) => {
     await fetchTerm()
 }
 
+const account = ref(getUser())
 const update = async (definition, type) => {
+    if (!account.value) {
+        ElMessage.warning('Каб прагаласаваць, вам трэба залагініцца');
+        return;
+    }
+
     await vote(definition, type)
     await fetchTerm()
     await fetchCount()
