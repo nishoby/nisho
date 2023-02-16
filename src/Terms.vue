@@ -33,14 +33,14 @@
                             <img class="dislike-img" src="/assets/img/dislike.svg" alt="">
                         </button>
                         <div class="dislikes-amount">
-                            {{ item.definition[0].vote_results.length > 0 ? item.definition[0].vote_results[0].downvotes : 0 }}
+                            {{ getVoteResult(item.definition[0]).downvotes }}
                         </div>
                         /
                         <button class="card-buttons-actions_like" @click="update(item.definition[0], 'upvote')">
                             <img class="like-img" src="/assets/img/like.svg" alt="">
                         </button>
                         <div class="likes-amount">
-                            {{ item.definition[0].vote_results.length > 0 ? item.definition[0].vote_results[0].upvotes : 0 }}
+                            {{ getVoteResult(item.definition[0]).upvotes }}
                         </div>
 
                         <button class="card-buttons-actions_flag">
@@ -64,13 +64,12 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from "vue";
-import {supabase}       from "./supabase.js";
-
-import {formatDate}     from "./date.js";
-import {vote}           from "./vote.js";
-import {getUser}        from "./user.js";
-import {ElMessage} from "element-plus";
+import {onMounted, ref}      from "vue";
+import {supabase}            from "./supabase.js";
+import {formatDate}          from "./date.js";
+import {vote, getVoteResult} from "./vote.js";
+import {getUser}             from "./user.js";
+import {ElMessage}           from "element-plus";
 
 const terms       = ref([]);
 const count       = ref(0)

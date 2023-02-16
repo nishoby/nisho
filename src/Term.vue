@@ -28,18 +28,18 @@
                 <div class="card-buttons">
                     <div class="card-buttons_actions">
                         <!--                        TODO нужен статус для обозначения, что сам пользователь пролайкал-->
-                        <button @click="update(item, 'upvote')" class="card-buttons-actions_dislike">
+                        <button @click="update(item, 'downvote')" class="card-buttons-actions_dislike">
                             <img class="dislike-img" src="/assets/img/dislike.svg" alt="">
                         </button>
                         <div class="dislikes-amount">
-                            {{ item.vote_results.length > 0 ? item.vote_results[0].downvotes : 0 }}
+                            {{ getVoteResult(item).downvotes }}
                         </div>
                         /
-                        <button class="card-buttons-actions_like" @click="update(item, 'downvote')">
+                        <button class="card-buttons-actions_like" @click="update(item, 'upvote')">
                             <img class="like-img" src="/assets/img/like.svg" alt="">
                         </button>
                         <div class="likes-amount">
-                            {{ item.vote_results.length > 0 ? item.vote_results[0].upvotes : 0 }}
+                            {{ getVoteResult(item).upvotes }}
                         </div>
 
                         <button class="card-buttons-actions_flag">
@@ -63,13 +63,13 @@
 </template>
 
 <script setup>
-import {useRoute}       from 'vue-router'
-import {onMounted, ref} from "vue";
-import {ElMessage}      from "element-plus";
-import {supabase}       from "./supabase.js";
-import {formatDate}     from "./date.js";
-import {vote}           from './vote.js';
-import {getUser}        from "./user.js";
+import {useRoute}            from 'vue-router'
+import {onMounted, ref}      from "vue";
+import {ElMessage}           from "element-plus";
+import {supabase}            from "./supabase.js";
+import {formatDate}          from "./date.js";
+import {vote, getVoteResult} from './vote.js';
+import {getUser}             from "./user.js";
 
 const route = useRoute()
 const id    = route.params.id;
@@ -98,6 +98,7 @@ const update = async (definition, type) => {
     await fetchTerm()
     await fetchCount()
 }
+
 const term   = ref(null)
 const count  = ref(0)
 
