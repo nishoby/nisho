@@ -28,16 +28,21 @@
                 </div>
                 <div class="card-buttons">
                     <div class="card-buttons_actions">
-                        <!--                        TODO нужен статус для обозначения, что сам пользователь пролайкал-->
-                        <button @click="update(item.definition[0], 'downvote')" class="card-buttons-actions_dislike">
-                            <img class="dislike-img" src="/assets/img/dislike.svg" alt="">
+                        <button
+                            class="card-buttons-actions_dislike"
+                            :class="{'card-buttons-actions_dislike--voted': getVoteResult(item.definition[0]).is_downvoted}"
+                            @click="update(item.definition[0], 'downvote')">
+                            <icon-dislike />
                         </button>
                         <div class="dislikes-amount">
                             {{ getVoteResult(item.definition[0]).downvotes }}
                         </div>
                         /
-                        <button class="card-buttons-actions_like" @click="update(item.definition[0], 'upvote')">
-                            <img class="like-img" src="/assets/img/like.svg" alt="">
+                        <button
+                            class="card-buttons-actions_like"
+                            :class="{'card-buttons-actions_like--voted': getVoteResult(item.definition[0]).is_upvoted}"
+                            @click="update(item.definition[0], 'upvote')">
+                            <icon-like />
                         </button>
                         <div class="likes-amount">
                             {{ getVoteResult(item.definition[0]).upvotes }}
@@ -65,11 +70,13 @@
 
 <script setup>
 import {onMounted, ref}      from "vue";
+import {ElMessage}           from "element-plus";
 import {supabase}            from "./supabase.js";
 import {formatDate}          from "./date.js";
 import {vote, getVoteResult} from "./vote.js";
 import {getUser}             from "./user.js";
-import {ElMessage}           from "element-plus";
+import IconDislike           from "./icons/IconDislike.vue";
+import IconLike              from "./icons/IconLike.vue";
 
 const terms       = ref([]);
 const count       = ref(0)

@@ -559,6 +559,14 @@ button {
   display: flex;
   align-items: center;
 }
+.card-buttons-actions_like,
+.card-buttons-actions_dislike{
+  color: #3A3A3A;
+}
+.card-buttons-actions_like--voted,
+.card-buttons-actions_dislike--voted{
+  color: #9FFC70;
+}
 .img-green{
   filter: invert(150%) sepia(91%) saturate(800%) hue-rotate(50deg) brightness(120%) contrast(280%);
 }

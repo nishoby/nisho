@@ -27,16 +27,21 @@
                 </div>
                 <div class="card-buttons">
                     <div class="card-buttons_actions">
-                        <!--                        TODO нужен статус для обозначения, что сам пользователь пролайкал-->
-                        <button @click="update(item, 'downvote')" class="card-buttons-actions_dislike">
-                            <img class="dislike-img" src="/assets/img/dislike.svg" alt="">
+                        <button
+                            class="card-buttons-actions_dislike"
+                            :class="{'card-buttons-actions_dislike--voted': getVoteResult(item).is_downvoted}"
+                            @click="update(item, 'downvote')">
+                            <icon-dislike />
                         </button>
                         <div class="dislikes-amount">
                             {{ getVoteResult(item).downvotes }}
                         </div>
                         /
-                        <button class="card-buttons-actions_like" @click="update(item, 'upvote')">
-                            <img class="like-img" src="/assets/img/like.svg" alt="">
+                        <button
+                            class="card-buttons-actions_like"
+                            :class="{'card-buttons-actions_like--voted': getVoteResult(item).is_upvoted}"
+                            @click="update(item, 'upvote')">
+                            <icon-like />
                         </button>
                         <div class="likes-amount">
                             {{ getVoteResult(item).upvotes }}
@@ -70,6 +75,8 @@ import {supabase}            from "./supabase.js";
 import {formatDate}          from "./date.js";
 import {vote, getVoteResult} from './vote.js';
 import {getUser}             from "./user.js";
+import IconDislike           from "./icons/IconDislike.vue";
+import IconLike              from "./icons/IconLike.vue";
 
 const route = useRoute()
 const id    = route.params.id;
