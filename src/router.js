@@ -2,7 +2,8 @@ import {createRouter, createWebHistory} from 'vue-router'
 import Terms                            from './Terms.vue';
 import Term                             from './Term.vue';
 import About                            from './About.vue';
-import Team                            from './Team.vue';
+import Team                             from './Team.vue';
+import Donation                         from './Donation.vue';
 import Add                              from './Add.vue';
 import DefaultLayout                    from './DefaultLayout.vue';
 import SimplifiedLayout                 from './SimplifiedLayout.vue';
@@ -50,6 +51,17 @@ const main   = [
                 name     : 'team',
                 path     : '',
                 component: Team,
+            }
+        ],
+    },
+    {
+        path     : '/zadanacic',
+        component: DefaultLayout,
+        children : [
+            {
+                name     : 'donation',
+                path     : '',
+                component: Donation,
             }
         ],
     },
