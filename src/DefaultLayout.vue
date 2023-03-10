@@ -17,6 +17,7 @@
             </div>
             <div class="about-links">
                 <router-link :to="{'name' : 'about'}">Апісанне</router-link>
+                <router-link :to="{'name' : 'team'}">Каманда</router-link>
                 <a href="">Гайдлайны</a>
             </div>
         </div>

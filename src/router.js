@@ -2,6 +2,7 @@ import {createRouter, createWebHistory} from 'vue-router'
 import Terms                            from './Terms.vue';
 import Term                             from './Term.vue';
 import About                            from './About.vue';
+import Team                            from './Team.vue';
 import Add                              from './Add.vue';
 import DefaultLayout                    from './DefaultLayout.vue';
 import SimplifiedLayout                 from './SimplifiedLayout.vue';
@@ -38,6 +39,17 @@ const main   = [
                 name     : 'about',
                 path     : '',
                 component: About,
+            }
+        ],
+    },
+    {
+        path     : '/kamanda',
+        component: DefaultLayout,
+        children : [
+            {
+                name     : 'team',
+                path     : '',
+                component: Team,
             }
         ],
     },
