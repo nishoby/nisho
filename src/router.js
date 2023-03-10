@@ -6,6 +6,7 @@ import Team                             from './Team.vue';
 import Donation                         from './Donation.vue';
 import Contacts                         from './Contacts.vue';
 import Rules                            from './Rules.vue';
+import Bugs                             from './Bugs.vue';
 import Add                              from './Add.vue';
 import DefaultLayout                    from './DefaultLayout.vue';
 import SimplifiedLayout                 from './SimplifiedLayout.vue';
@@ -86,6 +87,17 @@ const main   = [
                 name     : 'rules',
                 path     : '',
                 component: Rules,
+            }
+        ],
+    },
+    {
+        path     : '/bugs',
+        component: DefaultLayout,
+        children : [
+            {
+                name     : 'bugs',
+                path     : '',
+                component: Bugs,
             }
         ],
     },
