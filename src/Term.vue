@@ -36,7 +36,7 @@
                         <div class="dislikes-amount">
                             {{ getVoteResult(item).downvotes }}
                         </div>
-                        /
+
                         <button
                             class="card-buttons-actions_like"
                             :class="{'card-buttons-actions_like--voted': getVoteResult(item).is_upvoted}"

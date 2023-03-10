@@ -366,9 +366,9 @@ button {
     padding-bottom: 1rem;
     grid-template-rows: repeat(2, 1fr);
   }
-  .header-logo-btn{
-    justify-self: start;
-  }
+  /*.header-logo-btn{*/
+  /*  justify-self: start;*/
+  /*}*/
   .header-form-container{
     margin-left: 1rem;
     width: calc(100vw - 8rem);

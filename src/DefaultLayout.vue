@@ -20,12 +20,14 @@
                 <a href="">Гайдлайны</a>
             </div>
         </div>
-        @2022 Nisho
+        {{year}} NISHO
     </footer>
 </template>
 
 <script setup>
 import Navbar from "./Navbar.vue";
+
+let year = (new Date()).getUTCFullYear()
 </script>
 
 <style scoped>

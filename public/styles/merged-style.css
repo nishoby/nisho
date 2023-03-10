@@ -37,12 +37,12 @@ body::-webkit-scrollbar {
 }
 
 body::-webkit-scrollbar-track {
-  background: whitesmoke;    
+  background: whitesmoke;
 }
 
 body::-webkit-scrollbar-thumb {
-  background-color:#B3A5FF ;    
-  border-radius: 1.25rem;       
+  background-color:#B3A5FF ;
+  border-radius: 1.25rem;
   border: 0.2rem solid whitesmoke;
 }
 /*----------scroll styles end------------ */
@@ -348,6 +348,7 @@ div, button {
 a {
   display: inline;
   text-decoration: none;
+  color: #9442CE;
 }
 
 button {
@@ -393,8 +394,8 @@ button {
   padding: 0;
 }
 #app>main{
-  border-bottom: 0.1rem solid white;
-  border-top: 0.1rem solid white;
+  /*border-bottom: 0.1rem solid white;*/
+  /*border-top: 0.1rem solid white;*/
 }
 .hero-wrapper{
   height: 35rem;
@@ -453,7 +454,7 @@ button {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin: 2rem 0;
+  margin: 1rem 0;
   gap: 1.875rem;
 }
 .my-card-wrapper{
@@ -562,6 +563,7 @@ button {
 .card-buttons-actions_like,
 .card-buttons-actions_dislike{
   color: #3A3A3A;
+  width: 50px;
 }
 .card-buttons-actions_like--voted,
 .card-buttons-actions_dislike--voted{
@@ -694,12 +696,12 @@ button {
 
 @media screen and (max-width: 992px) {
   .header-logo-btn{
-    display: none;
+    padding-left: 1rem;
+    padding-top: 0.5rem;
     justify-self: start;
   }
   .header{
     height: 100%;
-    padding-bottom: 1rem;
     grid-template-rows: repeat(2, 1fr);
   }
   .header-form-container{
@@ -707,7 +709,7 @@ button {
     width: calc(100vw - 11rem);
   }
   .header-btns{
-    width: 7rem;
+    width: 10rem;
     padding: 0;
   }
   .add-btn{
@@ -731,9 +733,9 @@ button {
   }
   .header-form-container{
     margin-left: 1rem;
-    width: calc(100vw - 8rem);
+    width: calc(100vw - 10rem);
   }
-  
+
   .search-input{
     width: 50%;
   }

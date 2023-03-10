@@ -1,8 +1,8 @@
 <template>
     <router-link :to="{name: 'terms'}" class="header-logo-btn">
-        <a href="#" >
+        <router-link :to="{name: 'terms'}">
             <img class="header-logo-img" src="/assets/img/logo.svg" alt="">
-        </a>
+        </router-link>
     </router-link>
     <div class="header-form-container container">
         <form class="header-form" action="">
@@ -24,7 +24,7 @@
                         </span>
                 </template>
             </el-autocomplete>
-            <button class="form-random-btn" type="button">
+            <button class="form-random-btn" type="button" v-if="false">
                 <img class="form-random-btn-img" src="/assets/img/random.svg" alt="">
             </button>
         </form>
@@ -59,6 +59,11 @@
                 <el-button @click="signInWithGoogle" type="success">Логін з Google</el-button>
             </div>
         </el-popover>
+        <a
+            class="add-btn"
+            href="#">
+            <img class="add-btn-img" src="/assets/img/add.svg" alt="">
+        </a>
     </div>
 </template>
 
@@ -122,11 +127,26 @@ async function signOut() {
 }
 </script>
 
-<style scoped>
+<style>
 @media (min-width: 820px) {
     .mrgn-auto {
         margin-left: auto;
         margin-right: auto
     }
 }
+@media screen and (max-width: 992px) {
+    .el-input__inner::placeholder {
+        font-size: 11px;
+    }
+}
+
+.el-input__wrapper {
+    box-shadow: none;
+    padding: 0;
+}
+
+.el-input__wrapper.is-focus {
+    box-shadow: none;
+}
+
 </style>
