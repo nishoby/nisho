@@ -31,7 +31,7 @@ const main   = [
         ],
     },
     {
-        path     : '/about',
+        path     : '/apisannie',
         component: DefaultLayout,
         children : [
             {
