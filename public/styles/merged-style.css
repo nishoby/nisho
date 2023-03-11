@@ -69,6 +69,9 @@ body{
   box-shadow: 0 0.375rem 2rem rgba(107, 90, 135, 0.25);
   box-shadow: 0 1.5rem rgb(234, 234, 234);
 }
+input, select, textarea, button{
+  font-family: inherit;
+}
 .bcg-reg{
   background: var(--reg-grad);
 }
@@ -375,6 +378,7 @@ button {
   width: 42.5rem;
 }
 .search-autocomplete {
+  min-width: 300px;
   /* container width - search button width - form left padding */
   max-width: calc(42.5rem - 2.375rem - 0.75rem);
 }
