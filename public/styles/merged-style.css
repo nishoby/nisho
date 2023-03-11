@@ -374,6 +374,10 @@ button {
   margin: 0 auto;
   width: 42.5rem;
 }
+.search-autocomplete {
+  /* container width - search button width - form left padding */
+  max-width: calc(42.5rem - 2.375rem - 0.75rem);
+}
 .header{
   height: 7rem;
   display: grid;
@@ -747,6 +751,10 @@ button {
   .header-form-container{
     margin-left: 1rem;
     width: calc(100vw - 10rem);
+  }
+  .search-autocomplete {
+    /* container width - search button width - form left padding */
+    max-width: calc(100vw - 10rem - 2.375rem - 0.75rem);
   }
 
   .search-input{

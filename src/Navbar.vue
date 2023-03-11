@@ -16,12 +16,13 @@
                 :fit-input-width="false"
                 @select="handleSelect"
                 style="width: 100%;padding-right: 5px"
+                popper-class="search-autocomplete"
                 placeholder="Пачніце ўвадзіць слова">
                 <template #default="{ item }">
                     <span><b>{{ item.name }}</b></span>
-                    <span style="max-width: 250px;padding-left: 5px">
-                            {{ item.definition[0].content }}
-                        </span>
+                    <span style="padding-left: 5px">
+                        {{ item.definition[0].content }}
+                    </span>
                 </template>
             </el-autocomplete>
             <button class="form-random-btn" type="button" v-if="false">
@@ -94,7 +95,7 @@ const querySearchAsync = async (queryString, cb) => {
         .select(`*, definition(*)`)
         .order('created_at', {ascending: false, foreignTable: 'definition'})
         .limit(1, {foreignTable: 'definition'})
-        .filter('name', 'like', `%${queryString}%`);
+        .filter('name', 'ilike', `%${queryString}%`);
     cb(data)
 }
 
