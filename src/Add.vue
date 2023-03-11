@@ -1,59 +1,35 @@
 <template>
-<!--    <div class="scene">-->
-<!--        <router-link :to="{name: 'terms'}">-->
-<!--            <el-button>Вярнуцца</el-button>-->
-<!--        </router-link>-->
-<!--        <h3 class="pdng-t-15px">Дадаць слова</h3>-->
-<!--        <el-form :model="new_term"-->
-<!--                 ref="form"-->
-<!--                 :rules="rules"-->
-<!--                 @submit.prevent-->
-<!--                 label-width="120px"-->
-<!--                 label-position="top"-->
-<!--                 class="pdng-t-30px">-->
-<!--            <el-form-item label="Слова" required prop="term_name">-->
-<!--                <el-input v-model="new_term.term_name"/>-->
-<!--            </el-form-item>-->
-<!--            <el-form-item label="Вызначэнне" required prop="definition">-->
-<!--                <el-input v-model="new_term.definition"-->
-<!--                          :type="'textarea'"-->
-<!--                          :rows="7"-->
-<!--                          placeholder="Вызначэнне"/>-->
-<!--            </el-form-item>-->
-<!--            <el-form-item label="Прыклад" prop="example">-->
-<!--                <el-input v-model="new_term.example"-->
-<!--                          :type="'textarea'"-->
-<!--                          :rows="7"-->
-<!--                          placeholder="Прыклад"/>-->
-<!--            </el-form-item>-->
-<!--            <el-form-item>-->
-<!--                <el-button type="primary" @click="submit(form)">Дадаць</el-button>-->
-<!--                <router-link :to="{name: 'terms'}" class="mrgn-l-20px">-->
-<!--                    <el-button>Адмена</el-button>-->
-<!--                </router-link>-->
-<!--            </el-form-item>-->
-<!--        </el-form>-->
-<!--    </div>-->
     <h1 class="title">
-        <a class="back-btn" href="">
+        <router-link class="back-btn" :to="{name: 'terms'}">
             <img src="/public/assets/img/back-black.svg" alt="">
-        </a>
+        </router-link>
         Дадаць слова
     </h1>
-    <form class="add-word_form" action="" @submit.prevent>
+    <form class="add-word_form" action="" @submit.prevent="submit">
         <button class="cross" @click="router.back()"></button>
-        <p class="note">Усе тлумачэнні ў Нішо напісаныя звычайнымі людзьмі. Ты таксама можаш
-            дадаць у слоўнік свае. <br>
-            Зазірні ў <a href="/html/guidelines.html">гайдлайны</a> перад тым як даваць новаe слова ці яго тлумачэнне.</p>
+        <p class="note">
+            Усе тлумачэнні ў Нішо напісаныя звычайнымі людзьмі.
+            Ты таксама можаш дадаць у слоўнік свае.
+            <br>
+            Зазірні ў
+            <router-link :to="{name: 'rules'}">гайдлайны</router-link>
+            перад тым як даваць новаe слова ці яго тлумачэнне.
+        </p>
         <label class="add-word_label" for="word">Слова:</label>
-        <input class="add-word_input" type="text" name="word">
+        <input required
+               class="add-word_input" type="text" name="word" id="word"
+               v-model="new_term.term_name">
         <label class="add-word_label" for="definition">Тлумачэнне:</label>
-        <input class="add-word_input" type="text" name="definition">
+        <textarea required
+                  class="add-word_textarea" name="definition" rows="6" id="definition"
+                  v-model="new_term.definition"></textarea>
         <label class="add-word_label" for="example">Прыклад:</label>
-        <input style="height: 4.4rem;" class="add-word_input" type="text" name="example">
+        <textarea required
+                  class="add-word_textarea" type="text" rows="6" name="example" id="example"
+                  v-model="new_term.example"></textarea>
         <label class="add-word_label" for="tags">Тэгі:</label>
-        <input style="height: 4.8rem;" class="add-word_input" type="text" name="tags">
-        <input class="submit-btn" type="submit" value="Гатова">
+        <input class="add-word_input" type="text" name="tags" id="tags">
+        <input class="submit-btn" type="submit" value="Гатова" :disabled="loading">
     </form>
 </template>
 
@@ -66,54 +42,53 @@ import {getUser}       from "./user.js";
 
 const router = useRouter();
 
+const loading = ref(false)
+
 const new_term = reactive({
     term_name : '',
     definition: '',
     example   : '',
 })
 const form     = ref()
-const rules    = reactive({
-    term_name : [
-        {required: true, message: 'Абавязкова', trigger: 'blur'},
-        {min: 3, message: 'мінімум 3 сымбаля', trigger: 'blur'},
-    ],
-    definition: [
-        {required: true, message: 'Абавязкова', trigger: 'blur'},
-        {min: 10, message: 'мінімум 10 сымбалей', trigger: 'blur'},
-    ],
-})
 const account  = ref(getUser());
-const submit   = async (formEl) => {
-    if (!formEl) {
-        return
-    }
+const submit   = async () => {
     if (!account.value) {
         ElMessage.warning('Каб дадаць слова, вам трэба залагініцца')
         return;
     }
-    await formEl.validate(async (valid) => {
-        if (!valid) {
-            return;
-        }
-        try {
-            let {data, error} = await supabase.rpc(
-                'add_term',
-                {
-                    definition: new_term.definition,
-                    example   : new_term.example,
-                    term_name : new_term.term_name.trim()
-                }
-            )
-            if (error) {
-                throw error
+    if (new_term.term_name.length < 4) {
+        ElMessage.warning('Слова павінна быць не меньш 3 сымбалеў')
+        return;
+    }
+    if (new_term.definition.length < 10) {
+        ElMessage.warning('Павінна быць змястоўнае тлумачэнне')
+        return;
+    }
+    if (new_term.example.length < 10) {
+        ElMessage.warning('Павінен быць змястоўный прыклад')
+        return;
+    }
+    loading.value = true
+
+    try {
+        let {data, error} = await supabase.rpc(
+            'add_term',
+            {
+                definition: new_term.definition,
+                example   : new_term.example,
+                term_name : new_term.term_name.trim()
             }
-            ElMessage.success('Паспяхова даданы тэрмін');
-            await router.push({name: 'term', params: {id: data}})
-        } catch (error) {
-            ElMessage.error('Адбылася памылка')
-            throw error;
+        )
+        loading.value = false
+        if (error) {
+            throw error
         }
-    })
+        ElMessage.success('Паспяхова даданы тэрмін');
+        await router.push({name: 'term', params: {id: data}})
+    } catch (error) {
+        ElMessage.error('Адбылася памылка')
+        throw error;
+    }
 }
 
 </script>
