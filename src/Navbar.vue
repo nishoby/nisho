@@ -15,7 +15,7 @@
                 size="large"
                 :fit-input-width="false"
                 @select="handleSelect"
-                style="width: 100%;padding-right: 5px"
+                style="width: 100%"
                 popper-class="search-autocomplete"
                 placeholder="Пачніце ўвадзіць слова">
                 <template #default="{ item }">
@@ -61,20 +61,20 @@
             </div>
         </el-popover>
         <a
-            class="add-btn"
+            class="hamburger-btn"
             href="#">
-            <img class="add-btn-img" src="/assets/img/add.svg" alt="">
+            <IconHamburger />
         </a>
     </div>
 </template>
 
 <script setup>
-import {ref}                 from "vue";
-import {getUser}             from "./user.js";
-import {supabase}            from "./supabase.js";
-import {Plus, Refresh, User} from '@element-plus/icons-vue'
-import {useRouter}           from 'vue-router'
-import {ElMessage}           from "element-plus";
+import {ref}         from "vue";
+import {ElMessage}   from "element-plus";
+import {useRouter}   from "vue-router"
+import {getUser}     from "./user.js";
+import {supabase}    from "./supabase.js";
+import IconHamburger from "./icons/IconHamburger.vue";
 
 const account = ref(getUser())
 const search  = ref('')
