@@ -29,18 +29,44 @@
                   v-model="new_term.example"></textarea>
         <label class="add-word_label" for="tags">Тэгі:</label>
         <input class="add-word_input" type="text" name="tags" id="tags">
+
+        <el-tag
+            v-for="tag in new_term.tags"
+            :key="tag"
+            type="info"
+            size="large"
+            closable
+            :disable-transitions="false"
+            @close="handleClose(tag)"
+        >
+            {{ tag }}
+        </el-tag>
+        <el-input
+            v-if="inputVisible"
+            ref="InputRef"
+            v-model="inputValue"
+            size="large"
+            @keyup.enter="handleInputConfirm"
+            @blur="handleInputConfirm"
+        />
+        <el-button v-else @click="showInput">
+            + Дадаць тэг
+        </el-button>
         <input class="submit-btn" type="submit" value="Гатова" :disabled="loading">
     </form>
 </template>
 
 <script setup>
-import {reactive, ref} from 'vue'
-import {supabase}      from "./supabase.js";
-import {ElMessage}     from "element-plus";
-import {useRouter}     from 'vue-router'
-import {getUser}       from "./user.js";
+import {reactive, ref, nextTick} from 'vue'
+import {supabase}                from "./supabase.js";
+import {ElMessage}               from "element-plus";
+import {useRouter}               from 'vue-router'
+import {getUser}                 from "./user.js";
 
-const router = useRouter();
+const router       = useRouter();
+const inputValue   = ref('')
+const inputVisible = ref(false)
+const InputRef     = ref()
 
 const loading = ref(false)
 
@@ -48,6 +74,7 @@ const new_term = reactive({
     term_name : '',
     definition: '',
     example   : '',
+    tags      : ['Tag 1', 'Tag 2', 'Tag 3']
 })
 const form     = ref()
 const account  = ref(getUser());
@@ -79,7 +106,7 @@ const submit   = async () => {
                 term_name : new_term.term_name.trim()
             }
         )
-        loading.value = false
+        loading.value     = false
         if (error) {
             throw error
         }
@@ -89,6 +116,26 @@ const submit   = async () => {
         ElMessage.error('Адбылася памылка')
         throw error;
     }
+}
+
+
+const handleClose = (tag) => {
+    new_term.tags.splice(new_term.tags.indexOf(tag), 1)
+}
+
+const showInput = () => {
+    inputVisible.value = true
+    nextTick(() => {
+        InputRef.value.input.focus()
+    })
+}
+
+const handleInputConfirm = () => {
+    if (inputValue.value) {
+        new_term.tags.push(inputValue.value)
+    }
+    inputVisible.value = false
+    inputValue.value   = ''
 }
 
 </script>
