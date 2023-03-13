@@ -6,7 +6,7 @@
         Дадаць слова
     </h1>
     <form class="add-word_form" action="" @submit.prevent="submit">
-        <button class="cross" @click="router.back()"></button>
+        <button type="reset" class="cross" @click="router.back()"></button>
         <p class="note">
             Усе тлумачэнні ў Нішо напісаныя звычайнымі людзьмі.
             Ты таксама можаш дадаць у слоўнік свае.
@@ -28,30 +28,27 @@
                   class="add-word_textarea" type="text" rows="6" name="example" id="example"
                   v-model="new_term.example"></textarea>
         <label class="add-word_label" for="tags">Тэгі:</label>
-        <input class="add-word_input" type="text" name="tags" id="tags">
-
-        <el-tag
-            v-for="tag in new_term.tags"
-            :key="tag"
-            type="info"
-            size="large"
-            closable
-            :disable-transitions="false"
-            @close="handleClose(tag)"
-        >
+        <div class="add-word__tags-input-wrapper" @click="handleTagsWrapperClick">
+          <el-tag
+              v-for="tag in new_term.tags"
+              :key="tag"
+              size="large"
+              class="add-word__tags-input-tag"
+              closable
+              :disable-transitions="false"
+              @close="handleRemoveTag(tag)"
+          >
             {{ tag }}
-        </el-tag>
-        <el-input
-            v-if="inputVisible"
-            ref="InputRef"
-            v-model="inputValue"
-            size="large"
-            @keyup.enter="handleInputConfirm"
-            @blur="handleInputConfirm"
-        />
-        <el-button v-else @click="showInput">
-            + Дадаць тэг
-        </el-button>
+          </el-tag>
+          <el-input
+              v-model="newTag"
+              ref="newTagInput"
+              size="large"
+              class="add-word__tags-input"
+              @keyup.enter.prevent="handleAddTag"
+              @blur="handleAddTag"
+          />
+        </div>
         <input class="submit-btn" type="submit" value="Гатова" :disabled="loading">
     </form>
 </template>
@@ -63,10 +60,9 @@ import {ElMessage}               from "element-plus";
 import {useRouter}               from 'vue-router'
 import {getUser}                 from "./user.js";
 
-const router       = useRouter();
-const inputValue   = ref('')
-const inputVisible = ref(false)
-const InputRef     = ref()
+const router      = useRouter();
+const newTag      = ref('');
+const newTagInput = ref();
 
 const loading = ref(false)
 
@@ -74,7 +70,7 @@ const new_term = reactive({
     term_name : '',
     definition: '',
     example   : '',
-    tags      : ['Tag 1', 'Tag 2', 'Tag 3']
+    tags      : []
 })
 const form     = ref()
 const account  = ref(getUser());
@@ -119,23 +115,25 @@ const submit   = async () => {
 }
 
 
-const handleClose = (tag) => {
+const handleRemoveTag = (tag) => {
     new_term.tags.splice(new_term.tags.indexOf(tag), 1)
 }
 
-const showInput = () => {
-    inputVisible.value = true
-    nextTick(() => {
-        InputRef.value.input.focus()
-    })
+const handleAddTag = () => {
+    const normalizedValue = newTag.value.trim()
+
+    if (!normalizedValue) return
+
+    if (normalizedValue && !new_term.tags.includes(normalizedValue)) {
+        new_term.tags.push(normalizedValue)
+    }
+
+    newTag.value = ''
+    newTagInput.value.input.focus()
 }
 
-const handleInputConfirm = () => {
-    if (inputValue.value) {
-        new_term.tags.push(inputValue.value)
-    }
-    inputVisible.value = false
-    inputValue.value   = ''
+const handleTagsWrapperClick = () => {
+  newTagInput.value.input.focus();
 }
 
 </script>

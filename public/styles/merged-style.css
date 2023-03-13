@@ -220,9 +220,6 @@ input, select, textarea, button{
 .add-word_input--example{
   height: 4.4rem;
 }
-.add-word_input--tags{
-  height: 4.8rem;
-}
 .add-word_textarea {
   margin-bottom: 2.5rem;
   padding-left: 1rem;
@@ -232,6 +229,40 @@ input, select, textarea, button{
   border: none;
   border-radius: 0.5rem;
 }
+
+.add-word__tags-input-wrapper {
+  margin-bottom: 2.5rem;
+  background-color: rgba(234, 234, 234, 1);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.add-word__tags-input-tag {
+  margin-left: 1rem;
+  margin-top: 0.25rem;
+}
+
+.add-word__tags-input-tag.el-tag {
+  --el-tag-bg-color: #9FFC70;
+  --el-tag-text-color: black;
+  --el-tag-border-radius: 16px;
+  --el-tag-font-size: 16px;
+  --el-icon-size: 18px;
+}
+
+.add-word__tags-input.el-input {
+  width: auto;
+  flex-grow: 1;
+  min-width: 15rem;
+}
+
+.add-word__tags-input.el-input--large .el-input__wrapper {
+  background-color: transparent;
+  padding: 0.5rem 1rem;
+}
+
 .password_input{
   width: 90%;
   height: 100%;
