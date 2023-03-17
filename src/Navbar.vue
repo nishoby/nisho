@@ -60,11 +60,36 @@
                 <el-button @click="signInWithGoogle" type="success">Логін з Google</el-button>
             </div>
         </el-popover>
-        <a
-            class="hamburger-btn"
-            href="#">
-            <IconHamburger />
-        </a>
+        <el-dropdown>
+            <button class="hamburger-btn">
+                <IconHamburger />
+            </button>
+            <template #dropdown>
+                <el-dropdown-menu class="hamburger-dropdown">
+                    <el-dropdown-item>
+                      <router-link :to="{'name' : 'about'}">Апісанне</router-link>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <router-link :to="{'name' : 'team'}">Каманда</router-link>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <router-link :to="{'name' : 'donation'}">Заданаціць</router-link>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <router-link :to="{'name' : 'contacts'}">Кантакты</router-link>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <router-link :to="{'name' : 'rules'}">Правілы</router-link>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <router-link :to="{'name' : 'bugs'}">Багі</router-link>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                      <a href="">Гайдлайны</a>
+                    </el-dropdown-item>
+                </el-dropdown-menu>
+            </template>
+      </el-dropdown>
     </div>
 </template>
 
