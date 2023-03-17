@@ -10,6 +10,7 @@ import Bugs                             from './Bugs.vue';
 import Add                              from './Add.vue';
 import DefaultLayout                    from './DefaultLayout.vue';
 import SimplifiedLayout                 from './SimplifiedLayout.vue';
+import ComplainAboutDefinition          from './ComplainAboutDefinition.vue';
 
 const main   = [
     {
@@ -109,6 +110,18 @@ const main   = [
                 name     : 'add',
                 path     : '',
                 component: Add,
+            }
+        ],
+
+    },
+    {
+        path     : '/paskardzicca',
+        component: SimplifiedLayout,
+        children : [
+            {
+                name     : 'complain',
+                path     : '',
+                component: ComplainAboutDefinition,
             }
         ],
 

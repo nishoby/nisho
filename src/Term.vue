@@ -47,9 +47,9 @@
                             {{ getVoteResult(item).upvotes }}
                         </div>
 
-                        <button class="card-buttons-actions_flag">
+                        <router-link class="card-buttons-actions_flag" :to="{name: 'complain', query: {id: item.id}}">
                             <img class="flag-img" src="/assets/img/flag.svg" alt="">
-                        </button>
+                        </router-link>
                     </div>
                 </div>
             </div>

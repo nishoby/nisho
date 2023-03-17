@@ -1,8 +1,5 @@
 <template>
     <h1 class="title">
-        <router-link class="back-btn" :to="{name: 'terms'}">
-            <img src="/public/assets/img/back-black.svg" alt="">
-        </router-link>
         Дадаць слова
     </h1>
     <el-form :model="new_term"
