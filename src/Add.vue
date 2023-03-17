@@ -84,58 +84,53 @@ const new_term = reactive({
 })
 const rules    = reactive({
   term_name : [
-    {required: true, message: 'Абавязкова', trigger: 'blur'},
-    {min: 3, message: 'мінімум 3 сымбаля', trigger: 'blur'},
+    {required: true, message: 'Слова павінна быць не меньш 3 сымбалеў', trigger: 'blur'},
+    {min: 3, message: 'Слова павінна быць не меньш 3 сымбалеў', trigger: 'blur'},
   ],
   definition: [
-    {required: true, message: 'Абавязкова', trigger: 'blur'},
-    {min: 10, message: 'мінімум 10 сымбалей', trigger: 'blur'},
+    {required: true, message: 'Павінна быць змястоўнае тлумачэнне', trigger: 'blur'},
+    {min: 10, message: 'Павінна быць змястоўнае тлумачэнне', trigger: 'blur'},
   ],
   example: [
-    {required: true, message: 'Абавязкова', trigger: 'blur'},
-    {min: 10, message: 'мінімум 10 сымбалей', trigger: 'blur'},
+    {required: true, message: 'Павінен быць змястоўны прыклад', trigger: 'blur'},
+    {min: 10, message: 'Павінен быць змястоўны прыклад', trigger: 'blur'},
   ],
 })
 const form     = ref()
 const account  = ref(getUser());
 const submit   = async () => {
+    if (!form.value) {
+        return
+    }
     if (!account.value) {
         ElMessage.warning('Каб дадаць слова, вам трэба залагініцца')
         return;
     }
-    if (new_term.term_name.length < 4) {
-        ElMessage.warning('Слова павінна быць не меньш 3 сымбалеў')
-        return;
-    }
-    if (new_term.definition.length < 10) {
-        ElMessage.warning('Павінна быць змястоўнае тлумачэнне')
-        return;
-    }
-    if (new_term.example.length < 10) {
-        ElMessage.warning('Павінен быць змястоўный прыклад')
-        return;
-    }
     loading.value = true
 
-    try {
-        let {data, error} = await supabase.rpc(
-            'add_term',
-            {
-                definition: new_term.definition,
-                example   : new_term.example,
-                term_name : new_term.term_name.trim()
+    await form.value.validate(async (valid) => {
+        if (!valid) return
+
+        try {
+            let {data, error} = await supabase.rpc(
+                'add_term',
+                {
+                    definition: new_term.definition,
+                    example   : new_term.example,
+                    term_name : new_term.term_name.trim()
+                }
+            )
+            loading.value     = false
+            if (error) {
+                throw error
             }
-        )
-        loading.value     = false
-        if (error) {
-            throw error
+            ElMessage.success('Паспяхова даданы тэрмін');
+            await router.push({name: 'term', params: {id: data}})
+        } catch (error) {
+            ElMessage.error('Адбылася памылка')
+            throw error;
         }
-        ElMessage.success('Паспяхова даданы тэрмін');
-        await router.push({name: 'term', params: {id: data}})
-    } catch (error) {
-        ElMessage.error('Адбылася памылка')
-        throw error;
-    }
+    })
 }
 
 
