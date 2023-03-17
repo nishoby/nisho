@@ -132,10 +132,3 @@ onMounted(async () => {
 <style scoped>
 
 </style>
-<style>
-:root {
-    --el-color-primary: #D6FB89;
-    --el-color-white: black;
-}
-
-</style>

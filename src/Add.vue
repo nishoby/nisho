@@ -5,52 +5,62 @@
         </router-link>
         Дадаць слова
     </h1>
-    <form class="add-word_form" action="" @submit.prevent="submit">
+    <el-form :model="new_term"
+           ref="form"
+           :rules="rules"
+           @submit.prevent="submit"
+           label-position="top"
+           hide-required-asterisk
+           class="add-word_form">
         <button type="reset" class="cross" @click="router.back()"></button>
         <p class="note">
             Усе тлумачэнні ў Нішо напісаныя звычайнымі людзьмі.
             Ты таксама можаш дадаць у слоўнік свае.
             <br>
             Зазірні ў
-            <router-link :to="{name: 'rules'}">гайдлайны</router-link>
+            <router-link :to="{name: 'rules'}" target="_blank">гайдлайны</router-link>
             перад тым як даваць новаe слова ці яго тлумачэнне.
         </p>
-        <label class="add-word_label" for="word">Слова:</label>
-        <input required
-               class="add-word_input" type="text" name="word" id="word"
-               v-model="new_term.term_name">
-        <label class="add-word_label" for="definition">Тлумачэнне:</label>
-        <textarea required
-                  class="add-word_textarea" name="definition" rows="6" id="definition"
-                  v-model="new_term.definition"></textarea>
-        <label class="add-word_label" for="example">Прыклад:</label>
-        <textarea required
-                  class="add-word_textarea" type="text" rows="6" name="example" id="example"
-                  v-model="new_term.example"></textarea>
-        <label class="add-word_label" for="tags">Тэгі:</label>
-        <div class="add-word__tags-input-wrapper" @click="handleTagsWrapperClick">
-          <el-tag
-              v-for="tag in new_term.tags"
-              :key="tag"
-              size="large"
-              class="add-word__tags-input-tag"
-              closable
-              :disable-transitions="false"
-              @close="handleRemoveTag(tag)"
-          >
-            {{ tag }}
-          </el-tag>
-          <el-input
-              v-model="newTag"
-              ref="newTagInput"
-              size="large"
-              class="add-word__tags-input"
-              @keyup.enter.prevent="handleAddTag"
-              @blur="handleAddTag"
-          />
-        </div>
+        <el-form-item label="Слова:" prop="term_name">
+            <el-input v-model="new_term.term_name"/>
+        </el-form-item>
+        <el-form-item label="Тлумачэнне:" prop="definition">
+            <el-input
+                v-model="new_term.definition"
+                type="textarea"
+                :rows="5"/>
+        </el-form-item>
+        <el-form-item label="Прыклад:" prop="example">
+            <el-input
+                v-model="new_term.example"
+                type="textarea"
+                :rows="5"/>
+        </el-form-item>
+        <el-form-item label="Тэгі:" prop="tags">
+          <div class="add-word__tags-input-wrapper" @click="handleTagsWrapperClick">
+            <el-tag
+                v-for="tag in new_term.tags"
+                :key="tag"
+                size="large"
+                class="add-word__tags-input-tag"
+                closable
+                :disable-transitions="false"
+                @close="handleRemoveTag(tag)"
+            >
+                {{ tag }}
+            </el-tag>
+            <el-input
+                v-model="newTag"
+                ref="newTagInput"
+                size="large"
+                class="add-word__tags-input"
+                @keydown.enter.prevent="handleAddTag"
+                @blur="handleAddTag"
+            />
+          </div>
+        </el-form-item>
         <input class="submit-btn" type="submit" value="Гатова" :disabled="loading">
-    </form>
+    </el-form>
 </template>
 
 <script setup>
@@ -71,6 +81,20 @@ const new_term = reactive({
     definition: '',
     example   : '',
     tags      : []
+})
+const rules    = reactive({
+  term_name : [
+    {required: true, message: 'Абавязкова', trigger: 'blur'},
+    {min: 3, message: 'мінімум 3 сымбаля', trigger: 'blur'},
+  ],
+  definition: [
+    {required: true, message: 'Абавязкова', trigger: 'blur'},
+    {min: 10, message: 'мінімум 10 сымбалей', trigger: 'blur'},
+  ],
+  example: [
+    {required: true, message: 'Абавязкова', trigger: 'blur'},
+    {min: 10, message: 'мінімум 10 сымбалей', trigger: 'blur'},
+  ],
 })
 const form     = ref()
 const account  = ref(getUser());

@@ -128,26 +128,6 @@ async function signOut() {
 }
 </script>
 
-<style>
-@media (min-width: 820px) {
-    .mrgn-auto {
-        margin-left: auto;
-        margin-right: auto
-    }
-}
-@media screen and (max-width: 992px) {
-    .el-input__inner::placeholder {
-        font-size: 11px;
-    }
-}
-
-.el-input__wrapper {
-    box-shadow: none;
-    padding: 0;
-}
-
-.el-input__wrapper.is-focus {
-    box-shadow: none;
-}
+<style scoped>
 
 </style>
