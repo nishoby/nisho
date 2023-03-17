@@ -16,7 +16,6 @@
                     <span class="embedded-tag">Tag2</span>
                 </div>
                 <div class="card-info">
-
                     <a class="card-info_link">
                         {{ item.definition[0].user.name }}
                     </a>
