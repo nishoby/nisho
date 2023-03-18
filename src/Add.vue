@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import {reactive, ref, nextTick} from 'vue'
+import {reactive, ref} from 'vue'
 import {supabase}                from "./supabase.js";
 import {ElMessage}               from "element-plus";
 import {useRouter}               from 'vue-router'

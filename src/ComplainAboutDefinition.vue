@@ -4,12 +4,12 @@
             Паcкардзіцца мадэратару
         </h1>
         <el-form :model="complain"
-               ref="form"
-               :rules="rules"
-               @submit.prevent="submit"
-               label-position="top"
-               hide-required-asterisk
-               class="complaint_form">
+                 ref="form"
+                 :rules="rules"
+                 @submit.prevent="submit"
+                 label-position="top"
+                 hide-required-asterisk
+                 class="complaint_form">
             <button type="reset" class="cross" @click="router.back()"></button>
             <div class="complaint-block">
                 <p class="complaint-subtitle">Мы выдаляем такія тлумачэнні...</p>
@@ -20,7 +20,7 @@
                         <li>Сапраўдныя імёны і іншыя асабістыя дадзенныя</li>
                         <li>Выказванні нянавісці, здзекі, дыскрымінацыя, падбухторванне да гвалту</li>
                         <li>
-                            Тэксты,  што парушаюць іншыя нашыя
+                            Тэксты, што парушаюць іншыя нашыя
                             <router-link :to="{name: 'rules'}" target="_blank">гайдлайны</router-link>
                         </li>
                     </ol>
@@ -60,10 +60,10 @@
             </el-form-item>
 
             <el-form-item prop="comment">
-              <el-input
-                  v-model="complain.comment"
-                  type="textarea"
-                  :rows="3"/>
+                <el-input
+                    v-model="complain.comment"
+                    type="textarea"
+                    :rows="3"/>
             </el-form-item>
 
             <input class="submit-btn" type="submit" value="Паскардзіцца" :disabled="loading">
@@ -78,9 +78,9 @@ import {ElMessage}                from "element-plus";
 import {useRoute, useRouter}      from 'vue-router'
 import {getUser}                  from "./user.js";
 
-const router = useRouter();
-const route  = useRoute()
-const id     = route.query.id;
+const router        = useRouter();
+const route         = useRoute()
+const definition_id = route.query.id;
 
 onMounted(
     async () => {
@@ -91,16 +91,16 @@ onMounted(
 const definition = ref(null)
 
 async function fetchDefinition() {
-  const {data, error} = await supabase
-      .from("definition")
-      .select(`*, term(*)`)
-      .filter('id', 'eq', id)
-      .single()
+    const {data, error} = await supabase
+        .from("definition")
+        .select(`*, term(*)`)
+        .filter('id', 'eq', definition_id)
+        .single()
 
-  if (error) {
-    throw error
-  }
-  definition.value = data;
+    if (error) {
+        throw error
+    }
+    definition.value = data;
 }
 
 const loading = ref(false)
@@ -110,12 +110,12 @@ const complain = reactive({
     comment: ''
 })
 const rules    = reactive({
-  reason : [
-    {required: true, message: 'Абавязкова', trigger: 'blur'}
-  ],
-  comment: [
-    {min: 10, message: 'мінімум 10 сымбалей', trigger: 'blur'},
-  ],
+    reason : [
+        {required: true, message: 'Абавязкова', trigger: 'blur'}
+    ],
+    comment: [
+        {min: 10, message: 'мінімум 10 сымбалей', trigger: 'blur'},
+    ],
 })
 const form     = ref()
 const account  = ref(getUser());
@@ -127,17 +127,17 @@ const submit   = async () => {
         ElMessage.warning('Каб паcкардзіцца на слова, вам трэба залагініцца')
         return;
     }
-    loading.value = true
 
     await form.value.validate(async (valid) => {
         if (!valid) return
 
+        loading.value = true
         try {
-            let {data, error} = await supabase.rpc(
-                'complain_about_definition',
+            let {error}   = await supabase.rpc(
+                'add_complain',
                 {
-                    id,
-                    reason: complain.reason,
+                    definition_id,
+                    reason : complain.reason,
                     comment: complain.comment
                 }
             )
@@ -150,6 +150,8 @@ const submit   = async () => {
         } catch (error) {
             ElMessage.error('Адбылася памылка')
             throw error;
+        } finally {
+            loading.value = false;
         }
     })
 }
