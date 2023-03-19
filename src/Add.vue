@@ -3,12 +3,12 @@
         Дадаць слова
     </h1>
     <el-form :model="new_term"
-           ref="form"
-           :rules="rules"
-           @submit.prevent="submit"
-           label-position="top"
-           hide-required-asterisk
-           class="add-word_form">
+             ref="form"
+             :rules="rules"
+             @submit.prevent="submit"
+             label-position="top"
+             hide-required-asterisk
+             class="add-word_form">
         <button type="reset" class="cross" @click="router.back()"></button>
         <p class="note">
             Усе тлумачэнні ў Нішо напісаныя звычайнымі людзьмі.
@@ -34,27 +34,27 @@
                 :rows="5"/>
         </el-form-item>
         <el-form-item label="Тэгі:" prop="tags">
-          <div class="add-word__tags-input-wrapper" @click="handleTagsWrapperClick">
-            <el-tag
-                v-for="tag in new_term.tags"
-                :key="tag"
-                size="large"
-                class="add-word__tags-input-tag"
-                closable
-                :disable-transitions="false"
-                @close="handleRemoveTag(tag)"
-            >
-                {{ tag }}
-            </el-tag>
-            <el-input
-                v-model="newTag"
-                ref="newTagInput"
-                size="large"
-                class="add-word__tags-input"
-                @keydown.enter.prevent="handleAddTag"
-                @blur="handleAddTag"
-            />
-          </div>
+            <div class="add-word__tags-input-wrapper" @click="handleTagsWrapperClick">
+                <el-tag
+                    v-for="tag in new_term.tags"
+                    :key="tag"
+                    size="large"
+                    class="add-word__tags-input-tag"
+                    closable
+                    :disable-transitions="false"
+                    @close="handleRemoveTag(tag)"
+                >
+                    {{ tag }}
+                </el-tag>
+                <el-input
+                    v-model="newTag"
+                    ref="newTagInput"
+                    size="large"
+                    class="add-word__tags-input"
+                    @keydown.enter.prevent="handleAddTag"
+                    @blur="handleAddTag"
+                />
+            </div>
         </el-form-item>
         <input class="submit-btn" type="submit" value="Гатова" :disabled="loading">
     </el-form>
@@ -62,10 +62,10 @@
 
 <script setup>
 import {reactive, ref} from 'vue'
-import {supabase}                from "./supabase.js";
-import {ElMessage}               from "element-plus";
-import {useRouter}               from 'vue-router'
-import {getUser}                 from "./user.js";
+import {supabase}      from "./supabase.js";
+import {ElMessage}     from "element-plus";
+import {useRouter}     from 'vue-router'
+import {getUser}       from "./user.js";
 
 const router      = useRouter();
 const newTag      = ref('');
@@ -80,18 +80,18 @@ const new_term = reactive({
     tags      : []
 })
 const rules    = reactive({
-  term_name : [
-    {required: true, message: 'Слова павінна быць не меньш 3 сымбалеў', trigger: 'blur'},
-    {min: 3, message: 'Слова павінна быць не меньш 3 сымбалеў', trigger: 'blur'},
-  ],
-  definition: [
-    {required: true, message: 'Павінна быць змястоўнае тлумачэнне', trigger: 'blur'},
-    {min: 10, message: 'Павінна быць змястоўнае тлумачэнне', trigger: 'blur'},
-  ],
-  example: [
-    {required: true, message: 'Павінен быць змястоўны прыклад', trigger: 'blur'},
-    {min: 10, message: 'Павінен быць змястоўны прыклад', trigger: 'blur'},
-  ],
+    term_name : [
+        {required: true, message: 'Слова павінна быць не меньш 3 сымбалеў', trigger: 'blur'},
+        {min: 3, message: 'Слова павінна быць не меньш 3 сымбалеў', trigger: 'blur'},
+    ],
+    definition: [
+        {required: true, message: 'Павінна быць змястоўнае тлумачэнне', trigger: 'blur'},
+        {min: 10, message: 'Павінна быць змястоўнае тлумачэнне', trigger: 'blur'},
+    ],
+    example   : [
+        {required: true, message: 'Павінен быць змястоўны прыклад', trigger: 'blur'},
+        {min: 10, message: 'Павінен быць змястоўны прыклад', trigger: 'blur'},
+    ],
 })
 const form     = ref()
 const account  = ref(getUser());
@@ -114,7 +114,8 @@ const submit   = async () => {
                 {
                     definition: new_term.definition,
                     example   : new_term.example,
-                    term_name : new_term.term_name.trim()
+                    term_name : new_term.term_name.trim(),
+                    tags      : new_term.tags
                 }
             )
             loading.value     = false
@@ -149,7 +150,7 @@ const handleAddTag = () => {
 }
 
 const handleTagsWrapperClick = () => {
-  newTagInput.value.input.focus();
+    newTagInput.value.input.focus();
 }
 
 </script>
