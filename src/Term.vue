@@ -110,7 +110,7 @@ const term   = ref(null)
 const count  = ref(0)
 
 async function fetchTerm() {
-
+    //TODO handle term not found
     let {data, error} = await supabase
         .from("term")
         .select(`*, definition(*, user:user_profile(*),vote_results(*))`, {count: 'exact'})
