@@ -79,7 +79,7 @@ import {useRoute, useRouter}      from 'vue-router'
 import {getUser}                  from "./user.js";
 
 const router        = useRouter();
-const route         = useRoute()
+const route         = useRoute();
 const definition_id = route.query.id;
 
 onMounted(

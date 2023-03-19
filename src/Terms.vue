@@ -21,7 +21,7 @@
                     </a>
                     <div class="card-info_date">
                         <span :title="item.definition[0].created_at">
-                            {{ formatDate(item.definition[0].created_at) }}
+                            {{ formatLongDate(item.definition[0].created_at) }}
                         </span>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
 import {onMounted, ref}      from "vue";
 import {ElMessage}           from "element-plus";
 import {supabase}            from "./supabase.js";
-import {formatDate}          from "./date.js";
+import {formatLongDate}      from "./date.js";
 import {vote, getVoteResult} from "./vote.js";
 import {getUser}             from "./user.js";
 import IconDislike           from "./icons/IconDislike.vue";

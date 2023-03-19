@@ -8,9 +8,11 @@ import Contacts                         from './Contacts.vue';
 import Rules                            from './Rules.vue';
 import Bugs                             from './Bugs.vue';
 import Add                              from './Add.vue';
+import Edit                             from './Edit.vue';
 import DefaultLayout                    from './DefaultLayout.vue';
 import SimplifiedLayout                 from './SimplifiedLayout.vue';
 import ComplainAboutDefinition          from './ComplainAboutDefinition.vue';
+import UserWords                        from './UserWords.vue';
 
 const main   = [
     {
@@ -115,6 +117,18 @@ const main   = [
 
     },
     {
+        path     : '/redahavac',
+        component: SimplifiedLayout,
+        children : [
+            {
+                name     : 'edit',
+                path     : '',
+                component: Edit,
+            }
+        ],
+
+    },
+    {
         path     : '/paskardzicca',
         component: SimplifiedLayout,
         children : [
@@ -122,6 +136,18 @@ const main   = [
                 name     : 'complain',
                 path     : '',
                 component: ComplainAboutDefinition,
+            }
+        ],
+
+    },
+    {
+        path     : '/mae-slovy',
+        component: DefaultLayout,
+        children : [
+            {
+                name     : 'user-words',
+                path     : '',
+                component: UserWords,
             }
         ],
 
