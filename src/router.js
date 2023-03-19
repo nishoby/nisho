@@ -8,6 +8,7 @@ import Contacts                         from './Contacts.vue';
 import Rules                            from './Rules.vue';
 import Bugs                             from './Bugs.vue';
 import Add                              from './Add.vue';
+import Edit                             from './Edit.vue';
 import DefaultLayout                    from './DefaultLayout.vue';
 import SimplifiedLayout                 from './SimplifiedLayout.vue';
 import ComplainAboutDefinition          from './ComplainAboutDefinition.vue';
@@ -111,6 +112,18 @@ const main   = [
                 name     : 'add',
                 path     : '',
                 component: Add,
+            }
+        ],
+
+    },
+    {
+        path     : '/redahavac',
+        component: SimplifiedLayout,
+        children : [
+            {
+                name     : 'edit',
+                path     : '',
+                component: Edit,
             }
         ],
 

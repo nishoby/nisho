@@ -1,8 +1,9 @@
 <template>
     <h1 class="title">
-        Дадаць слова
+        Рэдагаваць слова
     </h1>
-    <el-form :model="new_term"
+    <el-form v-if="definition"
+           :model="new_term"
            ref="form"
            :rules="rules"
            @submit.prevent="submit"
@@ -19,7 +20,7 @@
             перад тым як даваць новаe слова ці яго тлумачэнне.
         </p>
         <el-form-item label="Слова:" prop="term_name">
-            <el-input v-model="new_term.term_name"/>
+            <el-input v-model="new_term.term_name" disabled />
         </el-form-item>
         <el-form-item label="Тлумачэнне:" prop="definition">
             <el-input
@@ -61,10 +62,10 @@
 </template>
 
 <script setup>
-import {reactive, ref} from 'vue'
+import {onMounted, reactive, ref} from 'vue'
 import {supabase}                from "./supabase.js";
 import {ElMessage}               from "element-plus";
-import {useRouter}               from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import {getUser}                 from "./user.js";
 
 const router      = useRouter();
@@ -95,13 +96,49 @@ const rules    = reactive({
 })
 const form     = ref()
 const account  = ref(getUser());
+
+onMounted(
+    async () => {
+      if (!account.value) {
+        await router.back();
+        return
+      }
+
+      await fetchDefinition()
+    }
+)
+
+const route         = useRoute();
+const definition_id = route.query.id;
+const definition    = ref(null)
+
+async function fetchDefinition () {
+  const {data, error} = await supabase
+      .from("definition")
+      .select(`*, term(*)`)
+      .filter('id', 'eq', definition_id)
+      .single()
+
+  if (error) {
+    throw error
+  }
+
+  if (data.user_id !== account.value.id) {
+    ElMessage.warning('Вы не можаце рэдагаваць гэтае слова');
+    await router.back();
+    return;
+  }
+
+  definition.value = data;
+  new_term.term_name = data.term.name;
+  new_term.definition = data.content;
+  new_term.example = data.example;
+  new_term.tags = []; // TODO: load tags
+}
+
 const submit   = async () => {
     if (!form.value) {
         return
-    }
-    if (!account.value) {
-        ElMessage.warning('Каб дадаць слова, вам трэба залагініцца')
-        return;
     }
     loading.value = true
 
@@ -110,8 +147,9 @@ const submit   = async () => {
 
         try {
             let {data, error} = await supabase.rpc(
-                'add_term',
+                'edit_term',
                 {
+                    definition_id,
                     definition: new_term.definition,
                     example   : new_term.example,
                     term_name : new_term.term_name.trim(),
@@ -123,8 +161,8 @@ const submit   = async () => {
             if (error) {
                 throw error
             }
-            ElMessage.success('Паспяхова даданы тэрмін');
-            await router.push({name: 'term', params: {id: data}})
+            ElMessage.success('Паспяхова адрэдагаваны тэрмін');
+            await router.back();
         } catch (error) {
             ElMessage.error('Адбылася памылка')
             throw error;

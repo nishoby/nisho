@@ -15,7 +15,9 @@
               на мадэрацыі
             </div>
             <div v-else class="date-edit_edit">
-              <img src="/assets/img/edit.svg" alt="">
+              <router-link :to="{name: 'edit', query: {id: definition.id}}">
+                <img src="/assets/img/edit.svg" alt="">
+              </router-link>
             </div>
           </div>
           <div class="my-card-text">
