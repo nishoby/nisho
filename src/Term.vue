@@ -11,9 +11,11 @@
                 <div class="card-example">
                     {{ item.example }}
                 </div>
-                <div class="card-tags" v-if="false">
-                    <span class="user-tag">Tag1</span>
-                    <span class="embedded-tag">Tag2</span>
+                <div class="card-tags">
+                    <span class="user-tag" v-for="tagItem of item.tags">
+                        {{ tagItem['tag']['name'] }}
+                    </span>
+                    <!--                    <span class="embedded-tag">Tag2</span>-->
                 </div>
                 <div class="card-info">
                     <a class="card-info_link">
@@ -31,7 +33,7 @@
                             class="card-buttons-actions_dislike"
                             :class="{'card-buttons-actions_dislike--voted': getVoteResult(item).is_downvoted}"
                             @click="update(item, 'downvote')">
-                            <icon-dislike />
+                            <icon-dislike/>
                         </button>
                         <div class="dislikes-amount">
                             {{ getVoteResult(item).downvotes }}
@@ -41,7 +43,7 @@
                             class="card-buttons-actions_like"
                             :class="{'card-buttons-actions_like--voted': getVoteResult(item).is_upvoted}"
                             @click="update(item, 'upvote')">
-                            <icon-like />
+                            <icon-like/>
                         </button>
                         <div class="likes-amount">
                             {{ getVoteResult(item).upvotes }}
@@ -88,14 +90,14 @@ onMounted(
     }
 )
 
-const currentPage = ref(1)
+const currentPage  = ref(1)
 const onPageChange = async (page) => {
     currentPage.value = page;
     await fetchTerm()
 }
 
 const account = ref(getUser())
-const update = async (definition, type) => {
+const update  = async (definition, type) => {
     if (!account.value) {
         ElMessage.warning('Каб прагаласаваць, вам трэба залагініцца');
         return;
@@ -106,14 +108,14 @@ const update = async (definition, type) => {
     await fetchCount()
 }
 
-const term   = ref(null)
-const count  = ref(0)
+const term  = ref(null)
+const count = ref(0)
 
 async function fetchTerm() {
     //TODO handle term not found
     let {data, error} = await supabase
         .from("term")
-        .select(`*, definition(*, user:user_profile(*),vote_results(*))`, {count: 'exact'})
+        .select(`*, definition(*, user:user_profile(*),vote_results(*),tags:definition_tag(tag(*)))`, {count: 'exact'})
         .order('created_at', {ascending: false, foreignTable: 'definition'})
         .filter('id', 'eq', id)
         .single()

@@ -11,9 +11,11 @@
                 <div class="card-example">
                     {{ item.definition[0].example }}
                 </div>
-                <div class="card-tags" v-if="false">
-                    <span class="user-tag">Tag1</span>
-                    <span class="embedded-tag">Tag2</span>
+                <div class="card-tags">
+                    <span class="user-tag" v-for="tagItem of item.definition[0].tags">
+                        {{ tagItem['tag']['name'] }}
+                    </span>
+                    <!--                    <span class="embedded-tag">Tag2</span>-->
                 </div>
                 <div class="card-info">
                     <a class="card-info_link">
@@ -31,7 +33,7 @@
                             class="card-buttons-actions_dislike"
                             :class="{'card-buttons-actions_dislike--voted': getVoteResult(item.definition[0]).is_downvoted}"
                             @click="update(item.definition[0], 'downvote')">
-                            <icon-dislike />
+                            <icon-dislike/>
                         </button>
                         <div class="dislikes-amount">
                             {{ getVoteResult(item.definition[0]).downvotes }}
@@ -40,7 +42,7 @@
                             class="card-buttons-actions_like"
                             :class="{'card-buttons-actions_like--voted': getVoteResult(item.definition[0]).is_upvoted}"
                             @click="update(item.definition[0], 'upvote')">
-                            <icon-like />
+                            <icon-like/>
                         </button>
                         <div class="likes-amount">
                             {{ getVoteResult(item.definition[0]).upvotes }}
@@ -76,9 +78,9 @@ import {getUser}             from "./user.js";
 import IconDislike           from "./icons/IconDislike.vue";
 import IconLike              from "./icons/IconLike.vue";
 
-const terms       = ref([]);
-const count       = ref(0)
-const account     = ref(getUser())
+const terms   = ref([]);
+const count   = ref(0)
+const account = ref(getUser())
 
 const update = async (definition, type) => {
     if (!account.value) {
@@ -91,7 +93,7 @@ const update = async (definition, type) => {
     await fetchCount()
 }
 
-const currentPage = ref(1)
+const currentPage  = ref(1)
 const onPageChange = async (page) => {
     currentPage.value = page;
     await fetchTerms()
@@ -101,7 +103,7 @@ const fetchTerms = async () => {
     //TODO сделать view вместо выборки
     let {data, error} = await supabase
         .from("term")
-        .select(`*, definition(*,user:user_profile(*),vote_results(*))`)
+        .select(`*, definition(*,user:user_profile(*),vote_results(*),tags:definition_tag(tag(*)))`)
         .order('created_at', {ascending: false, foreignTable: 'definition'})
         .limit(1, {foreignTable: 'definition'})
         .range((currentPage.value - 1) * 15, (currentPage.value * 15) - 1)
