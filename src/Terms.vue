@@ -13,7 +13,7 @@
                 </div>
                 <div class="card-tags">
                     <span class="user-tag" v-for="tagItem of item.definition[0].tags">
-                        {{ tagItem['tag']['name'] }}
+                        {{ tagItem.tag.name }}
                     </span>
                     <!--                    <span class="embedded-tag">Tag2</span>-->
                 </div>
