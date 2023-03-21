@@ -783,7 +783,7 @@ button {
 .error-wrapper {
     width: 30rem;
     height: 31rem;
-    margin: 16rem auto;
+    margin: 8rem auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -797,10 +797,14 @@ button {
     margin-bottom: 4rem;
     font-size: 2rem;
     color: #3a3a3a;
+    text-align: center;
 }
 .error-img {
     width: 28.5rem;
     height: 23rem;
+}
+.error-link {
+    text-decoration: underline;
 }
 .cross {
     position: absolute;

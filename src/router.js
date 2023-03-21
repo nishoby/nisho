@@ -14,6 +14,7 @@ import DefaultLayout from './DefaultLayout.vue';
 import SimplifiedLayout from './SimplifiedLayout.vue';
 import ComplainAboutDefinition from './ComplainAboutDefinition.vue';
 import UserWords from './UserWords.vue';
+import NotFoundPage from './NotFoundPage.vue';
 
 const main = [
     {
@@ -168,6 +169,17 @@ const main = [
                 name: 'faq',
                 path: '',
                 component: FAQ,
+            },
+        ],
+    },
+    {
+        path: '/:pathMatch(.*)',
+        component: SimplifiedLayout,
+        children: [
+            {
+                name: 'not-found',
+                path: '',
+                component: NotFoundPage,
             },
         ],
     },
