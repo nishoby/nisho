@@ -1,13 +1,13 @@
 <template>
     <router-link :to="{ name: 'terms' }" class="header-logo-btn">
         <router-link :to="{ name: 'terms' }">
-            <img class="header-logo-img" src="/assets/img/logo.svg" alt="" />
+            <img class="header-logo-img" src="/assets/img/logo.svg" alt=""/>
         </router-link>
     </router-link>
     <div class="header-form-container container">
         <form class="header-form" action="">
             <button class="form-search-btn">
-                <img class="form-search-btn-img" src="/assets/img/search.svg" alt="" />
+                <img class="form-search-btn-img" src="/assets/img/search.svg" alt=""/>
             </button>
             <el-autocomplete
                 v-model="search"
@@ -21,7 +21,7 @@
             >
                 <template #default="{ item }">
                     <span
-                        ><b>{{ item.name }}</b></span
+                    ><b>{{ item.name }}</b></span
                     >
                     <span style="padding-left: 5px">
                         {{ item.definition[0].content }}
@@ -29,7 +29,7 @@
                 </template>
             </el-autocomplete>
             <button class="form-random-btn" type="button" v-if="false">
-                <img class="form-random-btn-img" src="/assets/img/random.svg" alt="" />
+                <img class="form-random-btn-img" src="/assets/img/random.svg" alt=""/>
             </button>
         </form>
     </div>
@@ -41,20 +41,30 @@
                 @click="ElMessage.warning('Каб дадаць слова, вам трэба залагініцца')"
                 href="#"
             >
-                <img class="add-btn-img" src="/assets/img/add.svg" alt="" />
+                <img class="add-btn-img" src="/assets/img/add.svg" alt=""/>
             </a>
             <a class="add-btn" v-else :href="href" @click="navigate">
-                <img class="add-btn-img" src="/assets/img/add.svg" alt="" />
+                <img class="add-btn-img" src="/assets/img/add.svg" alt=""/>
             </a>
         </router-link>
         <el-popover placement="bottom" :width="270" trigger="click">
             <template #reference>
                 <button class="person-btn">
-                    <img class="person-btn-img" src="/assets/img/person.svg" alt="" />
+                    <img class="person-btn-img" src="/assets/img/person.svg" alt=""/>
                 </button>
             </template>
             <div v-if="account">
-                <span class="txt-color-2 pdng-r-15px">{{ account.email }}</span>
+                <el-row style="padding-bottom: 10px">
+                    Email: {{ account.email }}
+                </el-row>
+                <el-row style="padding-bottom: 10px">
+                    Ваша імя:
+                    <el-input v-model="accountName">
+                        <template #append>
+                            <el-button :icon="Search"/>
+                        </template>
+                    </el-input>
+                </el-row>
                 <el-button @click="signOut" type="success">Выхад</el-button>
             </div>
             <div v-else>
@@ -63,7 +73,7 @@
         </el-popover>
         <el-dropdown>
             <button class="hamburger-btn">
-                <IconHamburger />
+                <IconHamburger/>
             </button>
             <template #dropdown>
                 <el-dropdown-menu class="hamburger-dropdown">
@@ -95,54 +105,55 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { ElMessage } from 'element-plus';
-import { useRouter } from 'vue-router';
-import { getUser } from './user.js';
-import { supabase } from './supabase.js';
+import {ref}         from 'vue';
+import {ElMessage}   from 'element-plus';
+import {useRouter}   from 'vue-router';
+import {getUser}     from './user.js';
+import {supabase}    from './supabase.js';
 import IconHamburger from './icons/IconHamburger.vue';
+import {Search}      from '@element-plus/icons-vue'
 
-const account = ref(getUser());
-const search = ref('');
+const account     = ref(getUser());
+const accountName = ref(account.value.email);
+const search      = ref('');
 
 supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN') {
         account.value = session.user;
     }
 });
-const router = useRouter();
+const router           = useRouter();
 const querySearchAsync = async (queryString, cb) => {
     if (!queryString) {
         cb([]);
         return;
     }
-    let { data } = await supabase
+    let {data} = await supabase
         .from('term')
         .select(`*, definition(*)`)
-        .order('created_at', { ascending: false, foreignTable: 'definition' })
-        .limit(1, { foreignTable: 'definition' })
+        .order('created_at', {ascending: false, foreignTable: 'definition'})
+        .limit(1, {foreignTable: 'definition'})
         .filter('name', 'ilike', `%${queryString}%`);
     cb(data);
 };
 
 const handleSelect = (item) => {
-    router.push({ name: 'term', params: { id: item.id } });
+    router.push({name: 'term', params: {id: item.id}});
 };
 
 async function signInWithGoogle() {
-    const options = import.meta.env.VITE_REDIRECT_URL
-        ? { redirectTo: import.meta.env.VITE_REDIRECT_URL }
-        : { redirectTo: window.location.origin };
-    const { user, error } = await supabase.auth.signIn({ provider: 'google' }, options);
+    const options       = import.meta.env.VITE_REDIRECT_URL
+        ? {redirectTo: import.meta.env.VITE_REDIRECT_URL}
+        : {redirectTo: window.location.origin};
+    const {user, error} = await supabase.auth.signIn({provider: 'google'}, options);
     if (error) {
-        console.error(error);
-        return;
+        throw error;
     }
     account.value = user;
 }
 
 async function signOut() {
-    const { error } = await supabase.auth.signOut();
+    const {error} = await supabase.auth.signOut();
     if (error) {
         console.error(error);
         return;
