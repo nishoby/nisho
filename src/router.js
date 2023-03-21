@@ -1,191 +1,185 @@
-import {createRouter, createWebHistory} from 'vue-router'
-import Terms                            from './Terms.vue';
-import Term                             from './Term.vue';
-import About                            from './About.vue';
-import Team                             from './Team.vue';
-import Donation                         from './Donation.vue';
-import Contacts                         from './Contacts.vue';
-import Rules                            from './Rules.vue';
-import Bugs                             from './Bugs.vue';
-import Add                              from './Add.vue';
-import Edit                             from './Edit.vue';
-import FAQ                              from './FAQ.vue';
-import DefaultLayout                    from './DefaultLayout.vue';
-import SimplifiedLayout                 from './SimplifiedLayout.vue';
-import ComplainAboutDefinition          from './ComplainAboutDefinition.vue';
-import UserWords                        from './UserWords.vue';
+import { createRouter, createWebHistory } from 'vue-router';
+import Terms from './Terms.vue';
+import Term from './Term.vue';
+import About from './About.vue';
+import Team from './Team.vue';
+import Donation from './Donation.vue';
+import Contacts from './Contacts.vue';
+import Rules from './Rules.vue';
+import Bugs from './Bugs.vue';
+import Add from './Add.vue';
+import Edit from './Edit.vue';
+import FAQ from './FAQ.vue';
+import DefaultLayout from './DefaultLayout.vue';
+import SimplifiedLayout from './SimplifiedLayout.vue';
+import ComplainAboutDefinition from './ComplainAboutDefinition.vue';
+import UserWords from './UserWords.vue';
 
-const main   = [
+const main = [
     {
-        path     : '/',
-        exclude  : true,
+        path: '/',
+        exclude: true,
         component: DefaultLayout,
-        children : [
+        children: [
             {
-                name     : 'terms',
-                path     : '',
+                name: 'terms',
+                path: '',
                 component: Terms,
-            }
+            },
         ],
     },
     {
-        path     : '/slova/:id',
+        path: '/slova/:id',
         component: DefaultLayout,
-        children : [
+        children: [
             {
-                name     : 'term',
-                path     : '',
+                name: 'term',
+                path: '',
                 component: Term,
-            }
+            },
         ],
     },
     {
-        path     : '/apisanne',
+        path: '/apisanne',
         component: DefaultLayout,
-        children : [
+        children: [
             {
-                name     : 'about',
-                path     : '',
+                name: 'about',
+                path: '',
                 component: About,
-            }
+            },
         ],
     },
     {
-        path     : '/kamanda',
+        path: '/kamanda',
         component: DefaultLayout,
-        children : [
+        children: [
             {
-                name     : 'team',
-                path     : '',
+                name: 'team',
+                path: '',
                 component: Team,
-            }
+            },
         ],
     },
     {
-        path     : '/zadanacic',
+        path: '/zadanacic',
         component: DefaultLayout,
-        children : [
+        children: [
             {
-                name     : 'donation',
-                path     : '',
+                name: 'donation',
+                path: '',
                 component: Donation,
-            }
+            },
         ],
     },
     {
-        path     : '/kantakty',
+        path: '/kantakty',
         component: DefaultLayout,
-        children : [
+        children: [
             {
-                name     : 'contacts',
-                path     : '',
+                name: 'contacts',
+                path: '',
                 component: Contacts,
-            }
+            },
         ],
     },
     {
-        path     : '/pravily',
+        path: '/pravily',
         component: DefaultLayout,
-        children : [
+        children: [
             {
-                name     : 'rules',
-                path     : '',
+                name: 'rules',
+                path: '',
                 component: Rules,
-            }
+            },
         ],
     },
     {
-        path     : '/bugs',
+        path: '/bugs',
         component: DefaultLayout,
-        children : [
+        children: [
             {
-                name     : 'bugs',
-                path     : '',
+                name: 'bugs',
+                path: '',
                 component: Bugs,
-            }
+            },
         ],
     },
     {
-        path     : '/dadac-slova',
+        path: '/dadac-slova',
         component: SimplifiedLayout,
-        children : [
+        children: [
             {
-                name     : 'add',
-                path     : '',
+                name: 'add',
+                path: '',
                 component: Add,
-            }
+            },
         ],
-
     },
     {
-        path     : '/redahavac',
+        path: '/redahavac',
         component: SimplifiedLayout,
-        children : [
+        children: [
             {
-                name     : 'edit',
-                path     : '',
+                name: 'edit',
+                path: '',
                 component: Edit,
-            }
+            },
         ],
-
     },
     {
-        path     : '/paskardzicca',
+        path: '/paskardzicca',
         component: SimplifiedLayout,
-        children : [
+        children: [
             {
-                name     : 'complain',
-                path     : '',
+                name: 'complain',
+                path: '',
                 component: ComplainAboutDefinition,
-            }
+            },
         ],
-
     },
     {
-        path     : '/mae-slovy',
+        path: '/mae-slovy',
         component: DefaultLayout,
-        children : [
+        children: [
             {
-                name     : 'current-user-words',
-                path     : '',
+                name: 'current-user-words',
+                path: '',
                 component: UserWords,
-            }
+            },
         ],
-
     },
     {
-        path     : '/autar/:id',
+        path: '/autar/:id',
         component: DefaultLayout,
-        children : [
+        children: [
             {
-                name     : 'user-words',
-                path     : '',
+                name: 'user-words',
+                path: '',
                 component: UserWords,
-            }
+            },
         ],
-
     },
     {
-        path     : '/faq',
+        path: '/faq',
         component: DefaultLayout,
-        children : [
+        children: [
             {
-                name     : 'faq',
-                path     : '',
+                name: 'faq',
+                path: '',
                 component: FAQ,
-            }
+            },
         ],
     },
-]
-const routes = [...main]
+];
+const routes = [...main];
 const router = createRouter({
-    history       : createWebHistory(),
+    history: createWebHistory(),
     routes,
-    scrollBehavior: () => ({top: 0, behavior: 'smooth'}),
-})
+    scrollBehavior: () => ({ top: 0, behavior: 'smooth' }),
+});
 router.beforeEach((to) => {
-    document.title = to.meta && to.meta.title ? `${to.meta.title} - Нішо` : 'Нішо'
-})
+    document.title = to.meta && to.meta.title ? `${to.meta.title} - Нішо` : 'Нішо';
+});
 
-export default router
-
+export default router;

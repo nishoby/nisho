@@ -1,10 +1,7 @@
-<script setup>
-</script>
+<script setup></script>
 
 <template>
-    <router-view :key="$route.fullPath"/>
+    <router-view :key="$route.fullPath" />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

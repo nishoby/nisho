@@ -1,12 +1,12 @@
-import {supabase} from './supabase'
+import { supabase } from './supabase';
 
 function getUser() {
     try {
-        const user = supabase.auth.user()
-        return user ? user : null
+        const user = supabase.auth.user();
+        return user ? user : null;
     } catch {
-        return null
+        return null;
     }
 }
 
-export {getUser}
+export { getUser };

@@ -6,25 +6,15 @@
 
                 З намі можна звязацца ў
                 <ul style="padding-left: 1rem">
-                    <li>
-                        Дыскардзе - чат для супльнасці.
-                    </li>
-                    <li>
-                        Інстаграме - словы тыдня.
-                    </li>
-                    <li>
-                        Тык-току - словы тыдня з відэа тлучачэннямі.
-                    </li>
+                    <li>Дыскардзе - чат для супльнасці.</li>
+                    <li>Інстаграме - словы тыдня.</li>
+                    <li>Тык-току - словы тыдня з відэа тлучачэннямі.</li>
                 </ul>
             </div>
         </div>
     </div>
 </template>
 
-<script setup>
+<script setup></script>
 
-</script>
-
-<style scoped>
-
-</style>
+<style scoped></style>

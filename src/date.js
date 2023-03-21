@@ -1,30 +1,36 @@
 const BE_BY_MONTHS = [
-    "студзеня",
-    "лютага",
-    "сакавіка",
-    "красавіка",
-    "мая",
-    "чэрвеня",
-    "ліпеня",
-    "жніўня",
-    "верасня",
-    "кастрычніка",
-    "лістапада",
-    "снежня"
+    'студзеня',
+    'лютага',
+    'сакавіка',
+    'красавіка',
+    'мая',
+    'чэрвеня',
+    'ліпеня',
+    'жніўня',
+    'верасня',
+    'кастрычніка',
+    'лістапада',
+    'снежня',
 ];
 
 // Fallback for browsers that don't have be-BY locale
 const fallbackLocale = 'en-US';
-const fallbackYearFormatter = new Intl.DateTimeFormat(fallbackLocale, { year: 'numeric' });
-const fallbackMonthFormatter = new Intl.DateTimeFormat(fallbackLocale, { month: 'numeric' });
-const fallbackDayFormatter = new Intl.DateTimeFormat(fallbackLocale, { day: 'numeric' });
+const fallbackYearFormatter = new Intl.DateTimeFormat(fallbackLocale, {
+    year: 'numeric',
+});
+const fallbackMonthFormatter = new Intl.DateTimeFormat(fallbackLocale, {
+    month: 'numeric',
+});
+const fallbackDayFormatter = new Intl.DateTimeFormat(fallbackLocale, {
+    day: 'numeric',
+});
 
 function formatShortDate(raw) {
     const date = new Date(raw);
     const dateFormatter = new Intl.DateTimeFormat('be-BY', {
         year: 'numeric',
         month: 'numeric',
-        day: 'numeric'
+        day: 'numeric',
     });
 
     if (dateFormatter.resolvedOptions().locale === 'be-BY') {
@@ -43,7 +49,7 @@ function formatLongDate(raw) {
     const dateFormatter = new Intl.DateTimeFormat('be-BY', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
     });
 
     if (dateFormatter.resolvedOptions().locale === 'be-BY') {
@@ -57,7 +63,4 @@ function formatLongDate(raw) {
     return `${day} ${BE_BY_MONTHS[shortMonth]} ${year}`;
 }
 
-export {
-    formatShortDate,
-    formatLongDate,
-}
+export { formatShortDate, formatLongDate };

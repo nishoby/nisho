@@ -6,9 +6,9 @@
 
                 <p>
                     Калі вы заўважыле багі, калі ласка паведамляйце пра іх нашым распрацоўшчыкам на гітхабе:
-                    <br>
+                    <br />
                     <a href="https://github.com/alherd-by/nisho/issues">https://github.com/alherd-by/nisho/issues</a>
-                    <br>
+                    <br />
                     Проста стварыце новую задачу (issue) там.
                 </p>
             </div>
@@ -16,10 +16,6 @@
     </div>
 </template>
 
-<script setup>
+<script setup></script>
 
-</script>
-
-<style scoped>
-
-</style>
+<style scoped></style>
