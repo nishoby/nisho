@@ -65,6 +65,11 @@
                         </template>
                     </el-input>
                 </el-row>
+                <el-row style="padding-bottom: 10px">
+                    <router-link style="text-decoration: underline" :to="{ name: 'current-user-words' }">
+                        Мае словы
+                    </router-link>
+                </el-row>
                 <el-button @click="signOut" type="success">Выхад</el-button>
             </div>
             <div v-else>
