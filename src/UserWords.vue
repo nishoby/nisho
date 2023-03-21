@@ -21,9 +21,9 @@
             </div>
           </div>
           <div class="my-card-text">
-            <a class="my-card-title" href="">
+            <router-link :to="{name: 'term', params: {id: definition.term.id}}" class="my-card-title">
               {{ definition.term.name }}
-            </a>
+            </router-link>
 
             <p class="my-card-description"> - {{ getShortDefinitionContent(definition) }}</p>
           </div>
