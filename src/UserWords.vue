@@ -17,7 +17,7 @@
                         <div v-if="false" class="moderate-caption">на мадэрацыі</div>
                         <div v-if="canEdit" class="date-edit_edit">
                             <router-link :to="{ name: 'edit', query: { id: definition.id } }">
-                                <img src="/assets/img/edit.svg" alt="" />
+                                <IconEdit />
                             </router-link>
                         </div>
                     </div>
@@ -32,7 +32,7 @@
                             {{ definition.term.name }}
                         </router-link>
 
-                        <p class="my-card-description">- {{ getShortDefinitionContent(definition) }}</p>
+                        <p class="my-card-description">{{ ' -' }} {{ getShortDefinitionContent(definition) }}</p>
                     </div>
                 </div>
             </div>
@@ -58,6 +58,7 @@ import { supabase } from './supabase.js';
 import { useRoute, useRouter } from 'vue-router';
 import { formatShortDate } from './date.js';
 import PageContentSpinner from './PageContentSpinner.vue';
+import IconEdit from './icons/IconEdit.vue';
 
 const PAGE_SIZE = 15;
 const router = useRouter();

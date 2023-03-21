@@ -67,12 +67,17 @@ textarea {
     border: none;
 }
 
+svg {
+    height: 1.5rem;
+}
+
 body {
     min-height: 100vh;
     font-family: 'PT Sans';
     background: no-repeat var(--purple-grad);
     box-shadow: 0 0.375rem 2rem rgba(107, 90, 135, 0.25);
     box-shadow: 0 1.5rem rgb(234, 234, 234);
+    color: #494949;
 }
 input,
 select,
@@ -558,26 +563,21 @@ button {
     margin-top: 1rem;
     padding: 0;
     font-family: 'PT Sans Caption';
-    font-size: 2.4rem;
+    font-size: 2.5rem;
     color: rgb(255, 255, 255);
 }
 .date-edit {
-    height: 1.625rem;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
 }
 .date-edit_date {
     font-size: 1.25rem;
 }
-.date-edit_edit {
-    width: 1.75rem;
+.date-edit_edit svg {
     height: 1.75rem;
-    cursor: pointer;
-}
-.date-edit_edit > img {
-    width: 100%;
-    height: 100%;
+    color: #868686;
 }
 .cards-div,
 .my-cards-div {
@@ -588,8 +588,7 @@ button {
     gap: 1.875rem;
 }
 .my-card-wrapper {
-    padding: 1.875rem;
-    padding-top: 1.25rem;
+    padding: 1.25rem 1.875rem;
 }
 .card,
 .my-card {
@@ -608,8 +607,8 @@ button {
     margin: 1rem 0;
     padding: 0.6rem 0;
 }
-.my-card-text {
-    width: 32rem;
+.my-card-title {
+    font-size: 1.5rem;
 }
 .card-title,
 .my-card-title {
