@@ -1,6 +1,6 @@
 <template>
   <div class="main-container container">
-    <p class="my-words-title">Мае словы</p>
+    <p class="my-words-title">{{ header }}</p>
 
     <div class="my-cards-div">
       <div class="my-card"
@@ -11,10 +11,10 @@
             <div class="date-edit_date">
               {{ formatShortDate(definition.created_at) }}
             </div>
-            <div v-if="definition.pending_moderation" class="moderate-caption">
+            <div v-if="false" class="moderate-caption">
               на мадэрацыі
             </div>
-            <div v-else class="date-edit_edit">
+            <div v-if="canEdit" class="date-edit_edit">
               <router-link :to="{name: 'edit', query: {id: definition.id}}">
                 <img src="/assets/img/edit.svg" alt="">
               </router-link>
@@ -49,41 +49,62 @@
 import {onMounted, ref} from 'vue'
 import {getUser} from './user.js';
 import {supabase} from './supabase.js';
-import {useRouter} from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 import {formatShortDate} from "./date.js";
 
 const PAGE_SIZE = 15
 const router = useRouter();
-const account = ref(getUser());
+const route  = useRoute();
 const definitions = ref([])
-const count = ref()
+const count = ref();
+const user = ref();
+const header = ref('Словы');
+const canEdit = ref(false)
 
 onMounted(
     async () => {
-      if (!account.value) {
-        await router.push({name: 'terms'})
-        return
-      }
-
+      await fetchUser()
       await fetchDefinitions()
       await fetchCount()
     }
 )
 
+async function fetchUser() {
+    if (route.name === 'current-user-words') {
+        user.value = getUser();
+        header.value = 'Мае словы';
+        canEdit.value = true;
+    } else if (route.params.id) {
+        let {data, error} = await supabase
+            .from("user_profile")
+            .select(`id:user_id, name`)
+            .filter('user_id', 'eq', route.params.id)
+            .single()
+
+        if (error) {
+          throw error
+        }
+
+        user.value = data;
+        header.value = `Словы ад ${data.name}`
+    }
+
+    if (!user.value) {
+        await router.push({name: 'terms'})
+    }
+}
+
 async function fetchDefinitions() {
   let {data, error} = await supabase
       .from("definition")
-      .select(`*, term(*)`, {count: 'exact'})
+      .select(`*, term(*), user_profile(name)`, {count: 'exact'})
       .order('created_at', {ascending: false})
-      .filter('user_id', 'eq', account.value.id)
+      .filter('user_id', 'eq', user.value.id)
       .range((currentPage.value - 1) * PAGE_SIZE, (currentPage.value * PAGE_SIZE) - 1)
 
   if (error) {
     throw error
   }
-
-  // TODO
-  data[1].pending_moderation = true
 
   definitions.value = data;
 }
@@ -92,7 +113,7 @@ async function fetchCount() {
     let {count: data, error} = await supabase
         .from("definition")
         .select(`*`, {count: 'exact', head: true})
-        .filter('user_id', 'eq', account.value.id)
+        .filter('user_id', 'eq', user.value.id)
 
     if (error) {
         throw error

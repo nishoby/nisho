@@ -18,9 +18,10 @@
                     <!--                    <span class="embedded-tag">Tag2</span>-->
                 </div>
                 <div class="card-info">
-                    <a class="card-info_link">
+                    <router-link :to="{name: 'user-words', params: {id: item.definition[0].user.user_id}}"
+                                 class="card-info_link">
                         {{ item.definition[0].user.name }}
-                    </a>
+                    </router-link>
                     <div class="card-info_date">
                         <span :title="item.definition[0].created_at">
                             {{ formatLongDate(item.definition[0].created_at) }}

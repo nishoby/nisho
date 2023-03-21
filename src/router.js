@@ -28,7 +28,7 @@ const main   = [
         ],
     },
     {
-        path     : '/term/:id',
+        path     : '/slova/:id',
         component: DefaultLayout,
         children : [
             {
@@ -39,7 +39,7 @@ const main   = [
         ],
     },
     {
-        path     : '/apisannie',
+        path     : '/apisanne',
         component: DefaultLayout,
         children : [
             {
@@ -105,7 +105,7 @@ const main   = [
         ],
     },
     {
-        path     : '/add',
+        path     : '/dadac-slova',
         component: SimplifiedLayout,
         children : [
             {
@@ -142,6 +142,18 @@ const main   = [
     },
     {
         path     : '/mae-slovy',
+        component: DefaultLayout,
+        children : [
+            {
+                name     : 'current-user-words',
+                path     : '',
+                component: UserWords,
+            }
+        ],
+
+    },
+    {
+        path     : '/autar/:id',
         component: DefaultLayout,
         children : [
             {
