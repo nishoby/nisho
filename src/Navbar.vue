@@ -85,7 +85,7 @@
                       <router-link :to="{'name' : 'bugs'}">Багі</router-link>
                     </el-dropdown-item>
                     <el-dropdown-item>
-                      <a href="">Гайдлайны</a>
+                      <router-link :to="{'name' : 'faq'}">FAQ</router-link>
                     </el-dropdown-item>
                 </el-dropdown-menu>
             </template>

@@ -9,6 +9,7 @@ import Rules                            from './Rules.vue';
 import Bugs                             from './Bugs.vue';
 import Add                              from './Add.vue';
 import Edit                             from './Edit.vue';
+import FAQ                              from './FAQ.vue';
 import DefaultLayout                    from './DefaultLayout.vue';
 import SimplifiedLayout                 from './SimplifiedLayout.vue';
 import ComplainAboutDefinition          from './ComplainAboutDefinition.vue';
@@ -152,12 +153,23 @@ const main   = [
         ],
 
     },
+    {
+        path     : '/faq',
+        component: DefaultLayout,
+        children : [
+            {
+                name     : 'faq',
+                path     : '',
+                component: FAQ,
+            }
+        ],
+    },
 ]
 const routes = [...main]
 const router = createRouter({
-    history: createWebHistory(),
+    history       : createWebHistory(),
     routes,
-    scrollBehavior: () => ({ top: 0, behavior: 'smooth' }),
+    scrollBehavior: () => ({top: 0, behavior: 'smooth'}),
 })
 router.beforeEach((to) => {
     document.title = to.meta && to.meta.title ? `${to.meta.title} - Нішо` : 'Нішо'
