@@ -95,7 +95,11 @@ input, select, textarea, button{
 .complaint-wrapper{
   background: linear-gradient(180deg, #FF2A9D 0%, #FF658A 100%);
 }
-
+.el-pagination {
+  --el-color-primary: #D6FB89;
+  --el-color-white: #3A3A3A;
+  --el-pagination-hover-color: #868686;
+}
 .login{
   background: var(--purple-grad);
   text-align: center;
@@ -302,7 +306,9 @@ input, select, textarea, button{
 
 .add-word__tags-input-tag.el-tag {
   --el-tag-bg-color: #9FFC70;
+  --el-tag-hover-color: #7DF93F;
   --el-tag-text-color: #494949;
+  --el-color-white: #494949;
   --el-tag-border-radius: 16px;
   --el-tag-font-size: 16px;
   --el-icon-size: 18px;
