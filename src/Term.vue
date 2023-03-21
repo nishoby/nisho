@@ -1,6 +1,7 @@
 <template>
     <div class="main-container container">
-        <div class="cards-div" v-if="term">
+        <PageContentSpinner v-if="!term" />
+        <div v-else class="cards-div">
             <div class="card" v-for="item of term.definition">
                 <router-link class="card-title" :to="{ name: 'term', params: { id: term.id } }">
                     {{ term.name }}
@@ -71,6 +72,7 @@
                 </div>
             </div>
         </div>
+
         <div class="pages-list" v-if="count > 15">
             <el-pagination
                 :background="true"
@@ -94,6 +96,7 @@ import { vote, getVoteResult } from './vote.js';
 import { getUser } from './user.js';
 import IconDislike from './icons/IconDislike.vue';
 import IconLike from './icons/IconLike.vue';
+import PageContentSpinner from './PageContentSpinner.vue';
 
 const route = useRoute();
 const id = route.params.id;

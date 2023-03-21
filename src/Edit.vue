@@ -1,7 +1,8 @@
 <template>
     <h1 class="title">Рэдагаваць слова</h1>
+    <PageContentSpinner v-if="!definition" page-theme="green" />
     <el-form
-        v-if="definition"
+        v-else
         :model="new_term"
         ref="form"
         :rules="rules"
@@ -60,6 +61,7 @@ import { supabase } from './supabase.js';
 import { ElMessage } from 'element-plus';
 import { useRoute, useRouter } from 'vue-router';
 import { getUser } from './user.js';
+import PageContentSpinner from './PageContentSpinner.vue';
 
 const router = useRouter();
 const newTag = ref('');

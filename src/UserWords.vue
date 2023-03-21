@@ -2,7 +2,8 @@
     <div class="main-container container">
         <p class="my-words-title">{{ header }}</p>
 
-        <div class="my-cards-div">
+        <PageContentSpinner v-if="!definitions" />
+        <div v-else class="my-cards-div">
             <div
                 class="my-card"
                 :class="{ 'moderation': definition.pending_moderation }"
@@ -56,11 +57,12 @@ import { getUser } from './user.js';
 import { supabase } from './supabase.js';
 import { useRoute, useRouter } from 'vue-router';
 import { formatShortDate } from './date.js';
+import PageContentSpinner from './PageContentSpinner.vue';
 
 const PAGE_SIZE = 15;
 const router = useRouter();
 const route = useRoute();
-const definitions = ref([]);
+const definitions = ref(null);
 const count = ref();
 const user = ref();
 const header = ref('Словы');
