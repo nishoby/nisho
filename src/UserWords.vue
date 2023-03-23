@@ -72,7 +72,6 @@ const canEdit = ref(false);
 onMounted(async () => {
     await fetchUser();
     await fetchDefinitions();
-    await fetchCount();
 });
 
 async function fetchUser() {
@@ -101,7 +100,11 @@ async function fetchUser() {
 }
 
 async function fetchDefinitions() {
-    let { data, error } = await supabase
+    let {
+        data,
+        error,
+        count: definitionsCount,
+    } = await supabase
         .from('definition')
         .select(`*, term(*), user_profile(name)`, { count: 'exact' })
         .order('created_at', { ascending: false })
@@ -113,19 +116,7 @@ async function fetchDefinitions() {
     }
 
     definitions.value = data;
-}
-
-async function fetchCount() {
-    let { count: data, error } = await supabase
-        .from('definition')
-        .select(`*`, { count: 'exact', head: true })
-        .filter('user_id', 'eq', user.value.id);
-
-    if (error) {
-        throw error;
-    }
-
-    count.value = data;
+    count.value = definitionsCount;
 }
 
 const currentPage = ref(1);

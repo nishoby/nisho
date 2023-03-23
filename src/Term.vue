@@ -1,10 +1,10 @@
 <template>
     <div class="main-container container">
-        <PageContentSpinner v-if="!term" />
+        <PageContentSpinner v-if="!definitions" />
         <div v-else class="cards-div">
-            <div class="card" v-for="item of term.definition">
-                <router-link class="card-title" :to="{ name: 'term', params: { id: term.id } }">
-                    {{ term.name }}
+            <div class="card" v-for="item of definitions">
+                <router-link class="card-title" :to="{ name: 'term', params: { id: item.term.id } }">
+                    {{ item.term.name }}
                 </router-link>
                 <div class="card-description">
                     {{ item.content }}
@@ -73,12 +73,12 @@
             </div>
         </div>
 
-        <div class="pages-list" v-if="count > 15">
+        <div class="pages-list" v-if="count > PAGE_SIZE">
             <el-pagination
                 :background="true"
                 :current-page="currentPage"
                 @update:current-page="onPageChange"
-                :page-size="15"
+                :page-size="PAGE_SIZE"
                 layout="prev, pager, next"
                 :total="count"
             />
@@ -98,12 +98,12 @@ import IconDislike from './icons/IconDislike.vue';
 import IconLike from './icons/IconLike.vue';
 import PageContentSpinner from './PageContentSpinner.vue';
 
+const PAGE_SIZE = 15;
 const route = useRoute();
 const id = route.params.id;
 
 onMounted(async () => {
     await fetchTerm();
-    await fetchCount();
 });
 
 const currentPage = ref(1);
@@ -121,39 +121,31 @@ const update = async (definition, type) => {
 
     await vote(definition, type);
     await fetchTerm();
-    await fetchCount();
 };
 
-const term = ref(null);
+const definitions = ref(null);
 const count = ref(0);
 
 async function fetchTerm() {
     //TODO handle term not found
-    let { data, error } = await supabase
-        .from('term')
-        .select(`*, definition(*, user:user_profile(*),vote_results(*),tags:definition_tag(tag(*)))`, {
+    let {
+        data,
+        error,
+        count: definitionsCount,
+    } = await supabase
+        .from('definition')
+        .select(`*,term(*),user:user_profile(*),vote_results(*),tags:definition_tag(tag(*))`, {
             count: 'exact',
         })
-        .order('created_at', { ascending: false, foreignTable: 'definition' })
-        .filter('id', 'eq', id)
-        .single();
+        .order('created_at', { ascending: false })
+        .filter('term_id', 'eq', id)
+        .range((currentPage.value - 1) * PAGE_SIZE, currentPage.value * PAGE_SIZE - 1);
 
     if (error) {
         throw error;
     }
-    term.value = data;
-}
-
-async function fetchCount() {
-    let { count: data, error } = await supabase
-        .from('definition')
-        .select(`*`, { count: 'exact', head: true })
-        .filter('term_id', 'eq', id);
-
-    if (error) {
-        throw error;
-    }
-    count.value = data;
+    definitions.value = data;
+    count.value = definitionsCount;
 }
 </script>
 
