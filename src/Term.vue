@@ -110,6 +110,7 @@ const currentPage = ref(1);
 const onPageChange = async (page) => {
     currentPage.value = page;
     await fetchTerm();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 const account = ref(getUser());

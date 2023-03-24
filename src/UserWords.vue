@@ -123,6 +123,7 @@ const currentPage = ref(1);
 const onPageChange = async (page) => {
     currentPage.value = page;
     await fetchDefinitions();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 const MAX_DEFINITION_LENGTH = 55;
