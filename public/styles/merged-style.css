@@ -697,12 +697,29 @@ button {
 }
 .card-buttons-actions_like,
 .card-buttons-actions_dislike {
-    color: #3a3a3a;
-    width: 50px;
+    color: #494949;
+}
+.card-buttons-actions_like svg,
+.card-buttons-actions_dislike svg {
+    height: 2rem;
 }
 .card-buttons-actions_like--voted,
 .card-buttons-actions_dislike--voted {
     color: #9ffc70;
+}
+.card-buttons-actions_likes-amount,
+.card-buttons_actions_dislikes-amount {
+    margin-left: 0.125rem;
+}
+.card-buttons-actions_likes-amount,
+.card-buttons_actions_dislikes-amount {
+    padding-bottom: 0.25rem;
+}
+.card-buttons-actions_likes-separator {
+    width: 1.5rem;
+    text-align: center;
+    margin-left: 2px;
+    padding-bottom: 0.375rem;
 }
 .img-green {
     filter: invert(150%) sepia(91%) saturate(800%) hue-rotate(50deg) brightness(120%) contrast(280%);

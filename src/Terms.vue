@@ -45,9 +45,10 @@
                         >
                             <icon-dislike />
                         </button>
-                        <div class="dislikes-amount">
+                        <div class="card-buttons_actions_dislikes-amount">
                             {{ getVoteResult(item.definition[0]).downvotes }}
                         </div>
+                        <div class="card-buttons-actions_likes-separator">/</div>
                         <button
                             class="card-buttons-actions_like"
                             :class="{
@@ -57,7 +58,7 @@
                         >
                             <icon-like />
                         </button>
-                        <div class="likes-amount">
+                        <div class="card-buttons-actions_likes-amount">
                             {{ getVoteResult(item.definition[0]).upvotes }}
                         </div>
 
