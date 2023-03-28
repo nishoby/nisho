@@ -118,6 +118,7 @@ const currentPage = ref(1);
 const onPageChange = async (page) => {
     currentPage.value = page;
     await fetchTerms();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 const fetchTerms = async () => {
