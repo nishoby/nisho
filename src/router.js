@@ -10,11 +10,26 @@ import Bugs from './Bugs.vue';
 import Add from './Add.vue';
 import Edit from './Edit.vue';
 import FAQ from './FAQ.vue';
+import Login from './Login.vue';
 import DefaultLayout from './DefaultLayout.vue';
 import SimplifiedLayout from './SimplifiedLayout.vue';
 import ComplainAboutDefinition from './ComplainAboutDefinition.vue';
 import UserWords from './UserWords.vue';
 import NotFoundPage from './NotFoundPage.vue';
+import { getUser } from './user.js';
+import { ElMessage } from 'element-plus';
+
+const onlyAuthorized = () => {
+    const user = getUser();
+    if (user === null) {
+        ElMessage.warning('Каб працягнуць аперацыю, вам трэба залагініцца');
+
+        return {
+            name: 'login',
+        };
+    }
+    return true;
+};
 
 const main = [
     {
@@ -114,6 +129,7 @@ const main = [
                 name: 'add',
                 path: '',
                 component: Add,
+                beforeEnter: [onlyAuthorized],
             },
         ],
     },
@@ -169,6 +185,17 @@ const main = [
                 name: 'faq',
                 path: '',
                 component: FAQ,
+            },
+        ],
+    },
+    {
+        path: '/lagin',
+        component: SimplifiedLayout,
+        children: [
+            {
+                name: 'login',
+                path: '',
+                component: Login,
             },
         ],
     },

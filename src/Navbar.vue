@@ -34,20 +34,10 @@
         </form>
     </div>
     <div class="header-btns">
-        <router-link :to="{ name: 'add' }" custom v-slot="{ href, navigate }">
-            <a
-                class="add-btn"
-                v-if="!account"
-                @click="ElMessage.warning('Каб дадаць слова, вам трэба залагініцца')"
-                href="#"
-            >
-                <img class="add-btn-img" src="/assets/img/add.svg" alt="" />
-            </a>
-            <a class="add-btn" v-else :href="href" @click="navigate">
-                <img class="add-btn-img" src="/assets/img/add.svg" alt="" />
-            </a>
+        <router-link class="add-btn" :to="{ name: 'add' }">
+            <img class="add-btn-img" src="/assets/img/add.svg" alt="" />
         </router-link>
-        <el-popover placement="bottom" :width="270" trigger="click">
+        <el-popover placement="bottom" :width="account ? 270 : 60" trigger="click">
             <template #reference>
                 <button class="person-btn">
                     <img class="person-btn-img" src="/assets/img/person.svg" alt="" />
@@ -71,7 +61,10 @@
                 <el-button @click="signOut" type="success">Выхад</el-button>
             </div>
             <div v-else>
-                <el-button @click="signInWithGoogle" type="success">Логін з Google</el-button>
+                <router-link to="login" style="text-decoration: underline"> Логін </router-link>
+                <router-link to="login" style="padding-left: 15px; text-decoration: underline">
+                    Рэгістрацыя
+                </router-link>
             </div>
         </el-popover>
         <el-dropdown>
@@ -109,7 +102,6 @@
 
 <script setup>
 import { ref } from 'vue';
-import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { getUser } from './user.js';
 import { supabase } from './supabase.js';
@@ -143,17 +135,6 @@ const querySearchAsync = async (queryString, cb) => {
 const handleSelect = (item) => {
     router.push({ name: 'term', params: { id: item.id } });
 };
-
-async function signInWithGoogle() {
-    const options = import.meta.env.VITE_REDIRECT_URL
-        ? { redirectTo: import.meta.env.VITE_REDIRECT_URL }
-        : { redirectTo: window.location.origin };
-    const { user, error } = await supabase.auth.signIn({ provider: 'google' }, options);
-    if (error) {
-        throw error;
-    }
-    account.value = user;
-}
 
 async function signOut() {
     const { error } = await supabase.auth.signOut();

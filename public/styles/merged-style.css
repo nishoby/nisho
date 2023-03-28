@@ -46,15 +46,6 @@ body::-webkit-scrollbar-thumb {
 }
 /*----------scroll styles end------------ */
 
-input[type='password'] {
-    font-family: 'fontello';
-    font-style: normal;
-    font-weight: normal;
-    letter-spacing: 0.15rem;
-    font-size: 0.9rem;
-    color: #868686;
-}
-
 body,
 div,
 button,
@@ -245,28 +236,33 @@ button {
 .complaint_form .el-form-item {
     margin-bottom: 2.5rem;
 }
-.add-word_form .el-form-item__label {
+.add-word_form,
+.login_form .el-form-item__label {
     --el-text-color-regular: #494949;
     --el-form-label-font-size: 1rem;
 }
-.add-word_form .el-input__wrapper {
+.add-word_form,
+.login_form .el-input__wrapper {
     --el-input-bg-color: rgba(234, 234, 234, 1);
     --el-input-border-color: rgba(234, 234, 234, 1);
     --el-input-border-radius: 0.5rem;
 
     padding: 1px 1rem;
 }
-.add-word_form .el-input__inner {
+.add-word_form,
+.login_form .el-input__inner {
     height: calc(3.875rem - 2px);
     font-size: 1.5rem;
     color: #494949;
 }
-.add-word_form .el-textarea,
+.add-word_form,
+.login_form .el-textarea,
 .complaint_form .el-textarea {
     --el-input-bg-color: rgba(234, 234, 234, 1);
     --el-input-border-color: rgba(234, 234, 234, 1);
 }
-.add-word_form .el-textarea__inner,
+.add-word_form,
+.login_form .el-textarea__inner,
 .complaint_form .el-textarea__inner {
     --el-input-border-radius: 0.5rem;
 
@@ -964,9 +960,6 @@ button {
         height: 3.75rem;
         font-size: 1.5rem;
     }
-    .cross {
-        display: none;
-    }
     /*---- end of mobile for login, registration----*/
     /*---- mobile for complaint ----*/
     .complaint_form {
@@ -991,7 +984,7 @@ button {
     .add-word_form {
         box-sizing: border-box;
         width: 100vw;
-        padding: 2rem 1.3rem;
+        padding: 3.5rem 1.3rem;
     }
     .note {
         margin-bottom: 1.9rem;
