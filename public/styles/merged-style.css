@@ -489,10 +489,14 @@ button {
     max-width: calc(42.5rem - 2.375rem - 0.75rem);
 }
 .header {
+    position: sticky;
+    top: 0;
     height: 7rem;
+    width: 100%;
     display: grid;
     grid-auto-flow: column;
     grid-template-columns: 1fr 42.5rem 1fr;
+    background:no-repeat linear-gradient(180deg, #b3a5ff -187.3%, #e598fd 100%);
     align-items: center;
 }
 
