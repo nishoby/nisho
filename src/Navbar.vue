@@ -117,7 +117,7 @@ import IconHamburger from './icons/IconHamburger.vue';
 import { Search } from '@element-plus/icons-vue';
 
 const account = ref(getUser());
-const accountName = ref(account.value.email);
+const accountName = ref(account.value ? account.value.email : null);
 const search = ref('');
 
 supabase.auth.onAuthStateChange((event, session) => {
