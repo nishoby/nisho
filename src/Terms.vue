@@ -95,7 +95,7 @@ import { ElMessage } from 'element-plus';
 import { supabase } from './supabase.js';
 import { formatLongDate } from './date.js';
 import { vote, getVoteResult } from './vote.js';
-import { getUser } from './user.js';
+import { getUser } from './auth.js';
 import IconDislike from './icons/IconDislike.vue';
 import IconLike from './icons/IconLike.vue';
 import PageContentSpinner from './PageContentSpinner.vue';

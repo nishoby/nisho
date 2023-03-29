@@ -58,7 +58,7 @@ import { reactive, ref } from 'vue';
 import { supabase } from './supabase.js';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
-import { getUser } from './user.js';
+import { getUser } from './auth.js';
 
 const router = useRouter();
 const newTag = ref('');

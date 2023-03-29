@@ -1,5 +1,5 @@
 import { supabase } from './supabase.js';
-import { getUser } from './user.js';
+import { getUser } from './auth.js';
 
 export const EMPTY_VOTE_RESULT = {
     downvotes: 0,

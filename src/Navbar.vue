@@ -103,7 +103,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { getUser } from './user.js';
+import { getUser } from './auth.js';
 import { supabase } from './supabase.js';
 import IconHamburger from './icons/IconHamburger.vue';
 import { Search } from '@element-plus/icons-vue';

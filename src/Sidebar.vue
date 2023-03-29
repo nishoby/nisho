@@ -13,7 +13,7 @@
 import { Plus } from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
-import { getUser } from './user.js';
+import { getUser } from './auth.js';
 import { ElMessage } from 'element-plus';
 
 const router = useRouter();

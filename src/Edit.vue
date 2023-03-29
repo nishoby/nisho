@@ -60,7 +60,7 @@ import { onMounted, reactive, ref } from 'vue';
 import { supabase } from './supabase.js';
 import { ElMessage } from 'element-plus';
 import { useRoute, useRouter } from 'vue-router';
-import { getUser } from './user.js';
+import { getUser } from './auth.js';
 import PageContentSpinner from './PageContentSpinner.vue';
 
 const router = useRouter();

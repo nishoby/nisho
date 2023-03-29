@@ -53,7 +53,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import { getUser } from './user.js';
+import { getUser } from './auth.js';
 import { supabase } from './supabase.js';
 import { useRoute, useRouter } from 'vue-router';
 import { formatShortDate } from './date.js';

@@ -16,7 +16,7 @@ import SimplifiedLayout from './SimplifiedLayout.vue';
 import ComplainAboutDefinition from './ComplainAboutDefinition.vue';
 import UserWords from './UserWords.vue';
 import NotFoundPage from './NotFoundPage.vue';
-import { getUser } from './user.js';
+import { getUser } from './auth.js';
 import { ElMessage } from 'element-plus';
 
 const onlyAuthorized = () => {
