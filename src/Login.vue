@@ -33,11 +33,13 @@
             </div>
             <div class="gmail-registration">
                 <img class="gmail-img" style="width: 2rem" src="/assets/img/gmail.svg" alt="" />
-                <button class="gmail-registration-btn" type="button" @click="signInWithGoogle">Логін праз Gmail</button>
+                <button class="gmail-registration-btn" type="button" @click="signInWithGoogle">
+                    Логін праз Gmail
+                </button>
             </div>
             <div class="account">
                 <p>Патрэбны аккаунт?</p>
-                <router-link :to="{ name: 'registration' }" class="registration-link"> Рэгістрацыя </router-link>
+                <router-link :to="{ name: 'registration' }" class="registration-link"> Рэгістрацыя</router-link>
             </div>
         </el-form>
     </div>
@@ -45,8 +47,8 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
-import { supabase } from './supabase.js';
 import { reactive } from 'vue';
+import { signInWithGoogle } from './auth.js';
 
 const router = useRouter();
 
@@ -54,17 +56,6 @@ const signInData = reactive({
     login: '',
     password: '',
 });
-
-async function signInWithGoogle() {
-    const options = import.meta.env.VITE_REDIRECT_URL
-        ? { redirectTo: import.meta.env.VITE_REDIRECT_URL }
-        : { redirectTo: window.location.origin };
-    const { user, error } = await supabase.auth.signIn({ provider: 'google' }, options);
-    if (error) {
-        throw error;
-    }
-    account.value = user;
-}
 </script>
 
 <style scoped></style>

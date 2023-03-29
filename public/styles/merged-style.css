@@ -432,7 +432,7 @@ button {
 }
 .gmail-registration-btn {
     height: 90%;
-    padding-left: 0.75rem;
+    padding-left: 2.75rem;
     font-weight: 400;
     font-size: 1.75rem;
     line-height: 2.25rem;
@@ -491,7 +491,7 @@ button {
     display: grid;
     grid-auto-flow: column;
     grid-template-columns: 1fr 42.5rem 1fr;
-    background:no-repeat linear-gradient(180deg, #b3a5ff -187.3%, #d49cfe 100%);
+    background: no-repeat linear-gradient(180deg, #b3a5ff -187.3%, #d49cfe 100%);
     align-items: center;
 }
 
