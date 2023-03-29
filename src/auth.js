@@ -2,7 +2,9 @@ import { supabase } from './supabase';
 
 function getUser() {
     try {
+        //TODO get login
         const user = supabase.auth.user();
+        console.log(user);
         return user ? user : null;
     } catch {
         return null;
