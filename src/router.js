@@ -11,6 +11,7 @@ import Add from './Add.vue';
 import Edit from './Edit.vue';
 import FAQ from './FAQ.vue';
 import Login from './Login.vue';
+import Registration from './Registration.vue';
 import DefaultLayout from './DefaultLayout.vue';
 import SimplifiedLayout from './SimplifiedLayout.vue';
 import ComplainAboutDefinition from './ComplainAboutDefinition.vue';
@@ -196,6 +197,17 @@ const main = [
                 name: 'login',
                 path: '',
                 component: Login,
+            },
+        ],
+    },
+    {
+        path: '/registracya',
+        component: SimplifiedLayout,
+        children: [
+            {
+                name: 'registration',
+                path: '',
+                component: Registration,
             },
         ],
     },

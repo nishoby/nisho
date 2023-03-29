@@ -37,7 +37,7 @@
             </div>
             <div class="account">
                 <p>Патрэбны аккаунт?</p>
-                <a href="/registraciya" class="registration-link"> Рэгістрацыя </a>
+                <router-link :to="{ name: 'registration' }" class="registration-link"> Рэгістрацыя </router-link>
             </div>
         </el-form>
     </div>
