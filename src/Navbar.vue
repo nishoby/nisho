@@ -61,8 +61,8 @@
                 <el-button @click="signOut" type="success">Выхад</el-button>
             </div>
             <div v-else>
-                <router-link to="login" style="text-decoration: underline"> Логін </router-link>
-                <router-link to="login" style="padding-left: 15px; text-decoration: underline">
+                <router-link :to="{ name: 'login' }" style="text-decoration: underline"> Логін </router-link>
+                <router-link :to="{ name: 'registration' }" style="padding-left: 15px; text-decoration: underline">
                     Рэгістрацыя
                 </router-link>
             </div>
