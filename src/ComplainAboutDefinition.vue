@@ -2,7 +2,7 @@
     <div class="complaint-wrapper">
         <h1 class="title title-white">Паcкардзіцца мадэратару</h1>
         <el-form
-            :model="complain"
+            :model="complaint"
             ref="form"
             :rules="rules"
             @submit.prevent="submit"
@@ -49,7 +49,7 @@
             </div>
 
             <el-form-item label="Чаму трэба выдаліць тлумачэнне:" prop="reason">
-                <el-radio-group v-model="complain.reason">
+                <el-radio-group v-model="complaint.reason">
                     <el-radio label="unclear-term"> унутраны жарт без кантэксту ці не рэальны тэрмін </el-radio>
                     <el-radio label="personal-data"> імя ці іншыя асабістыя дадзеныя </el-radio>
                     <el-radio label="hostile-language"> мова варожасці </el-radio>
@@ -58,7 +58,7 @@
             </el-form-item>
 
             <el-form-item prop="comment">
-                <el-input v-model="complain.comment" type="textarea" :rows="3" />
+                <el-input v-model="complaint.comment" type="textarea" :rows="3" />
             </el-form-item>
 
             <input class="submit-btn" type="submit" value="Паскардзіцца" :disabled="loading" />
@@ -98,7 +98,7 @@ async function fetchDefinition() {
 
 const loading = ref(false);
 
-const complain = reactive({
+const complaint = reactive({
     reason: '',
     comment: '',
 });
@@ -122,10 +122,10 @@ const submit = async () => {
 
         loading.value = true;
         try {
-            let { error } = await supabase.rpc('add_complain', {
+            let { error } = await supabase.rpc('add_complaint', {
                 definition_id,
-                reason: complain.reason,
-                comment: complain.comment,
+                reason: complaint.reason,
+                comment: complaint.comment,
             });
             loading.value = false;
             if (error) {

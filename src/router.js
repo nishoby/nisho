@@ -150,7 +150,7 @@ const main = [
         component: SimplifiedLayout,
         children: [
             {
-                name: 'complain',
+                name: 'complaint',
                 path: '',
                 component: ComplainAboutDefinition,
             },

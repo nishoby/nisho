@@ -65,7 +65,7 @@
                         <router-link
                             class="card-buttons-actions_flag"
                             :to="{
-                                name: 'complain',
+                                name: 'complaint',
                                 query: { id: item.definition[0].id },
                             }"
                         >

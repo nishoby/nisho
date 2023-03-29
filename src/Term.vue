@@ -64,7 +64,7 @@
 
                         <router-link
                             class="card-buttons-actions_flag"
-                            :to="{ name: 'complain', query: { id: item.id } }"
+                            :to="{ name: 'complaint', query: { id: item.id } }"
                         >
                             <img class="flag-img" src="/assets/img/flag.svg" alt="" />
                         </router-link>
