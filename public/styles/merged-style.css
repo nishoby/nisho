@@ -224,7 +224,7 @@ button {
 }
 .add-word_input,
 .login_input {
-    margin-bottom: 2.5rem;
+    margin-bottom: 0.5rem;
     height: 3.875rem;
     font-size: 1.5rem;
     background-color: rgba(234, 234, 234, 1);
@@ -232,7 +232,9 @@ button {
     border-radius: 0.5rem;
 }
 .add-word_form .el-form-item,
-.complaint_form .el-form-item {
+.complaint_form .el-form-item,
+.login_form .el-form-item {
+    padding-top: 1rem;
     margin-bottom: 2.5rem;
 }
 .add-word_form,
