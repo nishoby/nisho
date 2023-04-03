@@ -50,3 +50,35 @@ create trigger on_auth_user_created
     on auth.users
     for each row
     execute procedure handle_new_user();
+
+drop trigger if exists on_user_update on auth.users;
+
+create or replace function handle_user_name() returns trigger
+    security definer
+    SET search_path = public
+    language plpgsql
+as
+$$
+begin
+UPDATE user_profile
+SET name = new.raw_user_meta_data ->> 'name'
+WHERE user_id = new.id AND (new.raw_user_meta_data ->> 'name') is not null;
+
+return new;
+end;
+$$;
+
+alter function handle_user_name() owner to postgres;
+
+grant execute on function handle_user_name() to anon;
+
+grant execute on function handle_user_name() to authenticated;
+
+grant execute on function handle_user_name() to service_role;
+
+
+create trigger on_user_update
+    after update
+    on auth.users
+    for each row
+    execute procedure handle_user_name();

@@ -37,19 +37,23 @@
         <router-link class="add-btn" :to="{ name: 'add' }">
             <img class="add-btn-img" src="/assets/img/add.svg" alt="" />
         </router-link>
-        <el-popover placement="bottom" :width="account ? 270 : 60" trigger="click">
+        <el-popover
+            placement="bottom"
+            :popper-class="account ? 'dropdown_user_auth' : 'dropdown_user_unauth'"
+            trigger="click"
+        >
             <template #reference>
                 <button class="person-btn">
                     <img class="person-btn-img" src="/assets/img/person.svg" alt="" />
                 </button>
             </template>
             <div v-if="account">
-                <el-row style="padding-bottom: 10px"> Email: {{ account.email }} </el-row>
+                <el-row style="padding-bottom: 10px"> Email: {{ account.email }}</el-row>
                 <el-row style="padding-bottom: 10px">
                     Ваша імя:
                     <el-input v-model="accountName">
-                        <template #append>
-                            <el-button :icon="Search" />
+                        <template #append v-if="oldAccountName !== accountName">
+                            <el-button :icon="Checked" @click="updateUserName(accountName)">Захаваць</el-button>
                         </template>
                     </el-input>
                 </el-row>
@@ -61,7 +65,7 @@
                 <el-button @click="signOut" type="success">Выхад</el-button>
             </div>
             <div v-else>
-                <router-link :to="{ name: 'login' }" style="text-decoration: underline"> Логін </router-link>
+                <router-link :to="{ name: 'login' }" style="text-decoration: underline"> Логін</router-link>
                 <router-link :to="{ name: 'registration' }" style="padding-left: 15px; text-decoration: underline">
                     Рэгістрацыя
                 </router-link>
@@ -106,10 +110,12 @@ import { useRouter } from 'vue-router';
 import { getUser } from './auth.js';
 import { supabase } from './supabase.js';
 import IconHamburger from './icons/IconHamburger.vue';
-import { Search } from '@element-plus/icons-vue';
+import { Checked } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 
 const account = ref(getUser());
-const accountName = ref(account.value ? account.value.email : null);
+const oldAccountName = ref(account.value ? account.value.user_metadata.name : '');
+const accountName = ref(account.value ? account.value.user_metadata.name : '');
 const search = ref('');
 
 supabase.auth.onAuthStateChange((event, session) => {
@@ -132,6 +138,21 @@ const querySearchAsync = async (queryString, cb) => {
     cb(data);
 };
 
+const updateUserName = async (username) => {
+    const { data, error } = await supabase.auth.update({
+        data: {
+            name: username.trim(),
+        },
+    });
+    accountName.value = data.user_metadata.name;
+    oldAccountName.value = data.user_metadata.name;
+    if (error) {
+        ElMessage.error('Праізашла памылка');
+        throw error;
+    }
+    ElMessage.success('Паспяхова змянілі імя');
+};
+
 const handleSelect = (item) => {
     router.push({ name: 'term', params: { id: item.id } });
 };
@@ -146,4 +167,12 @@ async function signOut() {
 }
 </script>
 
-<style scoped></style>
+<style>
+.dropdown_user_unauth {
+    width: 70px !important;
+}
+
+.dropdown_user_auth {
+    width: 90% !important;
+}
+</style>
