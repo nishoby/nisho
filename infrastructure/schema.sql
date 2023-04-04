@@ -82,3 +82,24 @@ create trigger on_user_update
     on auth.users
     for each row
     execute procedure handle_user_name();
+
+create function edit_term(definition_id int, definition varchar, example character varying,
+                          tags          character varying[]) returns integer
+    language sql
+    as
+$$
+DELETE
+FROM definition_tag as dt
+WHERE dt.definition_id = edit_term.definition_id;
+with list_tags as (
+    SELECT tag
+    FROM unnest(tags) AS tag
+),
+    insert_tag as (INSERT INTO tag (name) (SELECT tag from list_tags) on conflict do nothing returning id as tag_id)
+INSERT INTO definition_tag(definition_id, tag_id)
+SELECT edit_term.definition_id,
+    tag_id
+from insert_tag;
+update definition SET content = edit_term.definition, example = edit_term.example WHERE id = definition_id;
+SELECT term_id FROM definition WHERE id = edit_term.definition_id;
+$$;

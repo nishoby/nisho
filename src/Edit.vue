@@ -128,7 +128,7 @@ const definition = ref(null);
 async function fetchDefinition() {
     const { data, error } = await supabase
         .from('definition')
-        .select(`*, term(*)`)
+        .select(`*, term(*), tags:definition_tag(tag(*))`)
         .filter('id', 'eq', definition_id)
         .single();
 
@@ -146,7 +146,7 @@ async function fetchDefinition() {
     new_term.term_name = data.term.name;
     new_term.definition = data.content;
     new_term.example = data.example;
-    new_term.tags = []; // TODO: load tags
+    new_term.tags = Array.isArray(data.tags) ? data.tags.map((i) => i.tag.name) : [];
 }
 
 const submit = async () => {
@@ -159,13 +159,11 @@ const submit = async () => {
         if (!valid) return;
 
         try {
-            let { data, error } = await supabase.rpc('edit_term', {
+            let { error } = await supabase.rpc('edit_term', {
                 definition_id,
                 definition: new_term.definition,
                 example: new_term.example,
-                term_name: new_term.term_name.trim(),
-                // TODO: send tags
-                // tags      : new_term.tags,
+                tags: new_term.tags,
             });
             loading.value = false;
             if (error) {
