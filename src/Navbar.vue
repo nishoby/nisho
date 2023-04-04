@@ -171,8 +171,12 @@ async function signOut() {
 .dropdown_user_unauth {
     width: 70px !important;
 }
-
 .dropdown_user_auth {
-    width: 90% !important;
+    width: 300px !important;
+}
+@media screen and (max-width: 700px) {
+    .dropdown_user_auth {
+        width: 90% !important;
+    }
 }
 </style>
