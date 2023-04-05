@@ -11,6 +11,8 @@ import Add from './Add.vue';
 import Edit from './Edit.vue';
 import FAQ from './FAQ.vue';
 import Login from './Login.vue';
+import RestorePassword from './RestorePassword.vue';
+import NewPassword from './NewPassword.vue';
 import Registration from './Registration.vue';
 import DefaultLayout from './DefaultLayout.vue';
 import SimplifiedLayout from './SimplifiedLayout.vue';
@@ -208,6 +210,28 @@ const main = [
                 name: 'registration',
                 path: '',
                 component: Registration,
+            },
+        ],
+    },
+    {
+        path: '/adnavic-parol',
+        component: SimplifiedLayout,
+        children: [
+            {
+                name: 'restore-password',
+                path: '',
+                component: RestorePassword,
+            },
+        ],
+    },
+    {
+        path: '/novyy-parol',
+        component: SimplifiedLayout,
+        children: [
+            {
+                name: 'new-password',
+                path: '',
+                component: NewPassword,
             },
         ],
     },

@@ -29,7 +29,7 @@
                 />
             </el-form-item>
 
-            <a class="change-password" href="#">Не памятаю пароль</a>
+            <router-link class="change-password" :to="{ name: 'restore-password' }"> Не памятаю пароль </router-link>
 
             <input class="login-submit-btn" type="submit" value="Уваход" :disabled="loading" />
 

@@ -56,4 +56,14 @@ async function signUp(email, password, login) {
     return data;
 }
 
-export { getUser, signInWithGoogle, signUp, signIn };
+async function restorePassword(email) {
+    const { error } = await supabase.auth.user().resetPasswordForEmail(email, {
+        redirectTo: import.meta.env.VITE_REDIRECT_URL + '/novyy-parol',
+    });
+
+    if (error) {
+        throw error;
+    }
+}
+
+export { getUser, signInWithGoogle, signUp, signIn, restorePassword };
