@@ -102,7 +102,7 @@ import PageContentSpinner from './PageContentSpinner.vue';
 
 const terms = ref(null);
 const count = ref(0);
-const account = ref(getUser());
+const account = ref();
 
 const update = async (definition, type) => {
     if (!account.value) {
@@ -142,6 +142,7 @@ const fetchTerms = async () => {
 };
 
 onMounted(async () => {
+    account.value = await getUser();
     await fetchTerms();
 });
 </script>

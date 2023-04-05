@@ -76,7 +76,7 @@ onMounted(async () => {
 
 async function fetchUser() {
     if (route.name === 'current-user-words') {
-        user.value = getUser();
+        user.value = await getUser();
         header.value = 'Мае словы';
         canEdit.value = true;
     } else if (route.params.id) {

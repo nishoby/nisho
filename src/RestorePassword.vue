@@ -55,8 +55,7 @@ const submit = async () => {
     }
     loading.value = true;
     try {
-        const data = await restorePassword(restorePasswordData.email);
-        console.log(data);
+        await restorePassword(restorePasswordData.email);
         ElMessage.success('Адпраўлена спасылка на email');
         await router.push({ name: 'terms' });
     } catch (e) {

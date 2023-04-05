@@ -71,7 +71,6 @@ import { reactive, ref, onMounted } from 'vue';
 import { supabase } from './supabase.js';
 import { ElMessage } from 'element-plus';
 import { useRoute, useRouter } from 'vue-router';
-import { getUser } from './auth.js';
 
 const router = useRouter();
 const route = useRoute();
@@ -107,16 +106,10 @@ const rules = reactive({
     comment: [{ min: 10, message: 'мінімум 10 сымбалей', trigger: 'blur' }],
 });
 const form = ref();
-const account = ref(getUser());
 const submit = async () => {
     if (!form.value) {
         return;
     }
-    if (!account.value) {
-        ElMessage.warning('Каб паcкардзіцца на слова, вам трэба залагініцца');
-        return;
-    }
-
     await form.value.validate(async (valid) => {
         if (!valid) return;
 

@@ -22,8 +22,8 @@ import NotFoundPage from './NotFoundPage.vue';
 import { getUser } from './auth.js';
 import { ElMessage } from 'element-plus';
 
-const onlyAuthorized = () => {
-    const user = getUser();
+const onlyAuthorized = async () => {
+    const user = await getUser();
     if (user === null) {
         ElMessage.warning('Каб працягнуць аперацыю, вам трэба залагініцца');
 
@@ -144,6 +144,7 @@ const main = [
                 name: 'edit',
                 path: '',
                 component: Edit,
+                beforeEnter: [onlyAuthorized],
             },
         ],
     },
@@ -155,6 +156,7 @@ const main = [
                 name: 'complaint',
                 path: '',
                 component: ComplainAboutDefinition,
+                beforeEnter: [onlyAuthorized],
             },
         ],
     },

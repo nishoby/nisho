@@ -105,7 +105,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { getUser } from './auth.js';
 import { supabase } from './supabase.js';
@@ -113,9 +113,9 @@ import IconHamburger from './icons/IconHamburger.vue';
 import { Checked } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
-const account = ref(getUser());
-const oldAccountName = ref(account.value ? account.value.user_metadata.name : '');
-const accountName = ref(account.value ? account.value.user_metadata.name : '');
+const account = ref();
+const oldAccountName = ref('');
+const accountName = ref('');
 const search = ref('');
 
 supabase.auth.onAuthStateChange((event, session) => {
@@ -165,15 +165,24 @@ async function signOut() {
     }
     account.value = null;
 }
+
+onMounted(async () => {
+    account.value = await getUser();
+
+    oldAccountName.value = account.value ? account.value.user_metadata.name : '';
+    accountName.value = account.value ? account.value.user_metadata.name : '';
+});
 </script>
 
 <style>
 .dropdown_user_unauth {
     width: 70px !important;
 }
+
 .dropdown_user_auth {
     width: 300px !important;
 }
+
 @media screen and (max-width: 700px) {
     .dropdown_user_auth {
         width: 90% !important;

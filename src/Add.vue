@@ -58,7 +58,6 @@ import { reactive, ref } from 'vue';
 import { supabase } from './supabase.js';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
-import { getUser } from './auth.js';
 
 const router = useRouter();
 const newTag = ref('');
@@ -107,13 +106,8 @@ const rules = reactive({
     ],
 });
 const form = ref();
-const account = ref(getUser());
 const submit = async () => {
     if (!form.value) {
-        return;
-    }
-    if (!account.value) {
-        ElMessage.warning('Каб дадаць слова, вам трэба залагініцца');
         return;
     }
     loading.value = true;

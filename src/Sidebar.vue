@@ -12,12 +12,16 @@
 <script setup>
 import { Plus } from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { getUser } from './auth.js';
 import { ElMessage } from 'element-plus';
 
 const router = useRouter();
-const account = ref(getUser());
+const account = ref();
+
+onMounted(async () => {
+    account.value = await getUser();
+});
 
 const goToAdding = () => {
     if (account.value) {

@@ -110,13 +110,10 @@ const rules = reactive({
     ],
 });
 const form = ref();
-const account = ref(getUser());
+const account = ref();
 
 onMounted(async () => {
-    if (!account.value) {
-        await router.back();
-        return;
-    }
+    account.value = await getUser();
 
     await fetchDefinition();
 });

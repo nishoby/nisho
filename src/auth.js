@@ -1,11 +1,9 @@
 import { supabase } from './supabase';
 
-function getUser() {
+async function getUser() {
     try {
-        //TODO get login
-        const user = supabase.auth.user();
-        console.log(user);
-        return user ? user : null;
+        const { data } = await supabase.auth.getUser();
+        return data.user;
     } catch {
         return null;
     }
@@ -15,14 +13,14 @@ async function signInWithGoogle() {
     const options = import.meta.env.VITE_REDIRECT_URL
         ? { redirectTo: import.meta.env.VITE_REDIRECT_URL }
         : { redirectTo: window.location.origin };
-    const { error } = await supabase.auth.signIn({ provider: 'google' }, options);
+    const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options });
     if (error) {
         throw error;
     }
 }
 
 async function signIn(email, password) {
-    const { data, error } = await supabase.auth.signIn({
+    const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
     });
@@ -35,19 +33,17 @@ async function signIn(email, password) {
 }
 
 async function signUp(email, password, login) {
-    const { data, error } = await supabase.auth.signUp(
-        {
-            email,
-            password,
-        },
-        {
-            redirectTo: import.meta.env.VITE_REDIRECT_URL,
+    const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+            emailRedirectTo: import.meta.env.VITE_REDIRECT_URL,
             data: {
                 login,
                 name: login,
             },
-        }
-    );
+        },
+    });
 
     if (error) {
         throw error;
@@ -57,7 +53,7 @@ async function signUp(email, password, login) {
 }
 
 async function restorePassword(email) {
-    const { error } = await supabase.auth.user().resetPasswordForEmail(email, {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: import.meta.env.VITE_REDIRECT_URL + '/novyy-parol',
     });
 

@@ -113,7 +113,7 @@ const onPageChange = async (page) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-const account = ref(getUser());
+const account = ref();
 const update = async (definition, type) => {
     if (!account.value) {
         ElMessage.warning('Каб прагаласаваць, вам трэба залагініцца');
@@ -148,6 +148,9 @@ async function fetchTerm() {
     definitions.value = data;
     count.value = definitionsCount;
 }
+onMounted(async () => {
+    account.value = await getUser();
+});
 </script>
 
 <style scoped></style>
