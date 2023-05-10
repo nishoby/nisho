@@ -8,9 +8,9 @@
     <footer class="footer">
         <div class="links">
             <div class="social-links">
-                <a href="#" class="link">
-                    <img src="/assets/img/instagram.svg" alt="" />
-                </a>
+<!--                <a href="#" class="link">-->
+<!--                    <img src="/assets/img/instagram.svg" alt="" />-->
+<!--                </a>-->
                 <a href="https://discord.gg/TPpWYFqT" class="link">
                     <img src="/assets/img/discord.svg" alt="" />
                 </a>
