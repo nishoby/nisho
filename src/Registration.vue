@@ -39,9 +39,7 @@
 
             <div class="gmail-registration">
                 <img class="gmail-img" style="width: 2rem" src="/assets/img/gmail.svg" alt="" />
-                <button class="gmail-registration-btn" type="button" @click="signInWithGoogle">
-                    Логін праз Gmail
-                </button>
+                <button class="gmail-registration-btn" type="button" @click="signInWithGoogle">Логін праз Gmail</button>
             </div>
 
             <div class="account">
@@ -95,8 +93,9 @@ const submit = async () => {
     }
     loading.value = true;
     try {
-        const data = await signUp(signUpData.email, signUpData.password, signUpData.login);
-        console.log(data);
+        await signUp(signUpData.email, signUpData.password, signUpData.login);
+        ElMessage.error('Вы зарэгістраваліся! Перайдзіце па спасылцы ў лісце на сваім паштовай скрыні');
+        await router.push({ name: 'terms' });
     } catch (e) {
         ElMessage.error('Праізашла памылка');
         throw e;
