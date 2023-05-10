@@ -7,7 +7,7 @@
                 <p>
                     Калі вы заўважыле багі, калі ласка паведамляйце пра іх нашым распрацоўшчыкам на гітхабе:
                     <br />
-                    <a href="https://github.com/alherd-by/nisho/issues">https://github.com/alherd-by/nisho/issues</a>
+                    <a href="https://github.com/nishoby/nisho/issues">https://github.com/alherd-by/nisho/issues</a>
                     <br />
                     Проста стварыце новую задачу (issue) там.
                 </p>
