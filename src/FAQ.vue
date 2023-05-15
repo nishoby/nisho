@@ -2,7 +2,7 @@
     <div class="main-container container">
         <div class="cards-div">
             <div class="card">
-                <h3>FAQ</h3>
+                <h2>FAQ</h2>
                 <ul>
                     <li>
                         <b>Як дадаць слова?</b>
