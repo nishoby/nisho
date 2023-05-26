@@ -19,6 +19,7 @@
                 style="width: 100%"
                 popper-class="search-autocomplete"
                 placeholder="Пачніце ўвадзіць слова"
+                clearable
             >
                 <template #default="{ item }">
                     <span>
