@@ -107,7 +107,7 @@ import PageContentSpinner from './PageContentSpinner.vue';
 
 const router = useRouter();
 const route = useRoute();
-const searchQuery = route.query.posuk?.trim();
+const searchQuery = route.query.poshuk?.trim();
 const terms = ref(null);
 const count = ref(0);
 const account = ref();

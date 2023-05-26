@@ -119,7 +119,7 @@ const route = useRoute();
 const account = ref();
 const oldAccountName = ref('');
 const accountName = ref('');
-const search = ref(route.query.posuk?.trim() || '');
+const search = ref(route.query.poshuk?.trim() || '');
 
 supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN') {
@@ -160,7 +160,7 @@ const handleSelect = (item) => {
     if (item.id) {
         router.push({ name: 'term', params: { id: item.id } });
     } else if (item.value) {
-        router.push({ name: 'terms', query: { posuk: item.value } });
+        router.push({ name: 'terms', query: { poshuk: item.value } });
     }
 };
 
