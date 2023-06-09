@@ -26,8 +26,8 @@ create or replace function handle_new_user() returns trigger
 as
 $$
 begin
-insert into public."user_profile" (user_id, email, name)
-values (new.id, new.email, new.raw_user_meta_data ->> 'name');
+insert into public."user_profile" (user_id, name)
+values (new.id, new.raw_user_meta_data ->> 'name');
 
 UPDATE auth.users
 SET raw_user_meta_data = raw_user_meta_data || jsonb_build_object('login', coalesce(new.raw_user_meta_data ->> 'name', new.raw_user_meta_data ->> 'login'))
