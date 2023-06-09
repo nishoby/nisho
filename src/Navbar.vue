@@ -15,9 +15,11 @@
                 size="large"
                 :fit-input-width="false"
                 @select="handleSelect"
+                select-when-unmatched
                 style="width: 100%"
                 popper-class="search-autocomplete"
                 placeholder="Пачніце ўвадзіць слова"
+                clearable
             >
                 <template #default="{ item }">
                     <span>
@@ -106,17 +108,18 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { getUser } from './auth.js';
 import { supabase } from './supabase.js';
 import IconHamburger from './icons/IconHamburger.vue';
 import { Checked } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
+const route = useRoute();
 const account = ref();
 const oldAccountName = ref('');
 const accountName = ref('');
-const search = ref('');
+const search = ref(route.query.poshuk?.trim() || '');
 
 supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN') {
@@ -154,7 +157,11 @@ const updateUserName = async (username) => {
 };
 
 const handleSelect = (item) => {
-    router.push({ name: 'term', params: { id: item.id } });
+    if (item.id) {
+        router.push({ name: 'term', params: { id: item.id } });
+    } else if (item.value) {
+        router.push({ name: 'terms', query: { poshuk: item.value } });
+    }
 };
 
 async function signOut() {

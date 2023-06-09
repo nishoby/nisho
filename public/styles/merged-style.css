@@ -156,7 +156,7 @@ button {
     line-height: 130%;
 }
 .complaint-block {
-    color: rgba(73, 73, 73, 1);
+    color: #494949;
     padding-bottom: 1.25rem;
 }
 .complaint-subtitle {
@@ -627,7 +627,7 @@ button {
 .card-description,
 .my-card-description,
 .card-example {
-    color: rgba(73, 73, 73, 1);
+    color: #494949;
     font-family: 'PT Sans';
     font-weight: 400;
     font-size: 1.25rem;
@@ -859,6 +859,19 @@ button {
 .el-form-item__error {
     margin-top: 0.25rem;
     font-size: 1rem;
+}
+
+.terms__not-found-card {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    background-color: white;
+    padding: 1.5rem;
+    font-size: 1.25rem;
+}
+
+.terms__search-query {
+    color: #9442ce;
 }
 
 @media screen and (max-width: 992px) {

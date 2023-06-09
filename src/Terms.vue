@@ -2,6 +2,10 @@
     <div class="main-container container">
         <PageContentSpinner v-if="!terms" />
         <div v-else class="cards-div">
+            <div v-if="searchQuery && !terms.length" class="terms__not-found-card">
+                Нічога не знойдзена для запыту <span class="terms__search-query">{{ searchQuery }}</span>
+            </div>
+
             <div class="card" v-for="item of terms">
                 <router-link class="card-title" :to="{ name: 'term', params: { id: item.id } }">
                     {{ item.name }}
@@ -91,6 +95,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { supabase } from './supabase.js';
 import { formatLongDate } from './date.js';
@@ -100,6 +105,9 @@ import IconDislike from './icons/IconDislike.vue';
 import IconLike from './icons/IconLike.vue';
 import PageContentSpinner from './PageContentSpinner.vue';
 
+const router = useRouter();
+const route = useRoute();
+const searchQuery = route.query.poshuk?.trim();
 const terms = ref(null);
 const count = ref(0);
 const account = ref();
@@ -123,16 +131,18 @@ const onPageChange = async (page) => {
 
 const fetchTerms = async () => {
     //TODO сделать view вместо выборки
-    let {
-        data,
-        error,
-        count: termsCount,
-    } = await supabase
+    let queryBuilder = supabase
         .from('term')
         .select(`*, definition(*,user:user_profile(*),vote_results(*),tags:definition_tag(tag(*)))`, { count: 'exact' })
         .order('created_at', { ascending: false, foreignTable: 'definition' })
         .limit(1, { foreignTable: 'definition' })
         .range((currentPage.value - 1) * 15, currentPage.value * 15 - 1);
+
+    if (searchQuery) {
+        queryBuilder = queryBuilder.filter('name', 'ilike', `%${searchQuery}%`);
+    }
+
+    let { data, error, count: termsCount } = await queryBuilder;
 
     if (error) {
         throw error;
