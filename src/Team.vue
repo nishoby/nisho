@@ -12,7 +12,7 @@
                     <li>Павел Патапаў, фулстэк распрацоўка.</li>
                 </ul>
 
-                Вы можаце таксама далучыцца да каманды, каб дапамагчы платформе.
+                Вы можаце таксама <a href="https://next.falanster.info/index.php/apps/forms/s/5ygE4SJqtaCrxKbJiGL5nDyL" target="_blank">далучыцца да каманды</a>, каб дапамагчы платформе.
                 <br />
                 На сёння патрэбны наступныя ролі:
                 <ul style="padding-left: 1rem">
