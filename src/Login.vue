@@ -94,7 +94,7 @@ const submit = async () => {
             ElMessage.success('Паспяховая аўтарызацыя');
             await router.push({ name: 'terms' });
         } catch (e) {
-            let message = 'Праізашла памылка';
+            let message = 'Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна';
             if (typeof e === 'object' && e.message && e.message === 'Invalid login credentials') {
                 message = 'Неверный email ці пароль';
             }

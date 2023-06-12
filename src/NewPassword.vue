@@ -72,7 +72,7 @@ const submit = async () => {
         // const data = await signUp(newPasswordData.email, newPasswordData.password, newPasswordData.login);
         console.log(data);
     } catch (e) {
-        ElMessage.error('Праізашла памылка');
+        ElMessage.error('Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна');
         throw e;
     } finally {
         loading.value = false;

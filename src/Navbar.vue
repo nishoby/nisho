@@ -150,7 +150,7 @@ const updateUserName = async (username) => {
     accountName.value = data.user.user_metadata.name;
     oldAccountName.value = data.user.user_metadata.name;
     if (error) {
-        ElMessage.error('Праізашла памылка');
+        ElMessage.error('Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна');
         throw error;
     }
     ElMessage.success('Паспяхова змянілі імя');

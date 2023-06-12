@@ -59,7 +59,7 @@ const submit = async () => {
         ElMessage.success('Адпраўлена спасылка на email');
         await router.push({ name: 'terms' });
     } catch (e) {
-        ElMessage.error('Праізашла памылка');
+        ElMessage.error('Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна');
         throw e;
     } finally {
         loading.value = false;

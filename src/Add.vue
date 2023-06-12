@@ -129,7 +129,7 @@ const submit = async () => {
             ElMessage.success('Паспяхова даданы тэрмін');
             await router.push({ name: 'term', params: { id: data } });
         } catch (error) {
-            ElMessage.error('Адбылася памылка');
+            ElMessage.error('Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна');
             throw error;
         }
     });

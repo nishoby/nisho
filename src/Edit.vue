@@ -169,7 +169,7 @@ const submit = async () => {
             ElMessage.success('Паспяхова адрэдагаваны тэрмін');
             await router.back();
         } catch (error) {
-            ElMessage.error('Адбылася памылка');
+            ElMessage.error('Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна');
             throw error;
         }
     });

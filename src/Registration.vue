@@ -97,7 +97,7 @@ const submit = async () => {
         ElMessage.error('Вы зарэгістраваліся! Перайдзіце па спасылцы ў лісце на сваім паштовай скрыні');
         await router.push({ name: 'terms' });
     } catch (e) {
-        ElMessage.error('Праізашла памылка');
+        ElMessage.error('Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна');
         throw e;
     } finally {
         loading.value = false;
