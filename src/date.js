@@ -60,7 +60,7 @@ function formatLongDate(raw) {
     const shortMonth = fallbackMonthFormatter.format(date);
     const day = fallbackDayFormatter.format(date);
 
-    return `${day} ${BE_BY_MONTHS[shortMonth]} ${year}`;
+    return `${day} ${BE_BY_MONTHS[shortMonth - 1]} ${year}`;
 }
 
 export { formatShortDate, formatLongDate };
