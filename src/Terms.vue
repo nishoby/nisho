@@ -134,7 +134,7 @@ const fetchTerms = async () => {
     let queryBuilder = supabase
         .from('term')
         .select(`*, definition(*,user:user_profile(*),vote_results(*),tags:definition_tag(tag(*)))`, { count: 'exact' })
-        .order('created_at', { ascending: false, foreignTable: 'definition' })
+        .order('created_at', { ascending: false/*, foreignTable: 'definition'*/ })
         .limit(1, { foreignTable: 'definition' })
         .range((currentPage.value - 1) * 15, currentPage.value * 15 - 1);
 
