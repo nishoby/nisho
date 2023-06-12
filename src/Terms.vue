@@ -6,7 +6,7 @@
                 Нічога не знойдзена для запыту <span class="terms__search-query">{{ searchQuery }}</span>
             </div>
 
-            <div class="card" v-for="item of terms">
+            <div class="card" v-for="item of terms" :key="item.id">
                 <router-link class="card-title" :to="{ name: 'term', params: { id: item.id } }">
                     {{ item.name }}
                 </router-link>
