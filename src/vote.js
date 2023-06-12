@@ -38,8 +38,8 @@ export const removeVote = async (definition) => {
 
     await supabase.from('votes').delete().eq('definition_id', definition.id).eq('user_id', user.id);
 
-    const voteResult = getVoteResult(definition);
-    removeLocalVote(voteResult);
+    // const voteResult = getVoteResult(definition);
+    // removeLocalVote(voteResult);
 };
 
 export const upsertVote = async (definition, type) => {
@@ -56,9 +56,9 @@ export const upsertVote = async (definition, type) => {
         }
     );
 
-    const voteResult = getVoteResult(definition);
-    removeLocalVote(voteResult);
-    addLocalVote(voteResult, type);
+    // const voteResult = getVoteResult(definition);
+    // removeLocalVote(voteResult);
+    // addLocalVote(voteResult, type);
 };
 
 export const vote = async (definition, type) => {
