@@ -5,11 +5,8 @@
                 <h3>Багі</h3>
 
                 <p>
-                    Калі вы заўважыле багі, калі ласка паведамляйце пра іх нашым распрацоўшчыкам на гітхабе:
-                    <br />
-                    <a href="https://github.com/nishoby/nisho/issues">https://github.com/nishoby/nisho/issues</a>
-                    <br />
-                    Проста стварыце новую задачу (issue) там.
+                    Калі вы заўважыле багі, калі ласка паведамляйце пра іх нашым распрацоўшчыкам на гітхабе
+                    <a href="https://github.com/nishoby/nisho/issues">гітхабе</a>. Проста стварыце новую задачу (issue) там.
                 </p>
             </div>
         </div>

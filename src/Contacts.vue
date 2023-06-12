@@ -3,12 +3,10 @@
         <div class="cards-div">
             <div class="card">
                 <h3>Кантакты</h3>
-
+                Пішыце камусці з <a href="/kamanda">удзельнікаў каманды</a>.
                 З намі можна звязацца ў
                 <ul style="padding-left: 1rem">
-                    <li>Дыскардзе - чат для супольнасці.</li>
-                    <li>Інстаграме - словы тыдня.</li>
-                    <li>Тык-току - словы тыдня з відэа тлучачэннямі.</li>
+                    <li><a href="https://discord.com/invite/TPpWYFqT" target="_blank">Дыскардзе - чат для рэдактараў.</a></li>
                 </ul>
             </div>
         </div>
