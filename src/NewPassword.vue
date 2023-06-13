@@ -33,6 +33,7 @@ import { useRouter } from 'vue-router';
 import { reactive, ref } from 'vue';
 import { signInWithGoogle, signUp } from './auth.js';
 import { ElMessage } from 'element-plus';
+import { commonError } from './error.js';
 
 const router = useRouter();
 const account = ref();
@@ -72,7 +73,7 @@ const submit = async () => {
         // const data = await signUp(newPasswordData.email, newPasswordData.password, newPasswordData.login);
         console.log(data);
     } catch (e) {
-        ElMessage.error('Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна');
+        ElMessage.error(commonError);
         throw e;
     } finally {
         loading.value = false;

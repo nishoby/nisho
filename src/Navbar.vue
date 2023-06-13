@@ -114,6 +114,7 @@ import { supabase } from './supabase.js';
 import IconHamburger from './icons/IconHamburger.vue';
 import { Checked } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
+import { commonError } from './error.js';
 
 const route = useRoute();
 const account = ref();
@@ -150,7 +151,7 @@ const updateUserName = async (username) => {
     accountName.value = data.user.user_metadata.name;
     oldAccountName.value = data.user.user_metadata.name;
     if (error) {
-        ElMessage.error('Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна');
+        ElMessage.error(commonError);
         throw error;
     }
     ElMessage.success('Паспяхова змянілі імя');

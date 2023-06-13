@@ -62,6 +62,7 @@ import { ElMessage } from 'element-plus';
 import { useRoute, useRouter } from 'vue-router';
 import { getUser } from './auth.js';
 import PageContentSpinner from './PageContentSpinner.vue';
+import { commonError } from './error.js';
 
 const router = useRouter();
 const newTag = ref('');
@@ -169,7 +170,7 @@ const submit = async () => {
             ElMessage.success('Паспяхова адрэдагаваны тэрмін');
             await router.back();
         } catch (error) {
-            ElMessage.error('Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна');
+            ElMessage.error(commonError);
             throw error;
         }
     });

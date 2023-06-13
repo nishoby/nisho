@@ -71,6 +71,7 @@ import { reactive, ref, onMounted } from 'vue';
 import { supabase } from './supabase.js';
 import { ElMessage } from 'element-plus';
 import { useRoute, useRouter } from 'vue-router';
+import { commonError } from './error.js';
 
 const router = useRouter();
 const route = useRoute();
@@ -127,7 +128,7 @@ const submit = async () => {
             ElMessage.success('Паспяхова даданая скарга');
             await router.back();
         } catch (error) {
-            ElMessage.error('Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна');
+            ElMessage.error(commonError);
             throw error;
         } finally {
             loading.value = false;

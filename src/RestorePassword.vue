@@ -30,6 +30,7 @@ import { useRouter } from 'vue-router';
 import { reactive, ref } from 'vue';
 import { restorePassword } from './auth.js';
 import { ElMessage } from 'element-plus';
+import { commonError } from './error.js';
 
 const router = useRouter();
 const account = ref();
@@ -59,7 +60,7 @@ const submit = async () => {
         ElMessage.success('Адпраўлена спасылка на email');
         await router.push({ name: 'terms' });
     } catch (e) {
-        ElMessage.error('Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна');
+        ElMessage.error(commonError);
         throw e;
     } finally {
         loading.value = false;

@@ -55,6 +55,7 @@ import { useRouter } from 'vue-router';
 import { reactive, ref } from 'vue';
 import { signInWithGoogle, signIn } from './auth.js';
 import { ElMessage } from 'element-plus';
+import { commonError } from './error.js';
 
 const router = useRouter();
 
@@ -94,7 +95,7 @@ const submit = async () => {
             ElMessage.success('Паспяховая аўтарызацыя');
             await router.push({ name: 'terms' });
         } catch (e) {
-            let message = 'Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна';
+            let message = commonError;
             if (typeof e === 'object' && e.message && e.message === 'Invalid login credentials') {
                 message = 'Неверный email ці пароль';
             }

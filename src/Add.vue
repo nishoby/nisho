@@ -58,6 +58,7 @@ import { reactive, ref } from 'vue';
 import { supabase } from './supabase.js';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
+import { commonError } from './error.js';
 
 const router = useRouter();
 const newTag = ref('');
@@ -129,7 +130,7 @@ const submit = async () => {
             ElMessage.success('Паспяхова даданы тэрмін');
             await router.push({ name: 'term', params: { id: data } });
         } catch (error) {
-            ElMessage.error('Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна');
+            ElMessage.error(commonError);
             throw error;
         }
     });

@@ -55,6 +55,7 @@ import { useRouter } from 'vue-router';
 import { reactive, ref } from 'vue';
 import { signInWithGoogle, signUp } from './auth.js';
 import { ElMessage } from 'element-plus';
+import { commonError } from './error.js';
 
 const router = useRouter();
 const account = ref();
@@ -97,7 +98,7 @@ const submit = async () => {
         ElMessage.error('Вы зарэгістраваліся! Перайдзіце па спасылцы ў лісце на сваім паштовай скрыні');
         await router.push({ name: 'terms' });
     } catch (e) {
-        ElMessage.error('Праізашла памылка ў логіцы працы праграммы, не турбуйцеся, вы ўсе зрабілі правільна');
+        ElMessage.error(commonError);
         throw e;
     } finally {
         loading.value = false;
