@@ -1,0 +1,10 @@
+User-agent: *
+Sitemap: https://nisho.me/sitemap.xml
+
+Disallow: /autar/
+Disallow: /mae-slovy
+Disallow: /dadac-slova
+Disallow: /paskardzicca
+Disallow: /redahavac
+Disallow: /adnavic-parol
+Disallow: /novyy-parol
