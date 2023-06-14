@@ -148,8 +148,8 @@ const updateUserName = async (username) => {
             username: username.trim(),
         },
     });
-    accountName.value = data.user.user_metadata.name;
-    oldAccountName.value = data.user.user_metadata.name;
+    accountName.value = data.user.user_metadata.username;
+    oldAccountName.value = data.user.user_metadata.username;
     if (error) {
         ElMessage.error(commonError);
         throw error;
@@ -177,8 +177,8 @@ async function signOut() {
 onMounted(async () => {
     account.value = await getUser();
 
-    oldAccountName.value = account.value ? account.value.user_metadata.name : '';
-    accountName.value = account.value ? account.value.user_metadata.name : '';
+    oldAccountName.value = account.value ? account.value.user_metadata.username : '';
+    accountName.value = account.value ? account.value.user_metadata.username : '';
 });
 </script>
 
