@@ -143,9 +143,11 @@ const querySearchAsync = async (queryString, cb) => {
 };
 
 const updateUserName = async (username) => {
+    const newUsername = username.trim();
     const { data, error } = await supabase.auth.updateUser({
         data: {
-            username: username.trim(),
+            username: newUsername,
+            name: newUsername
         },
     });
     accountName.value = data.user.user_metadata.name;
