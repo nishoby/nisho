@@ -96,7 +96,7 @@ $$
 begin
 UPDATE user_profile
 SET name = new.raw_user_meta_data ->> 'username'
-WHERE user_id = new.id;
+WHERE user_id = new.id AND (new.raw_user_meta_data ->> 'username') is not null;
 
 return new;
 end;
