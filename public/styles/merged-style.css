@@ -631,6 +631,7 @@ button {
     font-family: 'PT Sans';
     font-weight: 400;
     font-size: 1.25rem;
+    white-space: pre-wrap;
 }
 .my-card-description,
 .card-description {
