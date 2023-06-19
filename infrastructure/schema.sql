@@ -33,7 +33,7 @@ with insert_term as (
     ),
     insert_dt as (
         INSERT INTO definition_tag(definition_id, tag_id)
-                    SELECT definition_id, tag_id from select_tag
+                    SELECT distinct definition_id, tag_id from select_tag
     )
 SELECT id FROM result_term;
 $$;
@@ -160,7 +160,7 @@ UNION
 SELECT edit_term.definition_id, id as tag_id from tag WHERE name IN (SELECT tag from list_tags)
     )
 INSERT INTO definition_tag(definition_id, tag_id)
-SELECT definition_id, tag_id from select_tag;
+SELECT distinct definition_id, tag_id from select_tag;
 update definition SET content = edit_term.definition, example = edit_term.example WHERE id = definition_id;
 SELECT term_id FROM definition WHERE id = edit_term.definition_id;
 $$;
