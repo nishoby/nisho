@@ -144,14 +144,9 @@ create or replace function edit_term(definition_id integer, definition character
     language sql
 as
 $$
-DELETE
-FROM definition_tag as dt
-WHERE dt.definition_id = edit_term.definition_id;
-with list_tags as (
-    SELECT tag
-    FROM unnest(tags) AS tag
-),
-    insert_tag as (INSERT INTO tag (name) (SELECT tag from list_tags) on conflict do nothing returning id as tag_id),
+DELETE FROM definition_tag as dt WHERE dt.definition_id = edit_term.definition_id;
+WITH list_tags as ( SELECT tag FROM unnest(tags) AS tag),
+    insert_tag as ( INSERT INTO tag (name) (SELECT tag from list_tags) on conflict do nothing returning id as tag_id),
     select_tag as (
 SELECT edit_term.definition_id,
     tag_id
@@ -160,8 +155,9 @@ UNION
 SELECT edit_term.definition_id, id as tag_id from tag WHERE name IN (SELECT tag from list_tags)
     )
 INSERT INTO definition_tag(definition_id, tag_id)
-SELECT distinct definition_id, tag_id from select_tag;
-update definition SET content = edit_term.definition, example = edit_term.example WHERE id = definition_id;
+SELECT DISTINCT definition_id, tag_id from select_tag;
+
+UPDATE definition SET content = edit_term.definition, example = edit_term.example WHERE id = definition_id;
 SELECT term_id FROM definition WHERE id = edit_term.definition_id;
 $$;
 
