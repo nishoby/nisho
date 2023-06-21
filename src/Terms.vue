@@ -1,5 +1,11 @@
 <template>
     <div class="main-container container">
+        <div class="sort-settings">
+            <span class="all-words-title">Сартыроўка:</span>
+            <el-select v-model="sort" placeholder="Сартыроўка">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+        </div>
         <PageContentSpinner v-if="!terms" />
         <div v-else class="cards-div">
             <div v-if="searchQuery && !terms.length" class="terms__not-found-card">
@@ -94,7 +100,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { supabase } from './supabase.js';
@@ -105,12 +111,24 @@ import IconDislike from './icons/IconDislike.vue';
 import IconLike from './icons/IconLike.vue';
 import PageContentSpinner from './PageContentSpinner.vue';
 
+const options = [
+    {
+        value: 'last',
+        label: 'Апошнія дададзеныя',
+    },
+    {
+        value: 'first',
+        label: 'Першыя дадазеныя',
+    },
+];
+
 const router = useRouter();
 const route = useRoute();
 const searchQuery = route.query.poshuk?.trim();
 const terms = ref(null);
 const count = ref(0);
 const account = ref();
+const sort = ref('last');
 
 const update = async (definition, type) => {
     if (!account.value) {
@@ -134,7 +152,7 @@ const fetchTerms = async () => {
     let queryBuilder = supabase
         .from('term')
         .select(`*, definition(*,user:user_profile(*),vote_results(*),tags:definition_tag(tag(*)))`, { count: 'exact' })
-        .order('created_at', { ascending: false/*, foreignTable: 'definition'*/ })
+        .order('created_at', { ascending: sort.value === 'first' /*, foreignTable: 'definition'*/ })
         .limit(1, { foreignTable: 'definition' })
         .range((currentPage.value - 1) * 15, currentPage.value * 15 - 1);
 
@@ -150,6 +168,10 @@ const fetchTerms = async () => {
     terms.value = data.filter((t) => t.definition.length > 0);
     count.value = termsCount;
 };
+
+watch(sort, () => {
+    fetchTerms();
+});
 
 onMounted(async () => {
     account.value = await getUser();

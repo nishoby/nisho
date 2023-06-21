@@ -25,6 +25,7 @@
 }
 
 :root {
+    --primary-color: #b3a5ff;
     --purple-grad: linear-gradient(180deg, #b3a5ff -187.3%, #e598fd 100%);
     --green-grad: linear-gradient(180deg, #9ffc70 0%, #d6fb89 100%);
     --reg-grad: linear-gradient(180deg, #9ffc70 0%, #d6fb89 42.71%);
@@ -103,6 +104,12 @@ button {
     --el-color-primary: #d6fb89;
     --el-color-white: #3a3a3a;
     --el-pagination-hover-color: #868686;
+}
+.el-select-dropdown {
+    --el-color-primary: var(--primary-color);
+    --el-select-border-color-hover: red;
+    --el-border-color-hover: red;
+    --el-input-hover-border-color: red;
 }
 .login {
     background: var(--purple-grad);
@@ -567,6 +574,14 @@ button {
     font-size: 2.5rem;
     color: rgb(255, 255, 255);
 }
+
+.all-words-title {
+    margin-top: 1rem;
+    font-family: 'PT Sans Caption';
+    font-size: 1.5rem;
+    color: rgb(255, 255, 255);
+}
+
 .date-edit {
     display: flex;
     justify-content: space-between;
@@ -1062,4 +1077,7 @@ button {
         font-size: 1.25rem;
     }
     /*---- end of mobile for hero ----*/
+    .sort-settings {
+        margin-left: 1rem;
+    }
 }
