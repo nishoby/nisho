@@ -49,16 +49,16 @@
             </div>
 
             <el-form-item label="Чаму трэба выдаліць тлумачэнне:" prop="reason">
-                <el-radio-group v-model="complaint.reason">
-                    <el-radio label="unclear-term"> унутраны жарт без кантэксту ці не рэальны тэрмін </el-radio>
-                    <el-radio label="personal-data"> імя ці іншыя асабістыя дадзеныя </el-radio>
-                    <el-radio label="hostile-language"> мова варожасці </el-radio>
+                <el-radio-group v-model="complaint.reason" class="reason-choose">
+                    <el-radio label="unclear-term"> унутраны жарт без кантэксту ці не рэальны тэрмін;</el-radio>
+                    <el-radio label="personal-data"> імя ці іншыя асабістыя дадзеныя;</el-radio>
+                    <el-radio label="hostile-language"> мова варожасці;</el-radio>
                     <el-radio label="other"> іншае </el-radio>
                 </el-radio-group>
             </el-form-item>
 
             <el-form-item prop="comment">
-                <el-input v-model="complaint.comment" type="textarea" :rows="3" />
+                <el-input v-model="complaint.comment" type="textarea" :rows="4" />
             </el-form-item>
 
             <input class="submit-btn" type="submit" value="Паскардзіцца" :disabled="loading" />
@@ -137,4 +137,32 @@ const submit = async () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+@media screen and (max-width: 992px) {
+    .title {
+        margin-left: 1.3rem;
+    }
+}
+</style>
+
+<style>
+.el-radio__input.is-checked + .el-radio__label {
+    --el-color-primary: #b3a5ff;
+}
+.el-radio__input.is-checked .el-radio__inner {
+    --el-color-primary: #b3a5ff;
+}
+@media screen and (max-width: 992px) {
+    .el-form-item__label {
+        font-size: 1.6rem;
+    }
+    .el-radio {
+        padding-bottom: 13px;
+    }
+    .el-radio__label {
+        font-size: 1rem;
+        line-height: 1rem;
+        white-space: initial;
+    }
+}
+</style>
