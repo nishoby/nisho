@@ -44,6 +44,7 @@
                 :current-page="currentPage"
                 @update:current-page="onPageChange"
                 :page-size="PAGE_SIZE"
+                :pager-count="4"
                 layout="prev, pager, next"
                 :total="count"
             />

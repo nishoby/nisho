@@ -92,6 +92,7 @@
                 :current-page="currentPage"
                 @update:current-page="onPageChange"
                 :page-size="15"
+                :pager-count="4"
                 layout="prev, pager, next"
                 :total="count"
             />

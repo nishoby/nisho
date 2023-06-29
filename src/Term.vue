@@ -81,6 +81,7 @@
                 :page-size="PAGE_SIZE"
                 layout="prev, pager, next"
                 :total="count"
+                :pager-count="4"
             />
         </div>
     </div>

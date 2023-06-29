@@ -901,7 +901,7 @@ button {
         grid-template-rows: repeat(2, 1fr);
     }
     .header-form-container {
-        margin-left: 3rem;
+        margin-left: 1rem;
         width: calc(100vw - 11rem);
     }
     .header-btns {
@@ -929,7 +929,7 @@ button {
     }
     .header-form-container {
         margin-left: 1rem;
-        width: calc(100vw - 10rem);
+        width: calc(100vw - 11rem);
     }
     .search-autocomplete {
         /* container width - search button width - form left padding */
