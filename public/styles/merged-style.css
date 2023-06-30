@@ -495,11 +495,11 @@ button {
 .header {
     position: sticky;
     top: 0;
-    height: 7rem;
+    height: 7.5rem;
     width: 100%;
     z-index: 1;
     display: grid;
-    grid-auto-flow: column;
+    padding-top: 10px;
     grid-template-columns: 1fr 42.5rem 1fr;
     background: no-repeat linear-gradient(180deg, #b3a5ff -187.3%, #d49cfe 100%);
     align-items: center;
@@ -936,7 +936,6 @@ button {
         /* container width - search button width - form left padding */
         max-width: calc(100vw - 10rem - 2.375rem - 0.75rem);
     }
-
     .search-input {
         width: 50%;
     }

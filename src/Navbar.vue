@@ -104,6 +104,12 @@
             </template>
         </el-dropdown>
     </div>
+    <div class="navbar-tag-container" v-show="tags.length > 0">
+        Тэг: &nbsp;
+        <el-tag v-for="tag in tags" :key="tag.name" closable @close="handleClose" size="large" type="info">
+            {{ tag.name }}
+        </el-tag>
+    </div>
 </template>
 
 <script setup>
@@ -121,7 +127,11 @@ const account = ref();
 const oldAccountName = ref('');
 const accountName = ref('');
 const search = ref(route.query.poshuk?.trim() || '');
+const tags = ref([]);
 
+const handleClose = (tag) => {
+    tags.value.splice(tags.value.indexOf(tag), 1);
+};
 supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN') {
         account.value = session.user;
@@ -189,6 +199,34 @@ onMounted(async () => {
 
 .dropdown_user_auth {
     width: 300px !important;
+}
+
+.navbar-tag-container {
+    height: 1rem;
+    min-width: 200px;
+    padding-top: 5px;
+    margin-bottom: 30px;
+    grid-column: 2;
+    font-family: 'PT Sans Caption';
+    font-size: 1.5rem;
+    color: rgb(255, 255, 255);
+    --el-color-info-light-9: #9ffc70;
+    --el-color-info-light-8: #9ffc70;
+}
+.navbar-tag-container .el-tag__content {
+    color: #494949;
+}
+.navbar-tag-container .el-tag {
+    --el-tag-border-radius: 0.75rem;
+    margin-right: 5px;
+}
+
+@media screen and (max-width: 992px) {
+    .navbar-tag-container {
+        padding-left: 1rem;
+        grid-row: 3;
+        grid-column: 1;
+    }
 }
 
 @media screen and (max-width: 700px) {
