@@ -11,7 +11,7 @@
 <!--                <a href="#" class="link">-->
 <!--                    <img src="/assets/img/instagram.svg" alt="" />-->
 <!--                </a>-->
-                <a href="https://discord.gg/TPpWYFqT" class="link">
+                <a href="https://discord.gg/YDyDdJY6" class="link">
                     <img src="/assets/img/discord.svg" alt="" />
                 </a>
             </div>
