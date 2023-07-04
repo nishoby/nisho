@@ -29,7 +29,7 @@ alter table term
 
 
 create unique index if not exists unique_term
-    on term (lower(name::text) ???);
+    on term (lower(name::text));
 
 
 create table if not exists user_profile
@@ -151,7 +151,7 @@ alter table tag
 
 
 create unique index if not exists tag_name_uindex
-    on tag (name ???);
+    on tag (name);
 
 
 create table if not exists definition_tag
@@ -175,7 +175,7 @@ create policy "Enable insert for authenticated users only" on definition_tag
     as permissive
     for insert
     to authenticated
-    with check true;
+    with check (true);
 
 
 create or replace view vote_results(upvotes, downvotes, is_upvoted, is_downvoted, definition_id) as
