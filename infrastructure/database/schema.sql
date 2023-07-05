@@ -336,4 +336,33 @@ $$;
 
 alter function handle_after_user_update() owner to postgres;
 
+DROP view terms;
+CREATE OR REPLACE view terms as
 
+SELECT     t.id as term_id,
+    d.id as definition_id,
+    t.name as term,
+    content as definition,
+    example,
+    d.created_at,
+    row_to_json(up.*)::jsonb as "user",
+    coalesce(
+            row_to_json(vr.*)::jsonb - 'definition_id',
+            jsonb_build_object(
+                'upvotes', 0,
+                'downvotes', 0,
+                'is_upvoted', false,
+                'is_downvoted', false
+                )
+        ) as vote_result,
+    coalesce(dt.tags, '[]'::jsonb) as tags
+FROM term t
+     JOIN definition d on t.id = d.term_id
+     JOIN user_profile up on d.user_id = up.user_id
+     LEFT JOIN (
+    SELECT definition_id, jsonb_agg(name) as tags
+    FROM definition_tag dt
+         JOIN tag on dt.id = tag.id
+    GROUP BY definition_id
+) as dt ON dt.definition_id = d.id
+     LEFT JOIN vote_results vr on d.id = vr.definition_id;
