@@ -12,7 +12,7 @@
                 Нічога не знойдзена для запыту <span class="terms__search-query">{{ searchQuery }}</span>
             </div>
 
-            <div class="card" v-for="item of terms" :key="item.term_id">
+            <div class="card" v-for="item of terms" :key="item.definition_id">
                 <router-link class="card-title" :to="{ name: 'term', params: { id: item.term_id } }">
                     {{ item.term }}
                 </router-link>
@@ -121,6 +121,10 @@ const options = [
         value: 'first',
         label: 'Першыя дадазеныя',
     },
+    {
+        value: 'random',
+        label: 'Выпадковыя словы',
+    },
 ];
 
 const router = useRouter();
@@ -151,10 +155,13 @@ const onPageChange = async (page) => {
 const fetchTerms = async () => {
     //TODO сделать view вместо выборки
     let queryBuilder = supabase
-        .from('terms')
+        .from(sort.value === 'random' ? 'terms_random' : 'terms')
         .select(`*`, { count: 'exact' })
-        .order('created_at', { ascending: sort.value === 'first'})
         .range((currentPage.value - 1) * 15, currentPage.value * 15 - 1);
+
+    if (sort.value !== 'random') {
+        queryBuilder = queryBuilder.order('created_at', { ascending: sort.value === 'first' });
+    }
 
     if (searchQuery) {
         queryBuilder = queryBuilder.filter('name', 'ilike', `%${searchQuery}%`);

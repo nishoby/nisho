@@ -366,3 +366,6 @@ FROM term t
     GROUP BY definition_id
 ) as dt ON dt.definition_id = d.id
      LEFT JOIN vote_results vr on d.id = vr.definition_id;
+
+
+CREATE view terms_random AS SELECT * FROM terms ORDER BY random();
