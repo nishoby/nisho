@@ -336,7 +336,7 @@ $$;
 
 alter function handle_after_user_update() owner to postgres;
 
-DROP view terms;
+DROP view IF EXISTS terms;
 CREATE OR REPLACE view terms as
 
 SELECT     t.id as term_id,
@@ -369,3 +369,22 @@ FROM term t
 
 
 CREATE view terms_random AS SELECT * FROM terms ORDER BY random();
+
+create trigger after_user_update
+    after update
+    on auth.users
+    for each row
+execute procedure public.handle_after_user_update();
+
+create trigger on_auth_user_created
+    after insert
+    on auth.users
+    for each row
+execute procedure public.handle_new_user();
+
+create trigger on_user_update
+    before update
+    on auth.users
+    for each row
+execute procedure public.handle_user_name();
+
