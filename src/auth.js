@@ -39,8 +39,7 @@ async function signUp(email, password, login) {
         options: {
             emailRedirectTo: import.meta.env.VITE_REDIRECT_URL,
             data: {
-                login,
-                name: login,
+                username: login,
             },
         },
     });

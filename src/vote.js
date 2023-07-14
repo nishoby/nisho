@@ -8,38 +8,12 @@ export const EMPTY_VOTE_RESULT = {
     is_downvoted: false,
 };
 
-// There couldn't be more than one vote result, because the view is based on definition id
-export const getVoteResult = (definition) => definition.vote_results[0] || EMPTY_VOTE_RESULT;
-
-const removeLocalVote = (voteResult) => {
-    if (voteResult.is_upvoted) {
-        voteResult.is_upvoted = false;
-        voteResult.upvotes--;
-    }
-
-    if (voteResult.is_downvoted) {
-        voteResult.is_downvoted = false;
-        voteResult.downvotes--;
-    }
-};
-
-const addLocalVote = (voteResult, type) => {
-    if (type === 'upvote') {
-        voteResult.is_upvoted = true;
-        voteResult.upvotes++;
-    } else {
-        voteResult.is_downvoted = true;
-        voteResult.downvotes++;
-    }
-};
+export const getVoteResult = (definition) => definition.vote_result || EMPTY_VOTE_RESULT;
 
 export const removeVote = async (definition) => {
     const user = await getUser();
 
-    await supabase.from('votes').delete().eq('definition_id', definition.id).eq('user_id', user.id);
-
-    // const voteResult = getVoteResult(definition);
-    // removeLocalVote(voteResult);
+    await supabase.from('votes').delete().eq('definition_id', definition.definition_id).eq('user_id', user.id);
 };
 
 export const upsertVote = async (definition, type) => {
@@ -47,7 +21,7 @@ export const upsertVote = async (definition, type) => {
 
     await supabase.from('votes').upsert(
         {
-            definition_id: definition.id,
+            definition_id: definition.definition_id,
             user_id: user.id,
             type,
         },
@@ -55,10 +29,6 @@ export const upsertVote = async (definition, type) => {
             onConflict: 'definition_id,user_id',
         }
     );
-
-    // const voteResult = getVoteResult(definition);
-    // removeLocalVote(voteResult);
-    // addLocalVote(voteResult, type);
 };
 
 export const vote = async (definition, type) => {

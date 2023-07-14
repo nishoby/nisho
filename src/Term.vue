@@ -3,18 +3,18 @@
         <PageContentSpinner v-if="!definitions" />
         <div v-else class="cards-div">
             <div class="card" v-for="item of definitions">
-                <router-link class="card-title" :to="{ name: 'term', params: { id: item.term.id } }">
-                    {{ item.term.name }}
+                <router-link class="card-title" :to="{ name: 'term', params: { id: item.term_id } }">
+                    {{ item.term }}
                 </router-link>
                 <div class="card-description">
-                    {{ item.content }}
+                    {{ item.definition }}
                 </div>
                 <div class="card-example">
                     {{ item.example }}
                 </div>
                 <div class="card-tags">
-                    <span class="user-tag" v-for="tagItem of item.tags">
-                        {{ tagItem.tag.name }}
+                    <span class="user-tag" v-for="tag of item.tags">
+                        {{ tag }}
                     </span>
                     <!--                    <span class="embedded-tag">Tag2</span>-->
                 </div>
@@ -64,7 +64,7 @@
 
                         <router-link
                             class="card-buttons-actions_flag"
-                            :to="{ name: 'complaint', query: { id: item.id } }"
+                            :to="{ name: 'complaint', query: { id: item.definition_id } }"
                         >
                             <img class="flag-img" src="/assets/img/flag.svg" alt="" />
                         </router-link>
@@ -81,6 +81,7 @@
                 :page-size="PAGE_SIZE"
                 layout="prev, pager, next"
                 :total="count"
+                :pager-count="4"
             />
         </div>
     </div>
@@ -134,10 +135,8 @@ async function fetchTerm() {
         error,
         count: definitionsCount,
     } = await supabase
-        .from('definition')
-        .select(`*,term(*),user:user_profile(*),vote_results(*),tags:definition_tag(tag(*))`, {
-            count: 'exact',
-        })
+        .from('terms')
+        .select(`*`, { count: 'exact' })
         .order('created_at', { ascending: false })
         .filter('term_id', 'eq', id)
         .range((currentPage.value - 1) * PAGE_SIZE, currentPage.value * PAGE_SIZE - 1);
@@ -148,6 +147,7 @@ async function fetchTerm() {
     definitions.value = data;
     count.value = definitionsCount;
 }
+
 onMounted(async () => {
     account.value = await getUser();
 });

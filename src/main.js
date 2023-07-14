@@ -6,7 +6,7 @@ import { BrowserTracing } from '@sentry/tracing';
 
 const app = createApp(App);
 
-if (import.meta.env.MODE !== 'development') {
+if (import.meta.env.MODE !== 'development' && import.meta.env.VITE_SENTRY_DSN) {
     Sentry.init({
         app,
         dsn: import.meta.env.VITE_SENTRY_DSN,
