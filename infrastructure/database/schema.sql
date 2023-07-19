@@ -362,7 +362,7 @@ FROM term t
      LEFT JOIN (
     SELECT definition_id, jsonb_agg(name) as tags
     FROM definition_tag dt
-         JOIN tag on dt.id = tag.id
+         JOIN tag on dt.tag_id = tag.id
     GROUP BY definition_id
 ) as dt ON dt.definition_id = d.id
      LEFT JOIN vote_results vr on d.id = vr.definition_id;
