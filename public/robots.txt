@@ -8,3 +8,4 @@ Disallow: /paskardzicca
 Disallow: /redahavac
 Disallow: /adnavic-parol
 Disallow: /novyy-parol
+Disallow: /*poshuk=
