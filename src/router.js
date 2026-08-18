@@ -253,7 +253,21 @@ const routes = [...main];
 const router = createRouter({
     history: createWebHistory(),
     routes,
-    scrollBehavior: () => ({ top: 0, behavior: 'smooth' }),
+    // Пры пераходзе назад вяртаем чалавека туды, дзе ён чытаў, а не наверх старонкі.
+    // Чакаем, пакуль спіс загрузіцца і старонка вырасце: інакш аднаўляць месца няма куды —
+    // браўзер прокруціць да канца кароткай старонкі і спыніцца.
+    scrollBehavior: async (to, from, savedPosition) => {
+        if (!savedPosition) {
+            return { top: 0, behavior: 'smooth' };
+        }
+        for (let i = 0; i < 20; i++) {
+            if (document.documentElement.scrollHeight >= savedPosition.top + window.innerHeight) {
+                break;
+            }
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return savedPosition;
+    },
 });
 router.beforeEach((to) => {
     document.title = to.meta && to.meta.title ? `${to.meta.title} - Нішо` : 'Нішо';
