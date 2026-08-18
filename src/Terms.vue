@@ -17,14 +17,16 @@
 
             <span v-if="tagQuery" class="user-tag sort-tag">
                 {{ tagQuery }}
-                <button class="sort-tag__close" type="button" title="Зняць адбор па тэгу" @click="clearTag">×</button>
+                <button class="sort-tag__close" type="button" title="Зняць адбор па тэгу" @click="clearTag">
+                    <IconCross />
+                </button>
             </span>
 
             <!-- аўтар — не тэг, таму без зялёнай пілюлі: белы надпіс, як у сартавання -->
             <span v-if="autarQuery" class="sort-autar">
                 @{{ autarName }}
                 <button class="sort-autar__close" type="button" title="Зняць адбор па аўтары" @click="clearAutar">
-                    ×
+                    <IconCross />
                 </button>
             </span>
         </div>
@@ -138,6 +140,7 @@ import IconDislike from './icons/IconDislike.vue';
 import IconLike from './icons/IconLike.vue';
 import PageContentSpinner from './PageContentSpinner.vue';
 import IconChevron from './icons/IconChevron.vue';
+import IconCross from './icons/IconCross.vue';
 
 const options = [
     {

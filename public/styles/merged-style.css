@@ -920,22 +920,20 @@ a.user-tag:active {
 }
 
 .sort-autar__close {
+    display: inline-flex;
+    align-items: center;
     background: none;
     cursor: pointer;
     color: inherit;
-    font-size: 1.25rem;
-    line-height: 1;
     padding: 0;
-    /* глыф × вісіць на ніжняй палове радка — падымаем да цэнтра вялікай літары */
-    transform: translateY(-0.1em);
 }
 
 .sort-tag__close {
+    display: inline-flex;
+    align-items: center;
     background: none;
     cursor: pointer;
     color: inherit;
-    font-size: 1.25rem;
-    line-height: 1;
     /* Тонкая рыска аддзяляе крыжык ад слова і ідзе на ўсю вышыню пілюлі.
        Каб дацягнуцца да краёў, кнопка вылазіць за вертыкальныя палі .user-tag
        (0.25rem зверху і знізу) адмоўнымі водступамі і дабірае іх сваімі. */
@@ -1615,4 +1613,45 @@ button:focus-visible {
 .card a:not(.user-tag):not(.card-title):not(.tag-cloud__tag):hover,
 .note a:hover {
     text-decoration: underline;
+}
+
+/* Крыжык на пілюлі тэга ў форме — іконка бібліятэкі з вострымі канцамі.
+   Хаваем яе і малюем свае дзве рыскі, круглыя на канцах, як у астатніх іконак. */
+.add-word__tags-input-tag .el-tag__close svg {
+    display: none;
+}
+
+.add-word__tags-input-tag .el-tag__close {
+    position: relative;
+    width: 0.875rem;
+    height: 0.875rem;
+}
+
+.add-word__tags-input-tag .el-tag__close::before,
+.add-word__tags-input-tag .el-tag__close::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.875rem;
+    height: 2px;
+    margin: -1px 0 0 -0.4375rem;
+    border-radius: 1px;
+    background: currentColor;
+}
+
+.add-word__tags-input-tag .el-tag__close::before {
+    transform: rotate(45deg);
+}
+
+.add-word__tags-input-tag .el-tag__close::after {
+    transform: rotate(-45deg);
+}
+
+/* глабальнае правіла svg { height: 1.5rem } расцягвала крыжык па вышыні —
+   задаём яму свой памер, каб малюнак быў роўны 14×14, як у viewBox */
+.sort-tag__close svg,
+.sort-autar__close svg {
+    width: 0.875rem;
+    height: 0.875rem;
 }
