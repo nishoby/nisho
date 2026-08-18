@@ -15,19 +15,37 @@
             <br />
             Зазірні ў
             <router-link :to="{ name: 'rules' }" target="_blank">правілы</router-link>
-            перад тым як даваць новае слова ці яго тлумачэнне.
+            перад тым як даваць новае слова ці яго тлумачэнне. Зазірні ва
+            <!-- новая ўкладка: пераход пасярод запаўнення згубіў бы форму -->
+            <router-link :to="{ name: 'all-tags' }" target="_blank">Усе тэгі</router-link>
+            каб натхніцца.
         </p>
         <el-form-item label="Слова:" prop="term_name">
-            <el-input v-model="new_term.term_name" />
+            <el-input v-model="new_term.term_name" placeholder="Напішы слова" />
         </el-form-item>
         <el-form-item label="Тлумачэнне:" prop="definition">
-            <el-input v-model="new_term.definition" type="textarea" :rows="5" />
+            <el-input
+                v-model="new_term.definition"
+                type="textarea"
+                :rows="5"
+                placeholder="Дай азначэнне свайму слову. Паспрабуй напісаць яго як мага больш нейтральна і зразумела."
+            />
         </el-form-item>
         <el-form-item label="Прыклад:" prop="example">
-            <el-input v-model="new_term.example" type="textarea" :rows="5" />
+            <el-input
+                v-model="new_term.example"
+                type="textarea"
+                :rows="5"
+                placeholder="Напішы сказ ці дыялог з прыкладам ужывання свайго слова. Іншым людзям вельмі дапаможа разуменне кантэксту."
+            />
         </el-form-item>
         <el-form-item label="Тэгі:" prop="tags">
             <div class="add-word__tags-input-wrapper" @click="handleTagsWrapperClick">
+                <!-- свая падказка замест убудаванай: убудаваная не ўмее пераносіцца
+                     на другі радок, а гэты тэкст на тэлефоне ў адзін не змяшчаецца -->
+                <span v-if="!new_term.tags.length && !newTag" class="tags-placeholder">
+                    Напішы тэг. Націсні Enter
+                </span>
                 <el-tag
                     v-for="tag in new_term.tags"
                     :key="tag"
@@ -65,6 +83,7 @@
                     @blur="handleAddTag"
                 />
             </div>
+            <p v-if="tagNotice" class="tags-notice">{{ tagNotice }}</p>
         </el-form-item>
         <input class="submit-btn" type="submit" value="Гатова" :disabled="loading" />
     </el-form>
@@ -147,6 +166,17 @@ const submit = async () => {
             throw error;
         }
     });
+};
+
+const tagNotice = ref('');
+let tagNoticeTimer = null;
+
+const showTagNotice = (text) => {
+    tagNotice.value = text;
+    clearTimeout(tagNoticeTimer);
+    tagNoticeTimer = setTimeout(() => {
+        tagNotice.value = '';
+    }, 3000);
 };
 
 const handleRemoveTag = (tag) => {
@@ -256,8 +286,9 @@ const handleAddTag = () => {
     if (alreadyAdded) {
         // Моўчкі не дадаць — значыць пакінуць чалавека ў здагадках: поле ачысцілася,
         // а тэг не з'явіўся. Называем тое напісанне, якое ўжо стаіць, каб было бачна,
-        // чаму «мова» не дадалася, калі ў картцы «Мова».
-        ElMessage.info(`«${alreadyAdded}» ужо ёсць`);
+        // чаму «мова» не дадалася, калі ў картцы «Мова». Паведамленне стаіць
+        // адразу пад полем — усплыўшы наверсе экрана, яно глядзелася адарваным.
+        showTagNotice(`«${alreadyAdded}» ужо ёсць`);
     } else {
         new_term.tags.push(normalizedValue);
     }
