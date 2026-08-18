@@ -66,6 +66,7 @@ svg {
 body {
     min-height: 100vh;
     font-family: 'PT Sans';
+    /* градыент расцягнуты на ўсю старонку: чым ніжэй заехаў, тым цяплей */
     background: no-repeat var(--purple-grad);
     box-shadow: 0 0.375rem 2rem rgba(107, 90, 135, 0.25);
     box-shadow: 0 1.5rem rgb(234, 234, 234);
@@ -570,7 +571,12 @@ button {
     display: grid;
     padding-top: 10px;
     grid-template-columns: 1fr 42.5rem 1fr;
-    background: no-repeat linear-gradient(180deg, #b3a5ff -187.3%, #d49cfe 100%);
+    /* Той самы градыент, што пад старонкай. Шапка ліпкая, таму сама па сабе
+       яна паказвала б заўсёды адзін і той жа кавалак — і пры пракрутцы пад ёй
+       з'яўлялася б шво. Памер і зрух гэтага фону задае скрыпт у DefaultLayout:
+       ён раскладвае градыент на вышыню ўсяго дакумента і суне яго ўверх роўна
+       на пракрутку, каб шапка паказвала тое, што пад ёй. */
+    background: no-repeat var(--purple-grad);
     align-items: center;
 }
 
@@ -920,39 +926,32 @@ a.user-tag:active {
     color: #494949;
 }
 
-/* адбор па аўтары: белая капсула з @нікам — тая ж форма, што ў тэгаў,
-   але белая: аўтар — не тэг */
+/* адбор па аўтары: проста імя тэкстам і крыжык побач — аўтар не тэг, таму
+   без пілюлі. Памер той жа, што ў сартавання справа */
 .sort-autar {
     display: inline-flex;
     align-items: center;
-    gap: 0.375rem;
-    background: #fff;
-    color: #494949;
-    border-radius: 999px;
-    padding: 0.25rem 0.75rem;
+    gap: 0.5rem;
+    font-family: 'PT Sans Caption';
+    font-size: 1.25rem;
+    color: rgb(255, 255, 255);
 }
 
-/* крыжык — як у чыпа тэга: рыска на ўсю вышыню капсулы і × па цэнтры.
-   Адмоўныя водступы даязджаюць да краёў вертыкальных палёў капсулы (0.25rem)
-   і дабіраюць іх сваімі, каб рыска ішла ад краю да краю */
 .sort-autar__close {
+    display: inline-flex;
+    align-items: center;
     background: none;
     cursor: pointer;
     color: inherit;
-    font-size: 1.25rem;
-    line-height: 1;
-    border-left: 1px solid currentColor;
-    margin-top: -0.25rem;
-    margin-bottom: -0.25rem;
-    padding: 0.25rem 0 0.25rem 0.375rem;
+    padding: 0;
 }
 
 .sort-tag__close {
+    display: inline-flex;
+    align-items: center;
     background: none;
     cursor: pointer;
     color: inherit;
-    font-size: 1.25rem;
-    line-height: 1;
     /* Тонкая рыска аддзяляе крыжык ад слова і ідзе на ўсю вышыню пілюлі.
        Каб дацягнуцца да краёў, кнопка вылазіць за вертыкальныя палі .user-tag
        (0.25rem зверху і знізу) адмоўнымі водступамі і дабірае іх сваімі. */
@@ -1078,21 +1077,42 @@ a.user-tag:active {
 .footer * {
     color: white;
 }
+/* падвал раўнуецца па той жа калонцы, што і карткі: злева спасылкі роўна
+   пад тэкстам, справа іконкі роўна пад правым краем карткі */
 .links {
-    margin-bottom: 2rem;
+    box-sizing: border-box;
+    width: 42.5rem;
+    max-width: 100%;
+    margin: 0 auto 2rem;
     display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.social-links {
+    /* па версе, каб першая іконка стаяла ў адной лініі з першым радком спасылак */
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
     padding: 0 2rem;
 }
-.social-links > * {
-    margin-right: 2rem;
-}
-.about-links {
+/* спачатку два слупкі спасылак, потым дзве іконкі — у разметцы яны ідуць
+   першымі, таму парадак задаём тут */
+.social-links {
+    order: 2;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+.social-links img {
+    display: block;
+    width: 3rem;
+    height: auto;
+}
+/* шэсць пунктаў у слупок рабілі падвал вельмі высокім — раскладваем іх
+   у два слупкі, каб падвал стаў удвая ніжэйшы */
+.about-links {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    grid-auto-flow: column;
+    grid-template-rows: repeat(3, auto);
+    column-gap: 4rem;
     text-align: left;
 }
 .about-links > * {
@@ -1263,8 +1283,15 @@ a.user-tag:active {
     .flag-img {
         margin: 0 1rem;
     }
-    .social-links {
-        padding: 0;
+    /* на вузкім экране радок падвала займае ўсю шырыню, таму трымае бакавыя
+       палі сам — тыя ж 2rem, што і тэкст у картках вышэй */
+    .links {
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0 2rem;
+    }
+    .about-links {
+        column-gap: 2rem;
     }
 
     .back-btn {
@@ -1514,13 +1541,12 @@ a.user-tag:active {
 .sort-tag__close,
 .sort-autar__close,
 .add-word__tags-input-tag .el-tag__close {
-    transition: transform 0.12s ease, opacity 0.12s ease;
+    transition: transform 0.12s ease;
 }
 
 .sort-tag__close:hover,
 .sort-autar__close:hover,
 .add-word__tags-input-tag .el-tag__close:hover {
-    opacity: 0.6;
     transform: scale(0.9);
 }
 
@@ -1556,4 +1582,108 @@ a.user-tag:active {
 .person-btn:active,
 .form-search-btn:active {
     transform: scale(0.88);
+}
+
+/* іконкі падвала адказваюць на навядзенне сцісканнем — на карцінцы гэта
+   бачна і не шкодзіць. Тэкставым спасылкам маштаб не даём: літары ад яго
+   мыляцца. Іх водгук — падкрэсліванне ніжэй, і колер пры гэтым не мяняецца. */
+.social-links .link {
+    display: inline-block;
+    transition: transform 0.12s ease;
+}
+
+.social-links .link:hover {
+    transform: scale(0.94);
+}
+
+.social-links .link:active {
+    transform: scale(0.88);
+}
+
+/* Пры націску браўзер сам малюе блакітны прамавугольнік падсветкі і рамку
+   фокусу — на нашых кнопках і спасылках яны толькі мільгаюць. Прыбіраем іх
+   для мышы і пальца, але пакідаем бачную рамку для тых, хто ходзіць па сайце
+   з клавіятуры: інакш немагчыма зразумець, дзе ты знаходзішся. */
+a,
+button,
+input,
+textarea,
+[tabindex] {
+    -webkit-tap-highlight-color: transparent;
+}
+
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+    outline: none;
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+/* Тэкставыя спасылкі падкрэсліваюцца пры навядзенні — гэта і ёсць знак, што
+   яны націскаюцца. Пілюлі, іконкі і загалоўкі картак сюды не трапляюць:
+   у іх свой водгук. */
+.about-links > a:hover,
+.hamburger-dropdown a:hover,
+.card a:not(.user-tag):not(.card-title):not(.tag-cloud__tag):hover,
+.note a:hover {
+    text-decoration: underline;
+}
+
+/* Крыжык на пілюлі тэга ў форме — іконка бібліятэкі з вострымі канцамі.
+   Хаваем яе і малюем свае дзве рыскі, круглыя на канцах, як у астатніх іконак. */
+.add-word__tags-input-tag .el-tag__close svg {
+    display: none;
+}
+
+.add-word__tags-input-tag .el-tag__close {
+    position: relative;
+    width: 0.875rem;
+    height: 0.875rem;
+}
+
+.add-word__tags-input-tag .el-tag__close::before,
+.add-word__tags-input-tag .el-tag__close::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.875rem;
+    height: 2px;
+    margin: -1px 0 0 -0.4375rem;
+    border-radius: 1px;
+    background: currentColor;
+}
+
+.add-word__tags-input-tag .el-tag__close::before {
+    transform: rotate(45deg);
+}
+
+.add-word__tags-input-tag .el-tag__close::after {
+    transform: rotate(-45deg);
+}
+
+/* глабальнае правіла svg { height: 1.5rem } расцягвала крыжык па вышыні —
+   задаём яму свой памер, каб малюнак быў роўны 14×14, як у viewBox */
+.sort-tag__close svg,
+.sort-autar__close svg {
+    width: 0.875rem;
+    height: 0.875rem;
+}
+
+/* спісы на інфастаронках жывуць па тых жа правілах, што абзацы вакол іх */
+.card ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.card li {
+    margin-bottom: 0.5rem;
+}
+
+.card li:last-child {
+    margin-bottom: 0;
 }
