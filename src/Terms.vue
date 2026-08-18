@@ -128,8 +128,8 @@ const options = [
         label: 'Спачатку новыя',
     },
     {
-        value: 'first',
-        label: 'Спачатку даўнія',
+        value: 'popular',
+        label: 'Спачатку папулярныя',
     },
     {
         value: 'random',
@@ -145,11 +145,19 @@ const count = ref(0);
 const account = ref();
 const sort = ref('last');
 
+// Пры выпадковым парадку калода тасуецца адзін раз і жыве да перазагрузкі —
+// толькі так «назад» вяртае тое, што чалавек ужо чытаў.
+// Увага: сюды трапляюць нумары ЎСІХ слоў слоўніка. Пры некалькіх тысячах гэта
+// дробязь, але для гіганцкага слоўніка спатрэбіцца тасаванне на баку базы.
+const shuffledIds = ref(null);
+
 const currentSortLabel = computed(() => options.find((item) => item.value === sort.value).label);
 
+// бягучы варыянт з меню прыбраны — ён ужо напісаны на кнопцы
 const otherSortOptions = computed(() => options.filter((item) => item.value !== sort.value));
 
 const onSortChange = (value) => {
+    currentPage.value = 1;
     sort.value = value;
 };
 
@@ -170,15 +178,73 @@ const onPageChange = async (page) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
+const shuffle = (ids) => {
+    for (let i = ids.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [ids[i], ids[j]] = [ids[j], ids[i]];
+    }
+    return ids;
+};
+
+const loadShuffledIds = async () => {
+    const ids = [];
+    const step = 1000;
+    // бяром порцыямі: у API ёсць столь на колькасць радкоў у адным адказе
+    for (let from = 0; ; from += step) {
+        let idQuery = supabase
+            .from('terms')
+            .select('definition_id')
+            .range(from, from + step - 1);
+        if (searchQuery) {
+            idQuery = idQuery.filter('name', 'ilike', `%${searchQuery}%`);
+        }
+        const { data, error } = await idQuery;
+        if (error) {
+            throw error;
+        }
+        ids.push(...data.map((row) => row.definition_id));
+        if (data.length < step) {
+            break;
+        }
+    }
+    shuffledIds.value = shuffle(ids);
+};
+
+const fetchRandomPage = async () => {
+    if (!shuffledIds.value) {
+        await loadShuffledIds();
+    }
+    const pageIds = shuffledIds.value.slice((currentPage.value - 1) * 15, currentPage.value * 15);
+    const { data, error } = await supabase.from('terms').select('*').in('definition_id', pageIds);
+    if (error) {
+        throw error;
+    }
+    // база аддае радкі ў сваім парадку — вяртаем наш
+    const place = new Map(pageIds.map((id, i) => [id, i]));
+    terms.value = data.slice().sort((a, b) => place.get(a.definition_id) - place.get(b.definition_id));
+    count.value = shuffledIds.value.length;
+};
+
 const fetchTerms = async () => {
+    if (sort.value === 'random') {
+        await fetchRandomPage();
+        return;
+    }
+
     //TODO сделать view вместо выборки
     let queryBuilder = supabase
-        .from(sort.value === 'random' ? 'terms_random' : 'terms')
+        .from('terms')
         .select(`*`, { count: 'exact' })
         .range((currentPage.value - 1) * 15, currentPage.value * 15 - 1);
 
-    if (sort.value !== 'random') {
-        queryBuilder = queryBuilder.order('created_at', { ascending: sort.value === 'first' });
+    if (sort.value === 'popular') {
+        // база захоўвае плюсы і мінусы паасобку, і лічыць рознасць умее толькі яна сама,
+        // таму сартуем па плюсах; пры роўнай колькасці вышэй ідуць навейшыя словы
+        queryBuilder = queryBuilder
+            .order('vote_result->upvotes', { ascending: false })
+            .order('created_at', { ascending: false });
+    } else {
+        queryBuilder = queryBuilder.order('created_at', { ascending: false });
     }
 
     if (searchQuery) {
