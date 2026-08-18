@@ -2,7 +2,7 @@
     <div class="main-container container">
         <div class="cards-div">
             <div class="card">
-                <h3>Кантакты</h3>
+                <h2>Кантакты</h2>
                 Пішыце камусці з <a href="/kamanda">удзельнікаў каманды</a>.
                 З намі можна звязацца ў
                 <ul style="padding-left: 1rem">

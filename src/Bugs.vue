@@ -2,7 +2,7 @@
     <div class="main-container container">
         <div class="cards-div">
             <div class="card">
-                <h3>Багі</h3>
+                <h2>Багі</h2>
 
                 <p>
                     Калі вы заўважыле багі, калі ласка паведамляйце пра іх нашым распрацоўшчыкам на
