@@ -1669,3 +1669,30 @@ button:focus-visible {
 .card li:last-child {
     margin-bottom: 0;
 }
+
+/* Лайк, дыслайк і сцяжок «паскардзіцца» таксама адказваюць на навядзенне —
+   тым жа сцісканнем, што іншыя іконкі. Колер не мяняем: у прагаласаваных
+   кнопак ён нясе сэнс. */
+.card-buttons-actions_like,
+.card-buttons-actions_dislike,
+.card-buttons-actions_flag {
+    cursor: pointer;
+    transition: transform 0.12s ease;
+}
+
+.card-buttons-actions_like:hover,
+.card-buttons-actions_dislike:hover,
+.card-buttons-actions_flag:hover {
+    transform: scale(0.94);
+}
+
+.card-buttons-actions_like:active,
+.card-buttons-actions_dislike:active,
+.card-buttons-actions_flag:active {
+    transform: scale(0.88);
+}
+
+/* сцяжок — спасылка, і .card a раней дадаваў яму падкрэсліванне */
+.card-buttons-actions_flag:hover {
+    text-decoration: none;
+}
