@@ -873,6 +873,37 @@ a.user-tag:active {
     color: #494949;
 }
 
+/* адбор па аўтары: белая капсула з @нікам — тая ж форма, што ў тэгаў,
+   але белая: аўтар — не тэг */
+.sort-autar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    background: #fff;
+    color: #494949;
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+}
+
+/* крыжык — як у чыпа тэга: рыска на ўсю вышыню капсулы і × па цэнтры.
+   Адмоўныя водступы даязджаюць да краёў вертыкальных палёў капсулы (0.25rem)
+   і дабіраюць іх сваімі, каб рыска ішла ад краю да краю */
+.sort-autar__close {
+    background: none;
+    cursor: pointer;
+    color: inherit;
+    font-size: 1.25rem;
+    line-height: 1;
+    border-left: 1px solid currentColor;
+    margin-top: -0.25rem;
+    margin-bottom: -0.25rem;
+    padding: 0.25rem 0 0.25rem 0.375rem;
+}
+
+.sort-autar__close:hover {
+    opacity: 0.7;
+}
+
 .sort-tag__close {
     background: none;
     cursor: pointer;
@@ -1105,6 +1136,8 @@ a.user-tag:active {
 @media screen and (max-width: 992px) {
     .sort-settings {
         margin-top: 1rem;
+        /* поле пошуку стаіць з водступам 1rem ад краю — чып аўтара раўнуем па ім */
+        margin-left: 1rem;
     }
     .header-logo-btn {
         padding-left: 1rem;
