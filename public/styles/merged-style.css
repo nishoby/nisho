@@ -1530,13 +1530,12 @@ a.user-tag:active {
 .sort-tag__close,
 .sort-autar__close,
 .add-word__tags-input-tag .el-tag__close {
-    transition: transform 0.12s ease, opacity 0.12s ease;
+    transition: transform 0.12s ease;
 }
 
 .sort-tag__close:hover,
 .sort-autar__close:hover,
 .add-word__tags-input-tag .el-tag__close:hover {
-    opacity: 0.6;
     transform: scale(0.9);
 }
 
@@ -1574,20 +1573,51 @@ a.user-tag:active {
     transform: scale(0.88);
 }
 
-/* спасылкі і іконкі падвала таксама адказваюць на навядзенне */
-.social-links .link,
-.about-links > a {
+/* іконкі падвала адказваюць на навядзенне сцісканнем — на карцінцы гэта
+   бачна і не шкодзіць. Тэкставым спасылкам маштаб не даём: літары ад яго
+   мыляцца. Іх водгук — падкрэсліванне ніжэй, і колер пры гэтым не мяняецца. */
+.social-links .link {
     display: inline-block;
-    transition: transform 0.12s ease, opacity 0.12s ease;
+    transition: transform 0.12s ease;
 }
 
-.social-links .link:hover,
-.about-links > a:hover {
+.social-links .link:hover {
     transform: scale(0.94);
-    opacity: 0.85;
 }
 
-.social-links .link:active,
-.about-links > a:active {
+.social-links .link:active {
     transform: scale(0.88);
+}
+
+/* Пры націску браўзер сам малюе блакітны прамавугольнік падсветкі і рамку
+   фокусу — на нашых кнопках і спасылках яны толькі мільгаюць. Прыбіраем іх
+   для мышы і пальца, але пакідаем бачную рамку для тых, хто ходзіць па сайце
+   з клавіятуры: інакш немагчыма зразумець, дзе ты знаходзішся. */
+a,
+button,
+input,
+textarea,
+[tabindex] {
+    -webkit-tap-highlight-color: transparent;
+}
+
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+    outline: none;
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+/* Тэкставыя спасылкі падкрэсліваюцца пры навядзенні — гэта і ёсць знак, што
+   яны націскаюцца. Пілюлі, іконкі і загалоўкі картак сюды не трапляюць:
+   у іх свой водгук. */
+.about-links > a:hover,
+.hamburger-dropdown a:hover,
+.card a:not(.user-tag):not(.card-title):not(.tag-cloud__tag):hover,
+.note a:hover {
+    text-decoration: underline;
 }
