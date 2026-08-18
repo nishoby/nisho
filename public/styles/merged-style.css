@@ -105,12 +105,6 @@ button {
     --el-color-white: #3a3a3a;
     --el-pagination-hover-color: #868686;
 }
-.el-select-dropdown {
-    --el-color-primary: var(--primary-color);
-    --el-select-border-color-hover: red;
-    --el-border-color-hover: red;
-    --el-input-hover-border-color: red;
-}
 .login {
     background: var(--purple-grad);
     text-align: center;
@@ -597,11 +591,41 @@ button {
     color: rgb(255, 255, 255);
 }
 
-.all-words-title {
-    margin-top: 1rem;
+.sort-settings {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    /* пад полем пошуку ўжо ёсць 32px пустой шапкі — свайго водступу не трэба */
+    margin-top: 0;
+}
+
+.sort-trigger {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    cursor: pointer;
     font-family: 'PT Sans Caption';
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     color: rgb(255, 255, 255);
+}
+
+.sort-trigger:hover {
+    text-decoration: underline;
+}
+
+.sort-trigger-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+.sort-dropdown {
+    --el-font-size-base: 1.25rem;
+}
+
+.sort-dropdown,
+.sort-dropdown .el-dropdown-menu {
+    border-radius: 0;
 }
 
 .date-edit {
@@ -913,6 +937,9 @@ button {
 }
 
 @media screen and (max-width: 992px) {
+    .sort-settings {
+        margin-top: 1rem;
+    }
     .header-logo-btn {
         padding-left: 1rem;
         padding-top: 0.5rem;
@@ -1103,5 +1130,6 @@ button {
     /*---- end of mobile for hero ----*/
     .sort-settings {
         margin-left: 1rem;
+        margin-right: 1rem;
     }
 }
