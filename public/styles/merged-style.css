@@ -1655,3 +1655,17 @@ button:focus-visible {
     width: 0.875rem;
     height: 0.875rem;
 }
+
+/* спісы на інфастаронках жывуць па тых жа правілах, што абзацы вакол іх */
+.card ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.card li {
+    margin-bottom: 0.5rem;
+}
+
+.card li:last-child {
+    margin-bottom: 0;
+}
