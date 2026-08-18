@@ -64,7 +64,32 @@ function formatLongDate(raw) {
 }
 
 function formatLocalDateTime(raw) {
-    return new Date(raw).toLocaleString();
+    const date = new Date(raw);
+    const dateTimeFormatter = new Intl.DateTimeFormat('be-BY', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+    });
+
+    if (dateTimeFormatter.resolvedOptions().locale === 'be-BY') {
+        return dateTimeFormatter.format(date);
+    }
+
+    const year = fallbackYearFormatter.format(date);
+    const shortMonth = fallbackMonthFormatter.format(date);
+    const day = fallbackDayFormatter.format(date);
+    const time = new Intl.DateTimeFormat(fallbackLocale, {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+    }).format(date);
+
+    return `${day} ${BE_BY_MONTHS[shortMonth - 1]} ${year}, ${time}`;
 }
 
 export { formatShortDate, formatLongDate, formatLocalDateTime };
