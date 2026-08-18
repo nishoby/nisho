@@ -1687,3 +1687,74 @@ button:focus-visible {
 .card li:last-child {
     margin-bottom: 0;
 }
+
+/* Лайк, дыслайк і сцяжок «паскардзіцца» таксама адказваюць на навядзенне —
+   тым жа сцісканнем, што іншыя іконкі. Колер не мяняем: у прагаласаваных
+   кнопак ён нясе сэнс. */
+.card-buttons-actions_like,
+.card-buttons-actions_dislike,
+.card-buttons-actions_flag {
+    cursor: pointer;
+    transition: transform 0.12s ease;
+}
+
+.card-buttons-actions_like:hover,
+.card-buttons-actions_dislike:hover,
+.card-buttons-actions_flag:hover {
+    transform: scale(0.94);
+}
+
+.card-buttons-actions_like:active,
+.card-buttons-actions_dislike:active,
+.card-buttons-actions_flag:active {
+    transform: scale(0.88);
+}
+
+/* сцяжок — спасылка, і .card a раней дадаваў яму падкрэсліванне */
+.card-buttons-actions_flag:hover {
+    text-decoration: none;
+}
+
+/* Тэкст інфастаронак быў 16px з вельмі шчыльным міжрадковым — драбнейшы, чым
+   на картках слоў (20px), таму імёны і назвы роляў чыталіся цяжка. Даём
+   памер паміж імі і паветра паміж радкамі. */
+.card p,
+.card li {
+    /* роўна як тлумачэнне на картцы слова — той самы шрыфт быў, розніўся памер */
+    font-size: 1.25rem;
+    line-height: 1.5;
+}
+
+/* загалоўкі буйнейшыя за тэкст — так відаць, дзе пачынаецца новая частка */
+.card h2 {
+    font-size: 2rem;
+    line-height: 1.3;
+}
+
+.card h3 {
+    font-size: 1.5rem;
+    line-height: 1.35;
+}
+
+/* Імя чалавека ці назва ролі, з якіх пачынаецца пункт спісу, — памерам як
+   падзагаловак: іх шукаюць вачыма, а не чытаюць запар. Астатні тэкст пункта
+   застаецца звычайным. Тлусты тэкст усярэдзіне абзацаў гэта не чапае. */
+.card li > b:first-child {
+    font-size: 1.5rem;
+    line-height: 1.35;
+}
+
+/* Фіялетавыя спасылкі ў тэксце — заўсёды падкрэсленыя, а не толькі пад
+   курсорам: на тэлефоне навядзення няма зусім, і без падкрэслівання спасылку
+   відаць толькі па колеры. Тэгі, назвы слоў і воблака тэгаў сюды не трапляюць:
+   у іх свой выгляд. */
+.card a:not(.user-tag):not(.card-title):not(.tag-cloud__tag):not(.card-info_link):not(.card-buttons-actions_flag),
+.note a,
+.error-caption a {
+    text-decoration: underline;
+}
+
+/* «Словы без тэгаў» — не тэг, таму не пілюля: асобны радок пад воблакам */
+.tag-cloud__untagged {
+    margin: 1.5rem 0 0;
+}

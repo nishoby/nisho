@@ -23,6 +23,13 @@
             </span>
 
             <!-- аўтар — не тэг, таму без зялёнай пілюлі: белы надпіс, як у сартавання -->
+            <span v-if="noTagsQuery" class="sort-autar">
+                Без тэгаў
+                <button class="sort-autar__close" type="button" title="Зняць адбор" @click="clearNoTags">
+                    <IconCross />
+                </button>
+            </span>
+
             <span v-if="autarQuery" class="sort-autar">
                 @{{ autarName }}
                 <button class="sort-autar__close" type="button" title="Зняць адбор па аўтары" @click="clearAutar">
@@ -162,6 +169,9 @@ const route = useRoute();
 const searchQuery = route.query.poshuk?.trim();
 const tagQuery = route.query.tag?.trim();
 const autarQuery = route.query.autar?.trim();
+// словы, да якіх ніхто не прычапіў ніводнага тэга: інакш на іх не вядзе
+// ніводная спасылка і знайсці іх можна толькі гартаннем
+const noTagsQuery = route.query.biez === 'tehau';
 
 const clearTag = () => {
     // чалавек прыйшоў сюды з нейкага месца спісу — вяртаем яго туды, разам са
@@ -173,6 +183,17 @@ const clearTag = () => {
     }
     const query = { ...route.query };
     delete query.tag;
+    router.push({ name: 'terms', query });
+};
+
+const clearNoTags = () => {
+    if (window.history.state?.back) {
+        router.back();
+        return;
+    }
+
+    const query = { ...route.query };
+    delete query.biez;
     router.push({ name: 'terms', query });
 };
 
@@ -261,6 +282,16 @@ const applyTagFilter = (query) => {
 // у чып бярэм імя з першай карткі — усе яны аднаго аўтара
 const autarName = computed(() => terms.value?.[0]?.user?.name || 'аўтар');
 
+// ва ўяўленні terms тэгі заўсёды масіў (coalesce '[]'), таму пустата — гэта
+// роўнасць пустому масіву, а не NULL
+const applyNoTagsFilter = (query) => {
+    if (!noTagsQuery) {
+        return query;
+    }
+
+    return query.filter('tags', 'eq', '[]');
+};
+
 const applyAutarFilter = (query) => {
     if (!autarQuery) {
         return query;
@@ -338,6 +369,7 @@ const buildIds = async (mode) => {
         }
         idQuery = applyTagFilter(idQuery);
         idQuery = applyAutarFilter(idQuery);
+        idQuery = applyNoTagsFilter(idQuery);
         const { data, error } = await idQuery;
         if (error) {
             throw error;
@@ -393,6 +425,7 @@ const fetchTerms = async () => {
 
     queryBuilder = applyTagFilter(queryBuilder);
     queryBuilder = applyAutarFilter(queryBuilder);
+    queryBuilder = applyNoTagsFilter(queryBuilder);
 
     let { data, error, count: termsCount } = await queryBuilder;
 

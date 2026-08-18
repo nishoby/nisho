@@ -88,7 +88,7 @@
                         <router-link :to="{ name: 'team' }">Каманда</router-link>
                     </el-dropdown-item>
                     <el-dropdown-item>
-                        <router-link :to="{ name: 'donation' }">Заданаціць</router-link>
+                        <router-link :to="{ name: 'donation' }">Падтрымаць</router-link>
                     </el-dropdown-item>
                     <el-dropdown-item>
                         <router-link :to="{ name: 'rules' }">Правілы</router-link>

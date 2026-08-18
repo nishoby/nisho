@@ -22,6 +22,12 @@
                         {{ tag.name }}
                     </router-link>
                 </div>
+
+                <p v-if="!loading && !failed && untagged" class="tag-cloud__untagged">
+                    <router-link :to="{ name: 'terms', query: { biez: 'tehau' } }">
+                        Словы без тэгаў ({{ untagged }})
+                    </router-link>
+                </p>
             </div>
         </div>
     </div>
@@ -34,12 +40,16 @@ import { supabase } from './supabase.js';
 const loading = ref(true);
 const failed = ref(false);
 const usage = ref(new Map());
+// словы, да якіх не прычаплены ніводзін тэг: у воблаку іх не відаць, а знайсці
+// іх інакш як гартаннем немагчыма
+const untagged = ref(0);
 
 // Той самы падлік, што на галоўнай фарбуе тэгі ў шэры/зялёны: забіраем тэгі
 // ўсіх слоў і лічым у браўзеры. Часовае рашэнне, пакуль слоў мала, — пры
 // дзясятках тысяч слоў лічыць трэба будзе ў базе.
 const loadTagUsage = async () => {
     const counted = new Map();
+    let withoutTags = 0;
     const step = 1000;
     for (let from = 0; ; from += step) {
         const { data, error } = await supabase
@@ -50,6 +60,10 @@ const loadTagUsage = async () => {
             throw error;
         }
         for (const row of data) {
+            if (!row.tags || !row.tags.length) {
+                withoutTags += 1;
+            }
+
             const seen = new Set();
             for (const raw of row.tags || []) {
                 const key = raw.trim().toLowerCase();
@@ -73,6 +87,7 @@ const loadTagUsage = async () => {
         }
     }
     usage.value = counted;
+    untagged.value = withoutTags;
 };
 
 // «Мова» і «мова » — адзін тэг з рознымі напісаннямі; паказваем адно,
