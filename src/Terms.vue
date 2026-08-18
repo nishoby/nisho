@@ -39,10 +39,10 @@
                     {{ item.term }}
                 </router-link>
                 <div class="card-description">
-                    {{ item.definition }}
+                    {{ tidy(item.definition) }}
                 </div>
                 <div class="card-example">
-                    {{ item.example }}
+                    {{ tidy(item.example) }}
                 </div>
                 <div class="card-tags">
                     <template v-for="tag of uniqueTags(item.tags)" :key="tag">
@@ -264,6 +264,9 @@ const applyAutarFilter = (query) => {
     }
     return query.eq('user->>user_id', autarQuery);
 };
+// людзі часам пакідаюць пустыя радкі напрыканцы тэксту, і картка расце ўвысь
+// упустую (white-space: pre-wrap іх паказвае). Абразаем краі пры паказе.
+const tidy = (text) => (text || '').trim();
 
 const terms = ref(null);
 const count = ref(0);
