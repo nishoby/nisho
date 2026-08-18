@@ -145,11 +145,13 @@ const count = ref(0);
 const account = ref();
 const sort = ref('last');
 
-// Пры выпадковым парадку калода тасуецца адзін раз і жыве да перазагрузкі —
-// толькі так «назад» вяртае тое, што чалавек ужо чытаў.
-// Увага: сюды трапляюць нумары ЎСІХ слоў слоўніка. Пры некалькіх тысячах гэта
-// дробязь, але для гіганцкага слоўніка спатрэбіцца тасаванне на баку базы.
-const shuffledIds = ref(null);
+// «Выпадковыя» і «Спачатку папулярныя» будуюцца аднолькава: спачатку бяром у базы
+// нумары ўсіх слоў, выстройваем іх у патрэбны парадак у браўзеры і далей падгружаем
+// старонкамі. Спіс жыве да перазагрузкі — толькі так «назад» вяртае тое, што чалавек
+// ужо чытаў, і ніводнае слова не паўтараецца.
+// Увага: сюды трапляюць нумары ЎСІХ слоў. Пры некалькіх тысячах гэта дробязь,
+// але для гіганцкага слоўніка парадак трэба будзе будаваць на баку базы.
+const idsBySort = ref({});
 
 const currentSortLabel = computed(() => options.find((item) => item.value === sort.value).label);
 
@@ -168,6 +170,8 @@ const update = async (definition, type) => {
     }
 
     await vote(definition, type);
+    // голас змяніў рэйтынг — парадак «папулярных» трэба перабудаваць
+    delete idsBySort.value.popular;
     await fetchTerms();
 };
 
@@ -186,14 +190,17 @@ const shuffle = (ids) => {
     return ids;
 };
 
-const loadShuffledIds = async () => {
-    const ids = [];
+// рэйтынг слова: плюсы мінус мінусы
+const score = (row) => (row.vote_result?.upvotes || 0) - (row.vote_result?.downvotes || 0);
+
+const buildIds = async (mode) => {
+    const rows = [];
     const step = 1000;
     // бяром порцыямі: у API ёсць столь на колькасць радкоў у адным адказе
     for (let from = 0; ; from += step) {
         let idQuery = supabase
             .from('terms')
-            .select('definition_id')
+            .select('definition_id, created_at, vote_result')
             .range(from, from + step - 1);
         if (searchQuery) {
             idQuery = idQuery.filter('name', 'ilike', `%${searchQuery}%`);
@@ -202,19 +209,27 @@ const loadShuffledIds = async () => {
         if (error) {
             throw error;
         }
-        ids.push(...data.map((row) => row.definition_id));
+        rows.push(...data);
         if (data.length < step) {
             break;
         }
     }
-    shuffledIds.value = shuffle(ids);
+
+    if (mode === 'random') {
+        return shuffle(rows.map((row) => row.definition_id));
+    }
+
+    // пры роўным рэйтынгу вышэй ідуць навейшыя словы
+    rows.sort((a, b) => score(b) - score(a) || new Date(b.created_at) - new Date(a.created_at));
+    return rows.map((row) => row.definition_id);
 };
 
-const fetchRandomPage = async () => {
-    if (!shuffledIds.value) {
-        await loadShuffledIds();
+const fetchPageByIds = async (mode) => {
+    if (!idsBySort.value[mode]) {
+        idsBySort.value[mode] = await buildIds(mode);
     }
-    const pageIds = shuffledIds.value.slice((currentPage.value - 1) * 15, currentPage.value * 15);
+    const ids = idsBySort.value[mode];
+    const pageIds = ids.slice((currentPage.value - 1) * 15, currentPage.value * 15);
     const { data, error } = await supabase.from('terms').select('*').in('definition_id', pageIds);
     if (error) {
         throw error;
@@ -222,12 +237,12 @@ const fetchRandomPage = async () => {
     // база аддае радкі ў сваім парадку — вяртаем наш
     const place = new Map(pageIds.map((id, i) => [id, i]));
     terms.value = data.slice().sort((a, b) => place.get(a.definition_id) - place.get(b.definition_id));
-    count.value = shuffledIds.value.length;
+    count.value = ids.length;
 };
 
 const fetchTerms = async () => {
-    if (sort.value === 'random') {
-        await fetchRandomPage();
+    if (sort.value === 'random' || sort.value === 'popular') {
+        await fetchPageByIds(sort.value);
         return;
     }
 
@@ -237,15 +252,7 @@ const fetchTerms = async () => {
         .select(`*`, { count: 'exact' })
         .range((currentPage.value - 1) * 15, currentPage.value * 15 - 1);
 
-    if (sort.value === 'popular') {
-        // база захоўвае плюсы і мінусы паасобку, і лічыць рознасць умее толькі яна сама,
-        // таму сартуем па плюсах; пры роўнай колькасці вышэй ідуць навейшыя словы
-        queryBuilder = queryBuilder
-            .order('vote_result->upvotes', { ascending: false })
-            .order('created_at', { ascending: false });
-    } else {
-        queryBuilder = queryBuilder.order('created_at', { ascending: false });
-    }
+    queryBuilder = queryBuilder.order('created_at', { ascending: false });
 
     if (searchQuery) {
         queryBuilder = queryBuilder.filter('name', 'ilike', `%${searchQuery}%`);
