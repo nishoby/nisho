@@ -248,6 +248,9 @@ button {
     --el-input-bg-color: rgba(234, 234, 234, 1);
     --el-input-border-color: rgba(234, 234, 234, 1);
     --el-input-border-radius: 0.5rem;
+    /* колер рамкі ў спакоі тут ужо шэры, а рамку ПРЫ ФОКУСЕ Element Plus фарбуе
+       ў свой сіні #409eff — задаем і яе, інакш поле сінее ад аднаго курсора */
+    --el-input-focus-border-color: rgba(234, 234, 234, 1);
 
     padding: 1px 1rem;
 }
@@ -262,6 +265,7 @@ button {
 .complaint_form .el-textarea {
     --el-input-bg-color: rgba(234, 234, 234, 1);
     --el-input-border-color: rgba(234, 234, 234, 1);
+    --el-input-focus-border-color: rgba(234, 234, 234, 1);
 }
 .add-word_form .el-textarea__inner,
 .login_form .el-textarea__inner,
@@ -302,6 +306,7 @@ button {
 }
 
 .add-word__tags-input-wrapper {
+    position: relative;
     width: 100%;
     background-color: rgba(234, 234, 234, 1);
     border-radius: 0.5rem;
@@ -331,9 +336,52 @@ button {
     min-width: 15rem;
 }
 
-.add-word__tags-input.el-input--large .el-input__wrapper {
+.add-word__tags-input .el-input__wrapper {
     background-color: transparent;
     padding: 0.5rem 1rem;
+}
+
+/* Element Plus малюе вакол поля цень-абводку, а пры фокусе перафарбоўвае яе ў свой
+   сіні #409eff — колер, якога ў нашай палітры няма. Поле і так відаць па шэрай
+   падкладцы, таму абводка не патрэбная: дастаткова курсора. */
+.add-word__tags-input .el-input__wrapper,
+.add-word__tags-input .el-input__wrapper:hover,
+.add-word__tags-input .el-input__wrapper.is-focus {
+    box-shadow: none;
+}
+
+/* Адна падказка над полем, як у месенджарах: або дакрануўся, або пішаш далей міма.
+   Шэрая, а не зялёная, — гэта яшчэ не дададзены тэг, а прапанова. */
+.tag-hint {
+    position: absolute;
+    bottom: 100%;
+    left: 1rem;
+    margin-bottom: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 1.25rem;
+    box-shadow: 0 2px 8px rgba(107, 90, 135, 0.25);
+    font-size: 1.25rem;
+    color: #494949;
+    z-index: 1;
+}
+
+.tag-hint__accept {
+    background: none;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+}
+
+.tag-hint__dismiss {
+    background: none;
+    cursor: pointer;
+    color: #868686;
+    font-size: 1.25rem;
+    line-height: 1;
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
 }
 
 .password_input {

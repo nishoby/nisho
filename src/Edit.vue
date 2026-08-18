@@ -16,8 +16,8 @@
             Усе тлумачэнні ў Нішо напісаныя звычайнымі людзьмі. Ты таксама можаш дадаць у слоўнік свае.
             <br />
             Зазірні ў
-            <router-link :to="{ name: 'rules' }" target="_blank">гайдлайны</router-link>
-            перад тым як даваць новаe слова ці яго тлумачэнне.
+            <router-link :to="{ name: 'rules' }" target="_blank">правілы</router-link>
+            перад тым як даваць новае слова ці яго тлумачэнне.
         </p>
         <el-form-item label="Слова:" prop="term_name">
             <el-input v-model="new_term.term_name" disabled />
@@ -41,11 +41,28 @@
                 >
                     {{ tag }}
                 </el-tag>
+                <span v-if="tagHint" class="tag-hint">
+                    <!-- mousedown.prevent: без гэтага поле губляе фокус раней за націск,
+                         спрацоўвае @blur і паспявае дадаць недапісанае «раз» побач з «размоўнае» -->
+                    <button class="tag-hint__accept" type="button" @mousedown.prevent @click="acceptTagHint">
+                        {{ tagHint }}
+                    </button>
+                    <button
+                        class="tag-hint__dismiss"
+                        type="button"
+                        title="Схаваць падказку"
+                        @mousedown.prevent
+                        @click="dismissTagHint"
+                    >
+                        ×
+                    </button>
+                </span>
                 <el-input
                     v-model="newTag"
                     ref="newTagInput"
                     size="large"
                     class="add-word__tags-input"
+                    @input="refreshTagHint"
                     @keydown.enter.prevent="handleAddTag"
                     @blur="handleAddTag"
                 />
@@ -80,34 +97,36 @@ const rules = reactive({
     term_name: [
         {
             required: true,
-            message: 'Слова павінна быць не меньш 3 сымбалеў',
+            message: 'Напішы слова — хаця б дзве літары',
             trigger: 'blur',
         },
         {
-            min: 3,
-            message: 'Слова павінна быць не меньш 3 сымбалеў',
+            // База дазваляе слова ад дзвюх літар (constraint valid_name у schema.sql).
+            // Форма патрабавала тры — і не пускала абрэвіятуры кшталту «ШІ».
+            min: 2,
+            message: 'Напішы слова — хаця б дзве літары',
             trigger: 'blur',
         },
     ],
     definition: [
         {
             required: true,
-            message: 'Павінна быць змястоўнае тлумачэнне',
+            message: 'Змястоўна патлумач слова',
             trigger: 'blur',
         },
         {
             min: 10,
-            message: 'Павінна быць змястоўнае тлумачэнне',
+            message: 'Змястоўна патлумач слова',
             trigger: 'blur',
         },
     ],
     example: [
         {
             required: true,
-            message: 'Павінен быць змястоўны прыклад',
+            message: 'Дадай прыклад ужывання',
             trigger: 'blur',
         },
-        { min: 10, message: 'Павінен быць змястоўны прыклад', trigger: 'blur' },
+        { min: 10, message: 'Дадай прыклад ужывання', trigger: 'blur' },
     ],
 });
 const form = ref();
@@ -180,12 +199,94 @@ const handleRemoveTag = (tag) => {
     new_term.tags.splice(new_term.tags.indexOf(tag), 1);
 };
 
+// Падказка пра ўжо існы тэг: адна, над полем. Чалавек або дакранаецца да яе,
+// або проста піша далей і не заўважае.
+const tagHint = ref('');
+const hintDismissedFor = ref('');
+let hintTimer = null;
+
+// Выбіраем адзін варыянт, а не спіс: той, што пачынаецца з набранага, і найкарацейшы.
+// Такі найбліжэй да таго, што чалавек, відаць, дапісвае.
+const pickHint = (names, query) => {
+    const lowerQuery = query.toLowerCase();
+    const already = new Set(new_term.tags.map((tag) => tag.trim().toLowerCase()));
+    const seen = new Map();
+
+    for (const name of names) {
+        const key = name.trim().toLowerCase();
+
+        if (already.has(key) || key === lowerQuery) {
+            continue;
+        }
+
+        // «Мова» і «мова» — адзін тэг; трымаем напісанне без лішніх прабелаў і ў ніжнім рэгістры
+        if (!seen.has(key) || name === name.trim().toLowerCase()) {
+            seen.set(key, name.trim());
+        }
+    }
+
+    const candidates = [...seen.entries()];
+    const starts = candidates.filter(([key]) => key.startsWith(lowerQuery));
+    const pool = starts.length ? starts : candidates;
+
+    pool.sort((a, b) => a[0].length - b[0].length);
+
+    return pool.length ? pool[0][1] : '';
+};
+
+const refreshTagHint = () => {
+    clearTimeout(hintTimer);
+
+    const query = newTag.value.trim();
+
+    if (!query || query === hintDismissedFor.value) {
+        tagHint.value = '';
+        return;
+    }
+
+    // не б'ём у базу на кожную літару
+    hintTimer = setTimeout(async () => {
+        const { data, error } = await supabase.from('tag').select('name').ilike('name', `%${query}%`).limit(20);
+
+        if (error || newTag.value.trim() !== query) {
+            return;
+        }
+
+        tagHint.value = pickHint(
+            data.map((row) => row.name),
+            query
+        );
+    }, 200);
+};
+
+const acceptTagHint = () => {
+    newTag.value = tagHint.value;
+    tagHint.value = '';
+    handleAddTag();
+};
+
+const dismissTagHint = () => {
+    hintDismissedFor.value = newTag.value.trim();
+    tagHint.value = '';
+};
+
 const handleAddTag = () => {
-    const normalizedValue = newTag.value.trim();
+    // Прыбіраем крайнія прабелы і сціскаем двайныя ўнутры. У базе праз гэта ўжо ляжаць
+    // асобна «школа» і «школа » — розныя радкі толькі з-за хвастовага прабелу.
+    const normalizedValue = newTag.value.trim().replace(/ +/g, ' ');
 
     if (!normalizedValue) return;
 
-    if (normalizedValue && !new_term.tags.includes(normalizedValue)) {
+    // «Мова» і «мова» — той самы тэг, таму параўноўваем без уліку рэгістра.
+    // Ранейшая праверка звярала напісанне дакладна і прапускала абодва ў адну картку.
+    const alreadyAdded = new_term.tags.find((tag) => tag.toLowerCase() === normalizedValue.toLowerCase());
+
+    if (alreadyAdded) {
+        // Моўчкі не дадаць — значыць пакінуць чалавека ў здагадках: поле ачысцілася,
+        // а тэг не з'явіўся. Называем тое напісанне, якое ўжо стаіць, каб было бачна,
+        // чаму «мова» не дадалася, калі ў картцы «Мова».
+        ElMessage.info(`«${alreadyAdded}» ужо ёсць`);
+    } else {
         new_term.tags.push(normalizedValue);
     }
 
