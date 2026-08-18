@@ -1,7 +1,7 @@
 <template>
     <div class="main-container container">
         <div class="sort-settings">
-            <el-dropdown trigger="click" popper-class="sort-dropdown" @command="onSortChange">
+            <el-dropdown trigger="click" placement="bottom-end" popper-class="sort-dropdown" @command="onSortChange">
                 <button class="sort-trigger" type="button">
                     {{ currentSortLabel }}
                     <IconChevron class="sort-trigger-icon" />

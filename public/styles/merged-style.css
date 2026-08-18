@@ -594,6 +594,9 @@ button {
 .sort-settings {
     display: flex;
     align-items: center;
+    /* управа на ўсіх шырынях: меню чапляецца за кнопку, таму толькі так яго правы
+       край супадае з правым краем карткі, а на вузкім экране — з краем іконак */
+    justify-content: flex-end;
     /* пад полем пошуку ўжо ёсць 32px пустой шапкі — свайго водступу не трэба */
     margin-top: 0;
 }
@@ -977,8 +980,12 @@ button {
         width: calc(100vw - 11rem);
     }
     .header-btns {
+        box-sizing: border-box;
         width: 10rem;
-        padding: 0;
+        /* іконкі прыціснутыя ўправа і адступаюць ад краю экрана гэтак жа, як усё
+           астатняе на старонцы — інакш бургер не супадаў з правым краем сартыроўкі */
+        padding: 0 1rem 0 0;
+        justify-content: flex-end;
     }
     .add-btn {
         margin: 0 0.5rem;
