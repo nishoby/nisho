@@ -93,40 +93,34 @@ const new_term = reactive({
     example: '',
     tags: [],
 });
+// Даўжыню правяраем толькі тады, калі чалавек ужо нешта напісаў. Пустое поле —
+// гэта не памылка, а проста яшчэ не запоўненае: чырваніць яго загадзя няветліва.
+const minIfFilled = (length, text) => (rule, value, callback) => {
+    const written = (value || '').trim();
+
+    if (written && written.length < length) {
+        callback(new Error(text));
+        return;
+    }
+
+    callback();
+};
+
 const rules = reactive({
     term_name: [
-        {
-            required: true,
-            message: 'Напішы слова — хаця б дзве літары',
-            trigger: 'blur',
-        },
-        {
-            // База дазваляе слова ад дзвюх літар (constraint valid_name у schema.sql).
-            // Форма патрабавала тры — і не пускала абрэвіятуры кшталту «ШІ».
-            min: 2,
-            message: 'Напішы слова — хаця б дзве літары',
-            trigger: 'blur',
-        },
+        // trigger 'submit' у інтэрфейсе не бывае, таму правіла спрацуе толькі пры
+        // поўнай праверцы — гэта значыць пры націску «Гатова».
+        // Без trigger правіла лічыцца «правяраць заўсёды» і чырваніць пустое поле адразу.
+        { required: true, message: 'Напішы слова — хаця б дзве літары', trigger: 'submit' },
+        { validator: minIfFilled(2, 'Напішы слова — хаця б дзве літары'), trigger: 'blur' },
     ],
     definition: [
-        {
-            required: true,
-            message: 'Змястоўна патлумач слова',
-            trigger: 'blur',
-        },
-        {
-            min: 10,
-            message: 'Змястоўна патлумач слова',
-            trigger: 'blur',
-        },
+        { required: true, message: 'Змястоўна патлумач слова', trigger: 'submit' },
+        { validator: minIfFilled(10, 'Змястоўна патлумач слова'), trigger: 'blur' },
     ],
     example: [
-        {
-            required: true,
-            message: 'Дадай прыклад ужывання',
-            trigger: 'blur',
-        },
-        { min: 10, message: 'Дадай прыклад ужывання', trigger: 'blur' },
+        { required: true, message: 'Дадай прыклад ужывання', trigger: 'submit' },
+        { validator: minIfFilled(10, 'Дадай прыклад ужывання'), trigger: 'blur' },
     ],
 });
 const form = ref();
