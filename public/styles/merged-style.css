@@ -594,7 +594,6 @@ button {
 .sort-settings {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
     /* пад полем пошуку ўжо ёсць 32px пустой шапкі — свайго водступу не трэба */
     margin-top: 0;
 }
@@ -619,8 +618,29 @@ button {
     height: 1rem;
 }
 
-.sort-dropdown {
-    --el-font-size-base: 1.25rem;
+/* Element Plus па змаўчанні падсвечвае пункт сінім фонам і сінім тэкстам —
+   у нашай палітры сіняга няма, таму пры навядзенні толькі падкрэсліванне */
+.sort-dropdown,
+.hamburger-dropdown {
+    --el-dropdown-menuItem-hover-fill: transparent;
+    --el-dropdown-menuItem-hover-color: #9442ce;
+}
+
+/* пункты набраны гэтак жа, як надпіс на кнопцы,
+   а колер — фіялетавы колер спасылак, як у меню бургера */
+.sort-dropdown .el-dropdown-menu__item {
+    font-family: 'PT Sans Caption';
+    font-size: 1.25rem;
+    color: #9442ce;
+}
+
+.sort-dropdown .el-dropdown-menu__item:hover,
+.sort-dropdown .el-dropdown-menu__item:focus,
+.sort-dropdown .el-dropdown-menu__item:active,
+.hamburger-dropdown .el-dropdown-menu__item:hover,
+.hamburger-dropdown .el-dropdown-menu__item:focus {
+    background-color: transparent;
+    text-decoration: underline;
 }
 
 .sort-dropdown,
