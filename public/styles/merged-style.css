@@ -626,11 +626,14 @@ button {
     --el-dropdown-menuItem-hover-color: #9442ce;
 }
 
-/* пункты набраны гэтак жа, як надпіс на кнопцы,
-   а колер — фіялетавы колер спасылак, як у меню бургера */
+/* «PT Sans Caption» падключаны толькі тлустым, таму пункты набіраем «PT Sans»:
+   ён ужо загружаны і ім жа набрана меню бургера.
+   Насычанасць пры навядзенні не мяняем: у гэтым праекце «тлусты» PT Sans —
+   гэта іншая гарнітура (не Caption), і тэкст ад яе не таўсцее, а звужаецца. */
 .sort-dropdown .el-dropdown-menu__item {
-    font-family: 'PT Sans Caption';
+    font-family: 'PT Sans';
     font-size: 1.25rem;
+    font-weight: 400;
     color: #9442ce;
 }
 
