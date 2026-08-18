@@ -8,11 +8,17 @@
                 <ul style="padding-left: 1rem">
                     <li><b>Аляксандра Давыдзенка</b>, візуальны і моўшн дызайн.</li>
                     <li><b>Аляксей Салдаткін</b>, фронт-энд.</li>
-                    <li><b><a href="https://www.facebook.com/mikhail.volczak" target="_blank">Міхаіл Волчак</a></b>, аўтар праекта і ідэйны натхняльнік.</li>
+                    <li>
+                        <b><a href="https://www.facebook.com/mikhail.volczak" target="_blank">Міхаіл Волчак</a></b
+                        >, аўтар праекта і ідэйны натхняльнік.
+                    </li>
                     <li><b>Павел Патапаў</b>, фулстэк распрацоўка.</li>
                 </ul>
 
-                Вы можаце таксама <a href="https://next.falanster.info/index.php/apps/forms/s/5ygE4SJqtaCrxKbJiGL5nDyL" target="_blank">далучыцца да каманды</a>, каб дапамагчы платформе.
+                Вы можаце таксама
+                <a href="https://next.falanster.info/index.php/apps/forms/s/5ygE4SJqtaCrxKbJiGL5nDyL" target="_blank"
+                    >далучыцца да каманды</a
+                >, каб дапамагчы платформе.
                 <br />
                 На сёння патрэбны наступныя ролі:
                 <ul style="padding-left: 1rem">
@@ -21,7 +27,14 @@
                 </ul>
                 А таксама іншыя кампэтэнцыі. Хочаш быць часткай каманды?
                 <br />
-                <a href="https://next.falanster.info/index.php/apps/forms/s/5ygE4SJqtaCrxKbJiGL5nDyL" target="_blank">Так, хачу далучыцца за каманды</a>
+                <a href="https://next.falanster.info/index.php/apps/forms/s/5ygE4SJqtaCrxKbJiGL5nDyL" target="_blank"
+                    >Так, хачу далучыцца за каманды</a
+                >
+
+                <h3>Як з намі звязацца?</h3>
+
+                Пішыце камусці з удзельнікаў каманды вышэй або прыходзьце ў
+                <a href="https://discord.com/invite/TPpWYFqT" target="_blank">Дыскард — чат для рэдактараў</a>.
             </div>
         </div>
     </div>

@@ -5,7 +5,6 @@ import Term from './Term.vue';
 import About from './About.vue';
 import Team from './Team.vue';
 import Donation from './Donation.vue';
-import Contacts from './Contacts.vue';
 import Rules from './Rules.vue';
 import Bugs from './Bugs.vue';
 import Add from './Add.vue';
@@ -109,16 +108,11 @@ const main = [
             },
         ],
     },
+    // Кантакты зліліся з камандай: старонка была з дзвюх фраз і сама адсылала туды.
+    // Стары адрас застаецца жывым — ён у sitemap і ў чужых спасылках.
     {
         path: '/kantakty',
-        component: DefaultLayout,
-        children: [
-            {
-                name: 'contacts',
-                path: '',
-                component: Contacts,
-            },
-        ],
+        redirect: { name: 'team' },
     },
     {
         path: '/pravily',
