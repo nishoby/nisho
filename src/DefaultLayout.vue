@@ -16,7 +16,7 @@
                 </a>
             </div>
             <div class="about-links">
-                <router-link :to="{ name: 'about' }">Апісанне</router-link>
+                <router-link :to="{ name: 'about' }">Пра праект</router-link>
                 <router-link :to="{ name: 'team' }">Каманда</router-link>
                 <router-link :to="{ name: 'donation' }">Заданаціць</router-link>
                 <router-link :to="{ name: 'contacts' }">Кантакты</router-link>
