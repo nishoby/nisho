@@ -1,10 +1,19 @@
 <template>
     <div class="main-container container">
         <div class="sort-settings">
-            <span class="all-words-title">Сартыроўка:</span>
-            <el-select v-model="sort" placeholder="Сартыроўка">
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
+            <el-dropdown trigger="click" placement="bottom-end" popper-class="sort-dropdown" @command="onSortChange">
+                <button class="sort-trigger" type="button">
+                    {{ currentSortLabel }}
+                    <IconChevron class="sort-trigger-icon" />
+                </button>
+                <template #dropdown>
+                    <el-dropdown-menu>
+                        <el-dropdown-item v-for="item in otherSortOptions" :key="item.value" :command="item.value">
+                            {{ item.label }}
+                        </el-dropdown-item>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
         </div>
         <PageContentSpinner v-if="!terms" />
         <div v-else class="cards-div">
@@ -101,7 +110,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { supabase } from './supabase.js';
@@ -111,19 +120,20 @@ import { getUser } from './auth.js';
 import IconDislike from './icons/IconDislike.vue';
 import IconLike from './icons/IconLike.vue';
 import PageContentSpinner from './PageContentSpinner.vue';
+import IconChevron from './icons/IconChevron.vue';
 
 const options = [
     {
         value: 'last',
-        label: 'Апошнія дададзеныя',
+        label: 'Спачатку новыя',
     },
     {
         value: 'first',
-        label: 'Першыя дадазеныя',
+        label: 'Спачатку даўнія',
     },
     {
         value: 'random',
-        label: 'Выпадковыя словы',
+        label: 'Выпадковыя',
     },
 ];
 
@@ -134,6 +144,14 @@ const terms = ref(null);
 const count = ref(0);
 const account = ref();
 const sort = ref('last');
+
+const currentSortLabel = computed(() => options.find((item) => item.value === sort.value).label);
+
+const otherSortOptions = computed(() => options.filter((item) => item.value !== sort.value));
+
+const onSortChange = (value) => {
+    sort.value = value;
+};
 
 const update = async (definition, type) => {
     if (!account.value) {
