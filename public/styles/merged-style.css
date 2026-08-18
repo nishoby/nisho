@@ -642,17 +642,19 @@ button {
 .sort-settings {
     display: flex;
     align-items: center;
-    /* управа на ўсіх шырынях: меню чапляецца за кнопку, таму толькі так яго правы
-       край супадае з правым краем карткі, а на вузкім экране — з краем іконак */
-    justify-content: space-between;
-    /* адваротны парадак: у разметцы чып ідзе пасля сартыроўкі, а бачны злева ад яе.
-       Дзякуючы гэтаму пры доўгім тэгу пераносіцца менавіта чып — пад сартыроўку,
-       а не над ёй */
-    flex-direction: row-reverse;
     flex-wrap: wrap;
     gap: 0.5rem;
     /* пад полем пошуку ўжо ёсць 32px пустой шапкі — свайго водступу не трэба */
     margin-top: 0;
+}
+
+/* чыпы стаяць злева па парадку разметкі, а сартаванне адціскаецца ўправа
+   аўтаматычным полем і паказваецца пасля чыпаў (order). Пры доўгім чыпе на
+   другі радок сыходзіць сартаванне — і застаецца прыціснутым управа, а чып
+   трымае левы край без скачкоў */
+.sort-settings > .el-dropdown {
+    order: 2;
+    margin-left: auto;
 }
 
 .sort-trigger {
@@ -1334,5 +1336,73 @@ a.user-tag:active {
     .sort-settings {
         margin-left: 1rem;
         margin-right: 1rem;
+    }
+}
+
+/* --- вузей за дэсктоп (<=992px): шапка адным радком, ад лагатыпа застаецца «Н».
+   Ранейшая двухрадковая планшэтная шапка больш не выкарыстоўваецца: гэтыя правілы
+   стаяць ніжэй па файле і перакрываюць яе. --- */
+.header-logo-img--compact {
+    display: none;
+}
+
+@media screen and (max-width: 992px) {
+    .header {
+        grid-template-columns: auto 1fr auto;
+        grid-template-rows: none;
+        height: 4.5rem;
+        padding-top: 0;
+    }
+    .header-logo-img {
+        display: none;
+    }
+    .header-logo-img--compact {
+        display: block;
+        /* роўна вышыня белага поля пошуку — «Н» стаіць з ім у адну лінію */
+        height: 3rem;
+        width: auto;
+    }
+    .header-logo-btn {
+        padding: 0 0 0 0.75rem;
+        margin: 0;
+        justify-self: start;
+        display: flex;
+        align-items: center;
+    }
+    .header-form-container,
+    .header-btns {
+        grid-row: auto;
+    }
+    .header-form-container {
+        grid-column: 2;
+        width: auto;
+        /* у .container сядзіць margin: 0 auto — правы auto у грыдзе сціскае поле
+           да натуральнай шырыні, таму пераабвяшчаем усе бакі разам */
+        margin: 0 0 0 0.75rem;
+        /* белае поле ўнутры вышэйшае за 2.25rem з планшэтнага блока — вяртаем
+           натуральную вышыню, каб грыд цэнтраваў сапраўдны прамавугольнік */
+        height: auto;
+    }
+    .header-btns {
+        grid-column: 3;
+        width: auto;
+        padding-right: 1rem;
+    }
+}
+
+/* на зусім вузкім экране сціскаем прамежкі — вызваленае месца дастаецца
+   полю пошуку, каб «Увядзіце слова» змяшчалася цалкам */
+@media screen and (max-width: 650px) {
+    .add-btn {
+        margin: 0 0.25rem;
+    }
+    .hamburger-btn > svg {
+        margin-left: 0.375rem;
+    }
+    .header-form {
+        padding-left: 0.25rem;
+    }
+    .header-form .el-input__wrapper {
+        padding-left: 0.25rem;
     }
 }

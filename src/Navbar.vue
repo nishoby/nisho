@@ -2,6 +2,8 @@
     <router-link :to="{ name: 'terms' }" class="header-logo-btn">
         <router-link :to="{ name: 'terms' }">
             <img class="header-logo-img" src="/assets/img/logo.svg" alt="" />
+            <!-- на вузкім экране ад лагатыпа застаецца адна літара — месца пад пошук -->
+            <img class="header-logo-img--compact" src="/assets/img/logo-n.svg" alt="" />
         </router-link>
     </router-link>
     <div class="header-form-container container">
@@ -18,7 +20,7 @@
                 select-when-unmatched
                 style="width: 100%"
                 popper-class="search-autocomplete"
-                placeholder="Пачніце ўвадзіць слова"
+                placeholder="Увядзіце слова"
                 clearable
             >
                 <template #default="{ item }">
