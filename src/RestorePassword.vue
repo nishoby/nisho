@@ -1,6 +1,10 @@
 <template>
     <div class="registration bcg-reg">
-        <h1 class="title title-white">Аднавіць пароль</h1>
+        <h1 class="title title-white">
+            <button class="back-btn" type="button" aria-label="Назад" @click="router.back()">
+                <img src="/assets/img/back.svg" alt="" /></button
+            >Аднавіць пароль
+        </h1>
         <el-form
             class="login_form"
             label-position="top"

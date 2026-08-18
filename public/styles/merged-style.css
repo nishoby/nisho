@@ -78,7 +78,9 @@ button {
     font-family: inherit;
 }
 .bcg-reg {
-    background: var(--reg-grad);
+    /* быў зялёны градыент — белы загаловак на ім знікаў; па макеце паласа
+       фіялетавая, як і на старонцы ўваходу */
+    background: var(--purple-grad);
 }
 .bcg-green {
     background: var(--green-grad);
@@ -236,7 +238,9 @@ button {
 .complaint_form .el-form-item,
 .login_form .el-form-item {
     padding-top: 1rem;
-    margin-bottom: 2.5rem;
+    /* без пастаяннага рэзерву пад радок памылкі: калі яна з'яўляецца,
+       то сама рассоўвае форму (памылка ніжэй зроблена static) */
+    margin-bottom: 1.25rem;
 }
 .add-word_form .el-form-item__label,
 .login_form .el-form-item__label {
@@ -257,7 +261,8 @@ button {
 .add-word_form .el-input__inner,
 .login_form .el-input__inner {
     height: calc(3.875rem - 2px);
-    font-size: 1.5rem;
+    /* той жа памер, што ў тэкставых палях: адзін памер тэксту ва ўсіх палях */
+    font-size: 1.2rem;
     color: #494949;
 }
 .add-word_form .el-textarea,
@@ -274,7 +279,8 @@ button {
 
     font-size: 1.2rem;
     color: #494949;
-    padding: 5px 1rem;
+    /* тэкст не ліпне да верхняга краю поля */
+    padding: 0.75rem 1rem;
 }
 .complaint_form .el-form-item__label {
     --el-text-color-regular: #494949;
@@ -1140,6 +1146,10 @@ a.user-tag:active {
 }
 
 .el-form-item__error {
+    /* у бібліятэцы памылка вісіць absolute па-над адступам; каб адступ можна
+       было ўшчыльніць, яна становіцца звычайным радком і займае месца толькі
+       тады, калі сапраўды ёсць */
+    position: static;
     margin-top: 0.25rem;
     font-size: 1rem;
 }
@@ -1428,19 +1438,22 @@ a.user-tag:active {
         padding-left: 0.25rem;
     }
     /* загаловак старонкі роўна па тэксце ўнутры белай формы (у яе бакавыя
-       палі 1.3rem), а не ўпрытык да краю экрана */
+       палі 1.3rem), а не ўпрытык да краю экрана; стрэлка «назад» — у радок
+       з загалоўкам */
     .title {
+        display: flex;
+        align-items: center;
         text-align: left;
         padding: 0 1.3rem;
         margin: 1.5rem 0;
     }
+    .title .back-btn {
+        margin: 0 0.5rem 0 0;
+        display: inline-flex;
+        align-items: center;
+    }
 }
 
-/* адзін памер тэксту ва ўсіх палях формы: аднарадковыя палі (слова, тэг)
-   без гэтага буйнейшыя за тэкставыя (24px супраць 19.2px) */
-.add-word_form .el-input__inner {
-    font-size: 1.2rem;
-}
 
 /* поле тэгаў вышэйшае — на два радкі: каб падказка змяшчалася цалкам */
 .add-word__tags-input-wrapper {
@@ -1449,10 +1462,6 @@ a.user-tag:active {
     align-content: flex-start;
 }
 
-/* тэкст не ліпне да верху: у тэкставых палях было 5px, робім аднолькава з усімі */
-.add-word_form .el-textarea__inner {
-    padding: 0.75rem 1rem;
-}
 
 /* свая падказка ўнутры поля тэгаў: шэрая, як у астатніх палях, умее пераносіцца.
    Па кліку поле ловіць фокус самім wrapper'ам, таму падказцы клікі не патрэбныя */

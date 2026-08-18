@@ -1,6 +1,10 @@
 <template>
     <div class="complaint-wrapper">
-        <h1 class="title title-white">Паcкардзіцца мадэратару</h1>
+        <h1 class="title title-white">
+            <button class="back-btn" type="button" aria-label="Назад" @click="router.back()">
+                <img src="/assets/img/back.svg" alt="" /></button
+            >Паcкардзіцца мадэратару
+        </h1>
         <el-form
             :model="complaint"
             ref="form"
