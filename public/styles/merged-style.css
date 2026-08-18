@@ -1735,8 +1735,3 @@ button:focus-visible {
 .error-caption a {
     text-decoration: underline;
 }
-
-/* «Словы без тэгаў» — не тэг, таму не пілюля: асобны радок пад воблакам */
-.tag-cloud__untagged {
-    margin: 1.5rem 0 0;
-}
