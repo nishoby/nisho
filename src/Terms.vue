@@ -14,6 +14,11 @@
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
+
+            <span v-if="tagQuery" class="user-tag sort-tag">
+                {{ tagQuery }}
+                <button class="sort-tag__close" type="button" title="Зняць адбор па тэгу" @click="clearTag">×</button>
+            </span>
         </div>
         <PageContentSpinner v-if="!terms" />
         <div v-else class="cards-div">
@@ -32,10 +37,12 @@
                     {{ item.example }}
                 </div>
                 <div class="card-tags">
-                    <span class="user-tag" v-for="tag of item.tags">
-                        {{ tag }}
-                    </span>
-                    <!-- <span class="embedded-tag">Tag2</span> -->
+                    <template v-for="tag of uniqueTags(item.tags)" :key="tag">
+                        <router-link v-if="isWalkable(tag)" class="user-tag" :to="{ name: 'terms', query: { tag } }">
+                            {{ tag }}
+                        </router-link>
+                        <span v-else class="user-tag user-tag--lonely">{{ tag }}</span>
+                    </template>
                 </div>
                 <div class="card-info">
                     <router-link
@@ -140,6 +147,93 @@ const options = [
 const router = useRouter();
 const route = useRoute();
 const searchQuery = route.query.poshuk?.trim();
+const tagQuery = route.query.tag?.trim();
+
+const clearTag = () => {
+    // чалавек прыйшоў сюды з нейкага месца спісу — вяртаем яго туды, разам са
+    // старонкай і месцам прокруткі. Калі ж тэг адкрылі па прамой спасылцы,
+    // вяртацца няма куды, таму проста здымаем адбор.
+    if (window.history.state?.back) {
+        router.back();
+        return;
+    }
+    const query = { ...route.query };
+    delete query.tag;
+    router.push({ name: 'terms', query });
+};
+
+// Колькі слоў мае кожны тэг. Лічым у браўзеры: бяром тэгі ўсіх слоў адным запытам
+// (пры 904 словах гэта каля 57 КБ) і трымаем да перазагрузкі.
+// ЧАСОВА, ПАКУЛЬ СЛОЎНІК МАЛЫ. Пры дзясятках тысяч слоў гэты спіс стане завялікім,
+// і лічыць колькасць трэба будзе на баку базы — вылічальным полем ва ўяўленні,
+// а не захаваным лічыльнікам, каб не разыходзіўся з праўдай.
+const tagUsage = ref(null);
+
+// адно і тое ж слова часам мае адзін тэг некалькі разоў: у табліцы сувязяў ляжаць
+// дублікаты радкоў, і забароны на паўтор там няма. Схлопваем пры паказе.
+const uniqueTags = (tags) => {
+    const seen = new Map();
+    for (const tag of tags || []) {
+        const key = tag.trim().toLowerCase();
+        if (key && !seen.has(key)) {
+            seen.set(key, tag.trim());
+        }
+    }
+    return [...seen.values()];
+};
+
+// тэг, які ёсць толькі ў аднаго слова, вядзе ў тупік — па ім не ходзім
+const isWalkable = (tag) => !tagUsage.value || (tagUsage.value.get(tag.trim().toLowerCase())?.count || 0) > 1;
+
+const loadTagUsage = async () => {
+    const usage = new Map();
+    const step = 1000;
+    for (let from = 0; ; from += step) {
+        const { data, error } = await supabase
+            .from('terms')
+            .select('tags')
+            .range(from, from + step - 1);
+        if (error) {
+            throw error;
+        }
+        for (const row of data) {
+            const counted = new Set();
+            for (const raw of row.tags || []) {
+                const key = raw.trim().toLowerCase();
+                if (!key) {
+                    continue;
+                }
+                if (!usage.has(key)) {
+                    usage.set(key, { count: 0, spellings: new Set() });
+                }
+                const entry = usage.get(key);
+                // слова лічым адзін раз, нават калі тэг паўтараецца ў ім некалькі разоў
+                if (!counted.has(key)) {
+                    counted.add(key);
+                    entry.count += 1;
+                }
+                // напісанне захоўваем сырым: «школа » з хвастовым прабелам — асобны
+                // радок у базе, і без яго адбор па тэгу згубіць частку слоў
+                entry.spellings.add(raw);
+            }
+        }
+        if (data.length < step) {
+            break;
+        }
+    }
+    tagUsage.value = usage;
+};
+
+// «Мова» і «мова» — адзін тэг, разрэзаны напалам розным напісаннем.
+// Шукаем адразу па ўсіх напісаннях, каб склеіць яго на экране.
+const applyTagFilter = (query) => {
+    if (!tagQuery) {
+        return query;
+    }
+    const spellings = tagUsage.value?.get(tagQuery.toLowerCase())?.spellings;
+    const list = spellings ? [...spellings] : [tagQuery];
+    return query.or(list.map((name) => 'tags.cs.' + JSON.stringify([name])).join(','));
+};
 const terms = ref(null);
 const count = ref(0);
 const account = ref();
@@ -203,8 +297,9 @@ const buildIds = async (mode) => {
             .select('definition_id, created_at, vote_result')
             .range(from, from + step - 1);
         if (searchQuery) {
-            idQuery = idQuery.filter('name', 'ilike', `%${searchQuery}%`);
+            idQuery = idQuery.filter('term', 'ilike', `%${searchQuery}%`);
         }
+        idQuery = applyTagFilter(idQuery);
         const { data, error } = await idQuery;
         if (error) {
             throw error;
@@ -255,8 +350,10 @@ const fetchTerms = async () => {
     queryBuilder = queryBuilder.order('created_at', { ascending: false });
 
     if (searchQuery) {
-        queryBuilder = queryBuilder.filter('name', 'ilike', `%${searchQuery}%`);
+        queryBuilder = queryBuilder.filter('term', 'ilike', `%${searchQuery}%`);
     }
+
+    queryBuilder = applyTagFilter(queryBuilder);
 
     let { data, error, count: termsCount } = await queryBuilder;
 
@@ -273,6 +370,14 @@ watch(sort, () => {
 
 onMounted(async () => {
     account.value = await getUser();
+    // Лічыльнік патрэбны і для колеру тэгаў, і для пошуку па ўсіх напісаннях,
+    // таму чакаем яго да першай выбаркі. Але калі ён не загрузіцца — гэта не падстава
+    // хаваць увесь спіс слоў: без яго тэгі проста застаюцца звычайнымі спасылкамі.
+    try {
+        await loadTagUsage();
+    } catch (error) {
+        console.error(error);
+    }
     await fetchTerms();
 });
 </script>
