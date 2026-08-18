@@ -340,7 +340,6 @@ button {
 .add-word__tags-input-tag .el-tag__close:hover {
     background: none;
     color: inherit;
-    opacity: 0.7;
 }
 
 .add-word__tags-input-tag {
@@ -930,10 +929,6 @@ a.user-tag:active {
     padding: 0.25rem 0 0.25rem 0.375rem;
 }
 
-.sort-autar__close:hover {
-    opacity: 0.7;
-}
-
 .sort-tag__close {
     background: none;
     cursor: pointer;
@@ -1493,4 +1488,54 @@ a.user-tag:active {
     color: #9442ce;
     text-decoration: none;
     pointer-events: auto;
+}
+
+/* Крыжыкі «прыбраць» — на карточных тэгах у форме, на чыпе адбору і на аўтары.
+   Без водгуку на навядзенне яны чыталіся як малюнак, а не як кнопка: цяпер
+   яны цямнеюць і сціскаюцца тым жа рухам, што і тэгі-спасылкі. */
+.sort-tag__close,
+.sort-autar__close,
+.add-word__tags-input-tag .el-tag__close {
+    transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.sort-tag__close:hover,
+.sort-autar__close:hover,
+.add-word__tags-input-tag .el-tag__close:hover {
+    opacity: 0.6;
+    transform: scale(0.9);
+}
+
+.sort-tag__close:active,
+.sort-autar__close:active,
+.add-word__tags-input-tag .el-tag__close:active {
+    transform: scale(0.8);
+}
+
+/* Іконкі шапкі і лагатып таксама адказваюць на навядзенне — тым жа лёгкім
+   сцісканнем, што тэгі і крыжыкі. Курсор-указальнік, каб не было сумневу,
+   што гэта кнопкі. */
+.header-logo-btn,
+.add-btn,
+.hamburger-btn,
+.person-btn,
+.form-search-btn {
+    cursor: pointer;
+    transition: transform 0.12s ease;
+}
+
+.header-logo-btn:hover,
+.add-btn:hover,
+.hamburger-btn:hover,
+.person-btn:hover,
+.form-search-btn:hover {
+    transform: scale(0.94);
+}
+
+.header-logo-btn:active,
+.add-btn:active,
+.hamburger-btn:active,
+.person-btn:active,
+.form-search-btn:active {
+    transform: scale(0.88);
 }
