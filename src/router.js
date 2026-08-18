@@ -59,7 +59,7 @@ const main = [
         ],
     },
     {
-        path: '/apisanne',
+        path: '/pra-praekt',
         component: DefaultLayout,
         children: [
             {
@@ -68,6 +68,12 @@ const main = [
                 component: About,
             },
         ],
+    },
+    // Старая адраса старонкі. Яна стаіць у sitemap і можа быць у чужых спасылках,
+    // таму не выкідаем яе, а вядзём на новую — інакш усе ранейшыя спасылкі трапяць у 404.
+    {
+        path: '/apisanne',
+        redirect: { name: 'about' },
     },
     {
         path: '/kamanda',

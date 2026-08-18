@@ -80,7 +80,7 @@
             <template #dropdown>
                 <el-dropdown-menu class="hamburger-dropdown">
                     <el-dropdown-item>
-                        <router-link :to="{ name: 'about' }">Апісанне</router-link>
+                        <router-link :to="{ name: 'about' }">Пра праект</router-link>
                     </el-dropdown-item>
                     <el-dropdown-item>
                         <router-link :to="{ name: 'team' }">Каманда</router-link>
