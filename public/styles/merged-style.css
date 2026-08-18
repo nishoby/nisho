@@ -825,6 +825,46 @@ a.user-tag:active {
     transform: scale(0.92);
 }
 
+/* воблака на старонцы «Усе тэгі»: словы рознага памеру, раўнуюцца па базавай лініі */
+.tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.625rem;
+    row-gap: 0.625rem;
+    padding-top: 8px;
+}
+
+/* тая ж пілюля, што тэг на картцы слова (фон, колер, радыус), толькі памеры
+   ў em — каб падушкі і скругленне раслі разам са шрыфтам */
+.tag-cloud__tag {
+    color: #494949;
+    text-decoration: none;
+    line-height: 1.25;
+    background: #9ffc70;
+    /* канцы заўсёды паўкруглыя, як у капсулы, пры любым памеры шрыфта */
+    border-radius: 999px;
+    padding: 0.25em 0.625em;
+    transition: transform 0.12s ease;
+}
+
+/* тэг, які мае толькі адно слова: святлейшы, з лёгкім градыентам */
+.tag-cloud__tag--single {
+    background: linear-gradient(180deg, #e4fab0 0%, #d6f897 100%);
+}
+
+.tag-cloud__tag:hover {
+    transform: scale(0.96);
+}
+
+.tag-cloud__tag:active {
+    transform: scale(0.92);
+}
+
+.tag-cloud__note {
+    color: #494949;
+}
+
 /* чып адбору — той самы тэг з карткі, толькі з крыжыкам */
 .sort-tag {
     display: inline-flex;
