@@ -19,6 +19,14 @@
                 {{ tagQuery }}
                 <button class="sort-tag__close" type="button" title="Зняць адбор па тэгу" @click="clearTag">×</button>
             </span>
+
+            <!-- аўтар — не тэг, таму без зялёнай пілюлі: белы надпіс, як у сартавання -->
+            <span v-if="autarQuery" class="sort-autar">
+                @{{ autarName }}
+                <button class="sort-autar__close" type="button" title="Зняць адбор па аўтары" @click="clearAutar">
+                    ×
+                </button>
+            </span>
         </div>
         <PageContentSpinner v-if="!terms" />
         <div v-else class="cards-div">
@@ -45,10 +53,12 @@
                     </template>
                 </div>
                 <div class="card-info">
+                    <!-- адбор па аўтары: тыя ж поўныя карткі, што і на галоўнай,
+                         а не ўціснуты спіс старонкі «Мае словы» -->
                     <router-link
                         :to="{
-                            name: 'user-words',
-                            params: { id: item.user.user_id },
+                            name: 'terms',
+                            query: { autar: item.user.user_id },
                         }"
                         class="card-info_link"
                     >
@@ -148,6 +158,7 @@ const router = useRouter();
 const route = useRoute();
 const searchQuery = route.query.poshuk?.trim();
 const tagQuery = route.query.tag?.trim();
+const autarQuery = route.query.autar?.trim();
 
 const clearTag = () => {
     // чалавек прыйшоў сюды з нейкага месца спісу — вяртаем яго туды, разам са
@@ -159,6 +170,16 @@ const clearTag = () => {
     }
     const query = { ...route.query };
     delete query.tag;
+    router.push({ name: 'terms', query });
+};
+
+const clearAutar = () => {
+    if (window.history.state?.back) {
+        router.back();
+        return;
+    }
+    const query = { ...route.query };
+    delete query.autar;
     router.push({ name: 'terms', query });
 };
 
@@ -234,6 +255,15 @@ const applyTagFilter = (query) => {
     const list = spellings ? [...spellings] : [tagQuery];
     return query.or(list.map((name) => 'tags.cs.' + JSON.stringify([name])).join(','));
 };
+// у чып бярэм імя з першай карткі — усе яны аднаго аўтара
+const autarName = computed(() => terms.value?.[0]?.user?.name || 'аўтар');
+
+const applyAutarFilter = (query) => {
+    if (!autarQuery) {
+        return query;
+    }
+    return query.eq('user->>user_id', autarQuery);
+};
 // людзі часам пакідаюць пустыя радкі напрыканцы тэксту, і картка расце ўвысь
 // упустую (white-space: pre-wrap іх паказвае). Абразаем краі пры паказе.
 const tidy = (text) => (text || '').trim();
@@ -304,6 +334,7 @@ const buildIds = async (mode) => {
             idQuery = idQuery.filter('term', 'ilike', `%${searchQuery}%`);
         }
         idQuery = applyTagFilter(idQuery);
+        idQuery = applyAutarFilter(idQuery);
         const { data, error } = await idQuery;
         if (error) {
             throw error;
@@ -358,6 +389,7 @@ const fetchTerms = async () => {
     }
 
     queryBuilder = applyTagFilter(queryBuilder);
+    queryBuilder = applyAutarFilter(queryBuilder);
 
     let { data, error, count: termsCount } = await queryBuilder;
 
