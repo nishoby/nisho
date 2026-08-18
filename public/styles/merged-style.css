@@ -1060,21 +1060,42 @@ a.user-tag:active {
 .footer * {
     color: white;
 }
+/* падвал раўнуецца па той жа калонцы, што і карткі: злева спасылкі роўна
+   пад тэкстам, справа іконкі роўна пад правым краем карткі */
 .links {
-    margin-bottom: 2rem;
+    box-sizing: border-box;
+    width: 42.5rem;
+    max-width: 100%;
+    margin: 0 auto 2rem;
     display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.social-links {
+    /* па версе, каб першая іконка стаяла ў адной лініі з першым радком спасылак */
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
     padding: 0 2rem;
 }
-.social-links > * {
-    margin-right: 2rem;
-}
-.about-links {
+/* спачатку два слупкі спасылак, потым дзве іконкі — у разметцы яны ідуць
+   першымі, таму парадак задаём тут */
+.social-links {
+    order: 2;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+.social-links img {
+    display: block;
+    width: 3rem;
+    height: auto;
+}
+/* шэсць пунктаў у слупок рабілі падвал вельмі высокім — раскладваем іх
+   у два слупкі, каб падвал стаў удвая ніжэйшы */
+.about-links {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    grid-auto-flow: column;
+    grid-template-rows: repeat(3, auto);
+    column-gap: 4rem;
     text-align: left;
 }
 .about-links > * {
@@ -1245,8 +1266,15 @@ a.user-tag:active {
     .flag-img {
         margin: 0 1rem;
     }
-    .social-links {
-        padding: 0;
+    /* на вузкім экране радок падвала займае ўсю шырыню, таму трымае бакавыя
+       палі сам — тыя ж 2rem, што і тэкст у картках вышэй */
+    .links {
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0 2rem;
+    }
+    .about-links {
+        column-gap: 2rem;
     }
 
     .back-btn {
@@ -1537,5 +1565,23 @@ a.user-tag:active {
 .hamburger-btn:active,
 .person-btn:active,
 .form-search-btn:active {
+    transform: scale(0.88);
+}
+
+/* спасылкі і іконкі падвала таксама адказваюць на навядзенне */
+.social-links .link,
+.about-links > a {
+    display: inline-block;
+    transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.social-links .link:hover,
+.about-links > a:hover {
+    transform: scale(0.94);
+    opacity: 0.85;
+}
+
+.social-links .link:active,
+.about-links > a:active {
     transform: scale(0.88);
 }
