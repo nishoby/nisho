@@ -1,5 +1,9 @@
 <template>
-    <h1 class="title">Дадаць слова</h1>
+    <h1 class="title">
+        <button class="back-btn" type="button" aria-label="Назад" @click="router.back()">
+            <img src="/assets/img/back-black.svg" alt="" /></button
+        >Дадаць слова
+    </h1>
     <el-form
         :model="new_term"
         ref="form"

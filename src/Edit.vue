@@ -1,5 +1,9 @@
 <template>
-    <h1 class="title">Рэдагаваць слова</h1>
+    <h1 class="title">
+        <button class="back-btn" type="button" aria-label="Назад" @click="router.back()">
+            <img src="/assets/img/back-black.svg" alt="" /></button
+        >Рэдагаваць слова
+    </h1>
     <PageContentSpinner v-if="!definition" page-theme="green" />
     <el-form
         v-else

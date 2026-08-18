@@ -1,6 +1,10 @@
 <template>
     <div class="login bcg-purple">
-        <h1 class="title title-white">Уваход</h1>
+        <h1 class="title title-white">
+            <button class="back-btn" type="button" aria-label="Назад" @click="router.back()">
+                <img src="/assets/img/back.svg" alt="" /></button
+            >Уваход
+        </h1>
         <el-form
             class="login_form"
             ref="form"

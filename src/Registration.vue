@@ -1,6 +1,10 @@
 <template>
     <div class="registration bcg-reg">
-        <h1 class="title title-white">Рэгістрацыя</h1>
+        <h1 class="title title-white">
+            <button class="back-btn" type="button" aria-label="Назад" @click="router.back()">
+                <img src="/assets/img/back.svg" alt="" /></button
+            >Рэгістрацыя
+        </h1>
         <el-form class="login_form" label-position="top" ref="form" :rules="rules" @submit.prevent="submit">
             <button type="reset" class="cross" @click="router.back()"></button>
             <el-form-item label="Email" prop="email">
