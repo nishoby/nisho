@@ -1725,3 +1725,13 @@ button:focus-visible {
     font-size: 1.5rem;
     line-height: 1.35;
 }
+
+/* Фіялетавыя спасылкі ў тэксце — заўсёды падкрэсленыя, а не толькі пад
+   курсорам: на тэлефоне навядзення няма зусім, і без падкрэслівання спасылку
+   відаць толькі па колеры. Тэгі, назвы слоў і воблака тэгаў сюды не трапляюць:
+   у іх свой выгляд. */
+.card a:not(.user-tag):not(.card-title):not(.tag-cloud__tag):not(.card-info_link):not(.card-buttons-actions_flag),
+.note a,
+.error-caption a {
+    text-decoration: underline;
+}
