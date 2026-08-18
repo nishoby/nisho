@@ -95,6 +95,9 @@
                         <router-link :to="{ name: 'rules' }">Правілы</router-link>
                     </el-dropdown-item>
                     <el-dropdown-item>
+                        <router-link :to="{ name: 'all-tags' }">Усе тэгі</router-link>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
                         <router-link :to="{ name: 'bugs' }">Багі</router-link>
                     </el-dropdown-item>
                     <el-dropdown-item>

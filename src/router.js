@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Terms from './Terms.vue';
+import AllTags from './AllTags.vue';
 import Term from './Term.vue';
 import About from './About.vue';
 import Team from './Team.vue';
@@ -66,6 +67,17 @@ const main = [
                 name: 'about',
                 path: '',
                 component: About,
+            },
+        ],
+    },
+    {
+        path: '/tehi',
+        component: DefaultLayout,
+        children: [
+            {
+                name: 'all-tags',
+                path: '',
+                component: AllTags,
             },
         ],
     },
