@@ -1707,11 +1707,13 @@ button:focus-visible {
     line-height: 1.5;
 }
 
-/* загалоўкі — той самы тэкст, толькі тлусты: без скачкоў памеру старонка
-   чытаецца як суцэльны аповед, а не як набор блокаў */
-.card h2,
+/* загалоўкі буйнейшыя за тэкст — так відаць, дзе пачынаецца новая частка */
+.card h2 {
+    font-size: 2rem;
+    line-height: 1.3;
+}
+
 .card h3 {
-    font-size: 1.25rem;
-    line-height: 1.5;
-    font-weight: 700;
+    font-size: 1.5rem;
+    line-height: 1.35;
 }
