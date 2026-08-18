@@ -23,9 +23,9 @@
             </span>
 
             <!-- аўтар — не тэг, таму без зялёнай пілюлі: белы надпіс, як у сартавання -->
-            <span v-if="noTagsQuery" class="sort-autar">
+            <span v-if="noTagsQuery" class="user-tag sort-tag">
                 Без тэгаў
-                <button class="sort-autar__close" type="button" title="Зняць адбор" @click="clearNoTags">
+                <button class="sort-tag__close" type="button" title="Зняць адбор" @click="clearNoTags">
                     <IconCross />
                 </button>
             </span>

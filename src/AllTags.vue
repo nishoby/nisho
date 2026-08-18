@@ -17,17 +17,11 @@
                         :class="{ 'tag-cloud__tag--single': tag.count === 1 }"
                         :style="{ fontSize: tag.size + 'rem' }"
                         :title="tag.count + ' ' + wordsLabel(tag.count)"
-                        :to="{ name: 'terms', query: { tag: tag.name } }"
+                        :to="{ name: 'terms', query: tag.query }"
                     >
                         {{ tag.name }}
                     </router-link>
                 </div>
-
-                <p v-if="!loading && !failed && untagged" class="tag-cloud__untagged">
-                    <router-link :to="{ name: 'terms', query: { biez: 'tehau' } }">
-                        Словы без тэгаў ({{ untagged }})
-                    </router-link>
-                </p>
             </div>
         </div>
     </div>
@@ -111,14 +105,28 @@ const cloud = computed(() => {
     const maxCount = Math.max(...entries.map(([, entry]) => entry.count));
     const maxLog = Math.log(maxCount + 1);
 
-    return entries
+    const cloud = entries
         .map(([key, entry]) => ({
             key,
             name: displayName(key, entry.spellings),
             count: entry.count,
+            query: { tag: displayName(key, entry.spellings) },
             size: 0.875 + (Math.log(entry.count + 1) / maxLog) * 1.125,
         }))
         .sort((a, b) => a.key.localeCompare(b.key, 'be'));
+
+    // словы без тэгаў — такая ж пілюля, але ў канцы: гэта не слова з алфавіту
+    if (untagged.value) {
+        cloud.push({
+            key: 'untagged',
+            name: 'Без тэгаў',
+            count: untagged.value,
+            query: { biez: 'tehau' },
+            size: 0.875 + (Math.log(untagged.value + 1) / maxLog) * 1.125,
+        });
+    }
+
+    return cloud;
 });
 
 const wordsLabel = (count) => {
