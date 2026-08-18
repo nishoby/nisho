@@ -39,7 +39,7 @@
                         {{ item.user.name }}
                     </router-link>
                     <div class="card-info_date">
-                        <span :title="item.created_at">
+                        <span :title="formatLocalDateTime(item.created_at)">
                             {{ formatLongDate(item.created_at) }}
                         </span>
                     </div>
@@ -105,7 +105,7 @@ import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { supabase } from './supabase.js';
-import { formatLongDate } from './date.js';
+import { formatLongDate, formatLocalDateTime } from './date.js';
 import { vote, getVoteResult } from './vote.js';
 import { getUser } from './auth.js';
 import IconDislike from './icons/IconDislike.vue';

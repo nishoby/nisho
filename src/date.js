@@ -63,4 +63,8 @@ function formatLongDate(raw) {
     return `${day} ${BE_BY_MONTHS[shortMonth - 1]} ${year}`;
 }
 
-export { formatShortDate, formatLongDate };
+function formatLocalDateTime(raw) {
+    return new Date(raw).toLocaleString();
+}
+
+export { formatShortDate, formatLongDate, formatLocalDateTime };
