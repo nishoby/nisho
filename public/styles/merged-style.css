@@ -509,16 +509,37 @@ button {
     margin-right: 1.75rem;
     justify-self: end;
 }
+.header-btns {
+    display: flex;
+    align-items: center;
+}
+
 .add-btn {
     margin: 0 1rem;
 }
 
+.add-btn,
+.person-btn {
+    display: flex;
+    align-items: center;
+}
+
+.add-btn-img,
+.person-btn-img {
+    display: block;
+}
+
+.hamburger-btn {
+    display: flex;
+    align-items: center;
+}
+
 .hamburger-btn > svg {
-    display: inline-block;
+    display: block;
     color: white;
     width: 40px;
     height: 40px;
-    margin-left: 1rem;
+    margin-left: 1.25rem;
 }
 
 .hamburger-dropdown {
@@ -911,6 +932,9 @@ button {
     }
     .add-btn {
         margin: 0 0.5rem;
+    }
+    .hamburger-btn > svg {
+        margin-left: 1rem;
     }
     .header-form-container,
     .header-btns {
