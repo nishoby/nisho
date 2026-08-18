@@ -159,7 +159,12 @@ const tagHint = ref('');
 const hintDismissedFor = ref('');
 let hintTimer = null;
 
-// Выбіраем адзін варыянт, а не спіс: той, што пачынаецца з набранага, і найкарацейшы.
+// Падказваем толькі тое, што чалавек відавочна дапісвае: тэг пачынаецца з набранага
+// або з набранага пачынаецца слова ўнутры тэга («сеткі» → «сацыяльныя сеткі»).
+// Супадзенне пасярод слова не паказваем: «ва» ў «размоўнае» выглядае як выпадковае слова.
+const startsAtWord = (key, lowerQuery) => key.startsWith(lowerQuery) || key.includes(' ' + lowerQuery);
+
+// Выбіраем адзін варыянт, а не спіс: найкарацейшы з тых, што пачынаюцца з набранага.
 // Такі найбліжэй да таго, што чалавек, відаць, дапісвае.
 const pickHint = (names, query) => {
     const lowerQuery = query.toLowerCase();
@@ -169,7 +174,7 @@ const pickHint = (names, query) => {
     for (const name of names) {
         const key = name.trim().toLowerCase();
 
-        if (already.has(key) || key === lowerQuery) {
+        if (already.has(key) || key === lowerQuery || !startsAtWord(key, lowerQuery)) {
             continue;
         }
 
@@ -180,29 +185,42 @@ const pickHint = (names, query) => {
     }
 
     const candidates = [...seen.entries()];
-    const starts = candidates.filter(([key]) => key.startsWith(lowerQuery));
-    const pool = starts.length ? starts : candidates;
+    // цэлы тэг з набранага пачынаецца — бліжэй, чым слова ўсярэдзіне
+    candidates.sort((a, b) => {
+        const byKind = Number(b[0].startsWith(lowerQuery)) - Number(a[0].startsWith(lowerQuery));
 
-    pool.sort((a, b) => a[0].length - b[0].length);
+        return byKind || a[0].length - b[0].length;
+    });
 
-    return pool.length ? pool[0][1] : '';
+    return candidates.length ? candidates[0][1] : '';
 };
 
 const refreshTagHint = () => {
     clearTimeout(hintTimer);
 
-    const query = newTag.value.trim();
+    const query = newTag.value.trim().replace(/ +/g, ' ');
+    // % _ * , ( ) — службовыя знакі пошуку і раздзяляльнікі ў запыце; у тэгах іх няма
+    const pattern = query.replace(/[%_*,()\\]/g, '');
 
-    if (!query || query === hintDismissedFor.value) {
+    // з адной літары падказка — амаль наўгад, чакаем дзве
+    if (pattern.length < 2 || query === hintDismissedFor.value) {
         tagHint.value = '';
         return;
     }
 
     // не б'ём у базу на кожную літару
     hintTimer = setTimeout(async () => {
-        const { data, error } = await supabase.from('tag').select('name').ilike('name', `%${query}%`).limit(20);
+        // Пытаем толькі тое, што пачынаецца з набранага — цэлы тэг або слова ўнутры яго.
+        // Раней быў пошук падрадка з limit 20: пры 600+ тэгах база вяртала 20 адвольных
+        // радкоў з сотні супадзенняў, і падказка сапраўды выглядала як выпадковае слова.
+        const { data, error } = await supabase
+            .from('tag')
+            .select('name')
+            .or(`name.ilike.${pattern}%,name.ilike.% ${pattern}%`)
+            .order('name')
+            .limit(50);
 
-        if (error || newTag.value.trim() !== query) {
+        if (error || newTag.value.trim().replace(/ +/g, ' ') !== query) {
             return;
         }
 
