@@ -322,6 +322,13 @@ const otherSortOptions = computed(() => options.filter((item) => item.value !== 
 
 const onSortChange = (value) => {
     currentPage.value = 1;
+
+    if (route.query.staronka) {
+        const query = { ...route.query };
+        delete query.staronka;
+        router.replace({ name: 'terms', query });
+    }
+
     sort.value = value;
 };
 
@@ -337,12 +344,39 @@ const update = async (definition, type) => {
     await fetchTerms();
 };
 
-const currentPage = ref(1);
+// Нумар старонкі трымаем у адрасе. Без гэтага спіс пасля вяртання (напрыклад, з
+// скаргі ці са старонкі слова) ствараўся нанова і пачынаўся з першай старонкі —
+// знойдзены запіс даводзілася шукаць нанова.
+const currentPage = ref(Number(route.query.staronka) || 1);
+
 const onPageChange = async (page) => {
     currentPage.value = page;
+
+    const query = { ...route.query };
+
+    if (page > 1) {
+        query.staronka = String(page);
+    } else {
+        delete query.staronka;
+    }
+
+    router.push({ name: 'terms', query });
     await fetchTerms();
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
+
+// кнопка «назад» у браўзеры мяняе адрас, але кампанент застаецца — даганяем спіс самі
+watch(
+    () => route.query.staronka,
+    (value) => {
+        const page = Number(value) || 1;
+
+        if (page !== currentPage.value) {
+            currentPage.value = page;
+            fetchTerms();
+        }
+    }
+);
 
 const shuffle = (ids) => {
     for (let i = ids.length - 1; i > 0; i--) {
