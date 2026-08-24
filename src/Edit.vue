@@ -319,7 +319,10 @@ const dismissTagHint = () => {
 const handleAddTag = () => {
     // Прыбіраем крайнія прабелы і сціскаем двайныя ўнутры. У базе праз гэта ўжо ляжаць
     // асобна «школа» і «школа » — розныя радкі толькі з-за хвастовага прабелу.
-    const normalizedValue = newTag.value.trim().replace(/ +/g, ' ');
+    // Тыпаграфскі апостраф ’ (яго падстаўляюць Word і тэлефоны) замяняем на просты:
+    // інакш «камп’ютары» і «камп'ютары» становяцца двума рознымі тэгамі, а на выгляд
+    // яны аднолькавыя.
+    const normalizedValue = newTag.value.trim().replace(/ +/g, ' ').replace(/’/g, "'");
 
     if (!normalizedValue) return;
 
