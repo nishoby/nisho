@@ -60,7 +60,9 @@
                     :disable-transitions="false"
                     @close="handleRemoveTag(tag)"
                 >
-                    {{ tag }}
+                    <!-- клік па самім слове вяртае тэг у поле: паправіць літару лягчэй,
+                         чым выдаліць і набраць нанова -->
+                    <span class="add-word__tags-input-tag-text" @click="startEditTag(tag)">{{ tag }}</span>
                 </el-tag>
                 <span v-if="tagHint" class="tag-hint">
                     <!-- mousedown.prevent: без гэтага поле губляе фокус раней за націск,
@@ -184,6 +186,21 @@ const showTagNotice = (text) => {
     }, 3000);
 };
 
+// месца, з якога тэг забралі на праўку, — каб выпраўлены вярнуўся туды ж,
+// а не ў канец спісу
+let editedIndex = null;
+
+// клік па тэксце тэга: прыбіраем яго са спісу і кладзём назад у поле ўводу
+const startEditTag = (tag) => {
+    editedIndex = new_term.tags.indexOf(tag);
+    new_term.tags.splice(editedIndex, 1);
+    newTag.value = tag;
+    tagHint.value = '';
+    // падказка не мусіць выскокваць адразу: чалавек прыйшоў правіць, а не набіраць новае
+    hintDismissedFor.value = tag;
+    newTagInput.value.input.focus();
+};
+
 const handleRemoveTag = (tag) => {
     new_term.tags.splice(new_term.tags.indexOf(tag), 1);
 };
@@ -285,7 +302,10 @@ const handleAddTag = () => {
     // яны аднолькавыя.
     const normalizedValue = newTag.value.trim().replace(/ +/g, ' ').replace(/’/g, "'");
 
-    if (!normalizedValue) return;
+    if (!normalizedValue) {
+        editedIndex = null;
+        return;
+    }
 
     // «Мова» і «мова» — той самы тэг, таму параўноўваем без уліку рэгістра.
     // Ранейшая праверка звярала напісанне дакладна і прапускала абодва ў адну картку.
@@ -297,9 +317,13 @@ const handleAddTag = () => {
         // чаму «мова» не дадалася, калі ў картцы «Мова». Паведамленне стаіць
         // адразу пад полем — усплыўшы наверсе экрана, яно глядзелася адарваным.
         showTagNotice(`«${alreadyAdded}» ужо ёсць`);
-    } else {
+    } else if (editedIndex === null) {
         new_term.tags.push(normalizedValue);
+    } else {
+        new_term.tags.splice(editedIndex, 0, normalizedValue);
     }
+
+    editedIndex = null;
 
     newTag.value = '';
     newTagInput.value.input.focus();

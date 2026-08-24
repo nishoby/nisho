@@ -1762,3 +1762,8 @@ button:focus-visible {
     color: #a8abb2;
     font-weight: 400;
 }
+
+/* слова ў пілюлі націскаецца — вяртае тэг у поле для праўкі */
+.add-word__tags-input-tag-text {
+    cursor: text;
+}
