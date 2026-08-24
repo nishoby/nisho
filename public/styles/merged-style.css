@@ -163,11 +163,15 @@ button {
     color: #494949;
     padding-bottom: 1.25rem;
 }
+/* тая ж лесвіца, што на інфастаронках («Пра праект»): 32 назва слова,
+   24 падзагалоўкі, 20 тэкст — і загалоўкі тлустыя */
+/* загалоўкі — 38px звычайнай вагі, як у арыгінальным дызайне */
 .complaint-subtitle {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     font-family: 'PT Sans';
     font-weight: 400;
-    font-size: 2.25rem;
+    font-size: 2.375rem;
+    line-height: 1.2;
 }
 .complaint-desc {
     padding: 10px;
@@ -287,7 +291,10 @@ button {
     --el-text-color-regular: #494949;
     --el-form-label-font-size: 2.25rem;
 
+    /* зменнай бібліятэкі тут не хапае — задаём памер напрамую, як у падзагалоўкаў */
+    font-size: 1.5rem;
     padding-bottom: 1rem;
+    white-space: normal;
 }
 .complaint_form .el-radio-group {
     display: block;
@@ -1759,4 +1766,111 @@ button:focus-visible {
    падкрэслівання: там ён загаловак, а не спасылка ў тэксце */
 .complaint_form a {
     text-decoration: underline;
+}
+
+/* На старонцы скаргі назва слова ліпла да тлумачэння: у картцы слова іх разводзіць
+   агульны прамежак радка, а тут яны стаялі ўшчыльную. Даём той жа паветра, што
+   паміж астатнімі блокамі. */
+/* блок з выбраным словам аддзелены тонкімі рыскамі зверху і знізу — так відаць,
+   дзе канчаюцца правілы і пачынаецца тое, на што чалавек скардзіцца */
+.complaint-chosen {
+    border-top: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
+    padding: 1.25rem 0;
+}
+
+.complaint_form .card-title {
+    display: block;
+    /* назва слова — асобная ступень паміж загалоўкам (38) і тэкстам (20) */
+    font-size: 1.75rem;
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+}
+
+.complaint_form .card-description {
+    margin-bottom: 0.5rem;
+}
+
+/* Стылі бібліятэкі падключаюцца пазней за гэты файл і перабіваюць роўныя па вазе
+   правілы, таму тут селектар цяжэйшы: пытанне доўгае і пераносіцца. */
+form.complaint_form .el-form-item__label {
+    line-height: 1.25;
+}
+
+/* удакладненне ў дужках — з новага радка і драбнейшае за само пытанне */
+
+
+/* Стылі бібліятэкі падключаюцца пазней за гэты файл і перабіваюць роўныя па вазе
+   правілы, таму селектары тут цяжэйшыя. */
+form.complaint_form .el-form-item__label {
+    font-size: 2.375rem;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+/* удакладненне ў дужках — з новага радка і драбнейшае за само пытанне, але
+   таго ж колеру, што і само пытанне (шэры з базавага правіла тут не патрэбны) */
+form.complaint_form .el-form-item__label .label-hint {
+    display: block;
+    font-size: 2.375rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-top: 0.375rem;
+    color: #494949;
+}
+
+/* Пункты выбару прычыны — у тым жа выглядзе, што пункты спісу правілаў вышэй:
+   20px звычайнай вагі. Бібліятэка давала ім 16px і паўтлусты, ад чаго яны
+   выглядалі танюткімі побач з астатнім тэкстам. */
+form.complaint_form .reason-choose .el-radio__label {
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.5;
+    white-space: normal;
+}
+
+form.complaint_form .reason-choose .el-radio {
+    height: auto;
+    /* без асобнага водступу — той жа шчыльны радок, што ў спісе правілаў вышэй.
+       Бібліятэка дадае свой padding-bottom: 13px на кожны радок (з разліку на
+       аднарадковы 14px тэкст) — ён і ствараў бачны разрыў, хаця margin быў нулявы. */
+    margin-bottom: 0;
+    padding-bottom: 0;
+    /* кружок раўнуецца па першым радку тэксту, а не па сярэдзіне ўсяго пункта:
+       інакш на доўгім пункце, які пераносіцца, ён з'язджае ўніз */
+    align-items: flex-start;
+}
+
+form.complaint_form .reason-choose .el-radio__input {
+    /* і крыху ніжэй, каб цэнтр кружка супаў з сярэдзінай радковых літар,
+       а не з верхам радка (замерана: не хапала трох пікселяў) */
+    margin-top: 0.5rem;
+}
+
+/* выбраны пункт — той самы фіялетавы, што спасылкі і назва слова вышэй,
+   а не светлы бэз паводле бібліятэкі; подпіс жырнее, памер не чапаем */
+form.complaint_form .reason-choose .el-radio.is-checked .el-radio__inner {
+    background-color: #9442ce;
+    border-color: #9442ce;
+}
+
+form.complaint_form .reason-choose .el-radio.is-checked .el-radio__input {
+    margin-top: 0.625rem;
+}
+
+form.complaint_form .reason-choose .el-radio.is-checked .el-radio__label {
+    color: #9442ce;
+    font-weight: 700;
+    /* тлусты фіялетавы на 20px усё роўна губляўся побач з 24px загалоўкам —
+       выбраны пункт падымаем да таго ж памеру */
+    font-size: 1.5rem;
+}
+
+/* Агульнае правіла для трох формаў задае тэкставым палям 19.2px — на дадаванні
+   слова і ўваходзе гэта супадае з астатнім тэкстам тых старонак. Але скарга
+   сёння пераведзена на 20px (той жа памер, што ў спісе правілаў і варыянтаў
+   адказу), і без гэтага выключэння яе поле каментара засталося б адзінае
+   не ў тым памеры. */
+.complaint_form .el-textarea__inner {
+    font-size: 1.25rem;
 }
