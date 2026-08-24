@@ -87,6 +87,7 @@
                     class="add-word__tags-input"
                     @input="refreshTagHint"
                     @keydown.enter.prevent="handleAddTag"
+                    @keydown.delete="handleBackspace"
                     @blur="handleAddTag"
                 />
             </div>
@@ -184,6 +185,17 @@ const showTagNotice = (text) => {
     tagNoticeTimer = setTimeout(() => {
         tagNotice.value = '';
     }, 3000);
+};
+
+// Backspace у пустым полі прыбірае апошні тэг — звычка з любога поля з пілюлямі.
+// Пакуль у полі ёсць літары, ён працуе як звычайна і сцірае іх.
+const handleBackspace = (event) => {
+    if (newTag.value.length || !new_term.tags.length) {
+        return;
+    }
+
+    event.preventDefault();
+    new_term.tags.pop();
 };
 
 // месца, з якога тэг забралі на праўку, — каб выпраўлены вярнуўся туды ж,
