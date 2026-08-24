@@ -16,7 +16,7 @@
         >
             <button type="reset" class="cross" @click="router.back()"></button>
             <div class="complaint-block">
-                <p class="complaint-subtitle">Мы выдаляем такія тлумачэнні...</p>
+                <p class="complaint-subtitle">Мы выдаляем такія словы і іх тлумачэнні</p>
                 <div class="complaint-desc">
                     <ol>
                         <li>Унутраныя жарты без кантэксту</li>
@@ -52,11 +52,14 @@
                 </div>
             </div>
 
-            <el-form-item label="Чаму трэба выдаліць тлумачэнне:" prop="reason">
+            <el-form-item label="Што не так са словам ці тлумачэннем:" prop="reason">
                 <el-radio-group v-model="complaint.reason" class="reason-choose">
                     <el-radio label="unclear-term"> унутраны жарт без кантэксту ці не рэальны тэрмін;</el-radio>
                     <el-radio label="personal-data"> імя ці іншыя асабістыя дадзеныя;</el-radio>
                     <el-radio label="hostile-language"> мова варожасці;</el-radio>
+                    <!-- асобны шлях: не выдаліць, а паправіць. Такіх зваротаў найбольш,
+                         і раней яны ішлі пад «іншае» разам са скаргамі на змест -->
+                    <el-radio label="fix-mistake"> проста памылка ў тэксце — трэба выправіць;</el-radio>
                     <el-radio label="other"> іншае </el-radio>
                 </el-radio-group>
             </el-form-item>
