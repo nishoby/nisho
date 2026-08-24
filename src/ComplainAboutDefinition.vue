@@ -25,7 +25,7 @@
                         <li>Выказванні нянавісці, здзекі, дыскрымінацыя, падбухторванне да гвалту</li>
                         <li>
                             Тэксты, што парушаюць іншыя нашыя
-                            <router-link :to="{ name: 'rules' }" target="_blank">гайдлайны</router-link>
+                            <router-link :to="{ name: 'rules' }" target="_blank">правілы</router-link>
                         </li>
                     </ol>
                 </div>
