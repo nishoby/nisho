@@ -1755,3 +1755,10 @@ button:focus-visible {
 .error-caption a {
     text-decoration: underline;
 }
+
+/* дапаможная фраза пры подпісе поля — шэрая, таго ж памеру, што падказкі ў палях */
+.label-hint {
+    font-size: 1.2rem;
+    color: #a8abb2;
+    font-weight: 400;
+}

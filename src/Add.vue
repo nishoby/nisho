@@ -43,13 +43,14 @@
                 placeholder="Напішы сказ ці дыялог з прыкладам ужывання свайго слова. Іншым людзям вельмі дапаможа разуменне кантэксту."
             />
         </el-form-item>
-        <el-form-item label="Тэгі:" prop="tags">
+        <el-form-item prop="tags">
+            <!-- падказка пра Enter стаіць пры подпісе, а не ў полі: у полі яна знікае
+                 акурат тады, калі чалавек пачынае пісаць і Enter яму патрэбны -->
+            <template #label> Тэгі: <span class="label-hint">(надрукуй свой тэг, націсні Enter)</span> </template>
             <div class="add-word__tags-input-wrapper" @click="handleTagsWrapperClick">
                 <!-- свая падказка замест убудаванай: убудаваная не ўмее пераносіцца
                      на другі радок, а гэты тэкст на тэлефоне ў адзін не змяшчаецца -->
-                <span v-if="!new_term.tags.length && !newTag" class="tags-placeholder">
-                    Напішы тэг. Націсні Enter
-                </span>
+                <span v-if="!new_term.tags.length && !newTag" class="tags-placeholder"> Напішы тэг </span>
                 <el-tag
                     v-for="tag in new_term.tags"
                     :key="tag"
