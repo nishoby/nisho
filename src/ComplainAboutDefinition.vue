@@ -75,7 +75,7 @@
                     v-model="complaint.comment"
                     type="textarea"
                     :autosize="{ minRows: 2 }"
-                    placeholder="Патлумачце сваю скаргу"
+                    placeholder="Патлумач сваю скаргу"
                 />
             </el-form-item>
 

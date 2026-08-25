@@ -28,10 +28,12 @@
             <el-input v-model="new_term.term_name" placeholder="Напішы слова" />
         </el-form-item>
         <el-form-item label="Тлумачэнне:" prop="definition">
+            <!-- пачынаецца з двух радкоў і расцягваецца пад тэкст, а не трымае
+                 пастаянную вышыню на пяць радкоў, якая пуставала для кароткіх слоў -->
             <el-input
                 v-model="new_term.definition"
                 type="textarea"
-                :rows="5"
+                :autosize="{ minRows: 2 }"
                 placeholder="Дай азначэнне свайму слову. Паспрабуй напісаць яго як мага больш нейтральна і зразумела."
             />
         </el-form-item>
@@ -39,7 +41,7 @@
             <el-input
                 v-model="new_term.example"
                 type="textarea"
-                :rows="5"
+                :autosize="{ minRows: 2 }"
                 placeholder="Напішы сказ ці дыялог з прыкладам ужывання свайго слова. Іншым людзям вельмі дапаможа разуменне кантэксту."
             />
         </el-form-item>
