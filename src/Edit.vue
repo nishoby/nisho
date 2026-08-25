@@ -47,13 +47,14 @@
                 placeholder="Напішы сказ ці дыялог з прыкладам ужывання свайго слова. Іншым людзям вельмі дапаможа разуменне кантэксту."
             />
         </el-form-item>
-        <el-form-item label="Тэгі:" prop="tags">
+        <el-form-item prop="tags">
+            <!-- падказка пра Enter стаіць пры подпісе, а не ў полі: у полі яна знікае
+                 акурат тады, калі чалавек пачынае пісаць і Enter яму патрэбны -->
+            <template #label> Тэгі: <span class="label-hint">(надрукуй свой тэг, націсні Enter)</span> </template>
             <div class="add-word__tags-input-wrapper" @click="handleTagsWrapperClick">
                 <!-- свая падказка замест убудаванай: убудаваная не ўмее пераносіцца
                      на другі радок, а гэты тэкст на тэлефоне ў адзін не змяшчаецца -->
-                <span v-if="!new_term.tags.length && !newTag" class="tags-placeholder">
-                    Напішы тэг. Націсні Enter
-                </span>
+                <span v-if="!new_term.tags.length && !newTag" class="tags-placeholder"> Напішы тэг </span>
                 <el-tag
                     v-for="tag in new_term.tags"
                     :key="tag"
@@ -63,7 +64,9 @@
                     :disable-transitions="false"
                     @close="handleRemoveTag(tag)"
                 >
-                    {{ tag }}
+                    <!-- клік па самім слове вяртае тэг у поле: паправіць літару лягчэй,
+                         чым выдаліць і набраць нанова -->
+                    <span class="add-word__tags-input-tag-text" @click="startEditTag(tag)">{{ tag }}</span>
                 </el-tag>
                 <span v-if="tagHint" class="tag-hint">
                     <!-- mousedown.prevent: без гэтага поле губляе фокус раней за націск,
@@ -88,6 +91,7 @@
                     class="add-word__tags-input"
                     @input="refreshTagHint"
                     @keydown.enter.prevent="handleAddTag"
+                    @keydown.delete="handleBackspace"
                     @blur="handleAddTag"
                 />
             </div>
@@ -225,6 +229,32 @@ const showTagNotice = (text) => {
     }, 3000);
 };
 
+// Backspace у пустым полі прыбірае апошні тэг — звычка з любога поля з пілюлямі.
+// Пакуль у полі ёсць літары, ён працуе як звычайна і сцірае іх.
+const handleBackspace = (event) => {
+    if (newTag.value.length || !new_term.tags.length) {
+        return;
+    }
+
+    event.preventDefault();
+    new_term.tags.pop();
+};
+
+// месца, з якога тэг забралі на праўку, — каб выпраўлены вярнуўся туды ж,
+// а не ў канец спісу
+let editedIndex = null;
+
+// клік па тэксце тэга: прыбіраем яго са спісу і кладзём назад у поле ўводу
+const startEditTag = (tag) => {
+    editedIndex = new_term.tags.indexOf(tag);
+    new_term.tags.splice(editedIndex, 1);
+    newTag.value = tag;
+    tagHint.value = '';
+    // падказка не мусіць выскокваць адразу: чалавек прыйшоў правіць, а не набіраць новае
+    hintDismissedFor.value = tag;
+    newTagInput.value.input.focus();
+};
+
 const handleRemoveTag = (tag) => {
     new_term.tags.splice(new_term.tags.indexOf(tag), 1);
 };
@@ -321,9 +351,15 @@ const dismissTagHint = () => {
 const handleAddTag = () => {
     // Прыбіраем крайнія прабелы і сціскаем двайныя ўнутры. У базе праз гэта ўжо ляжаць
     // асобна «школа» і «школа » — розныя радкі толькі з-за хвастовага прабелу.
-    const normalizedValue = newTag.value.trim().replace(/ +/g, ' ');
+    // Тыпаграфскі апостраф ’ (яго падстаўляюць Word і тэлефоны) замяняем на просты:
+    // інакш «камп’ютары» і «камп'ютары» становяцца двума рознымі тэгамі, а на выгляд
+    // яны аднолькавыя.
+    const normalizedValue = newTag.value.trim().replace(/ +/g, ' ').replace(/’/g, "'");
 
-    if (!normalizedValue) return;
+    if (!normalizedValue) {
+        editedIndex = null;
+        return;
+    }
 
     // «Мова» і «мова» — той самы тэг, таму параўноўваем без уліку рэгістра.
     // Ранейшая праверка звярала напісанне дакладна і прапускала абодва ў адну картку.
@@ -335,9 +371,13 @@ const handleAddTag = () => {
         // чаму «мова» не дадалася, калі ў картцы «Мова». Паведамленне стаіць
         // адразу пад полем — усплыўшы наверсе экрана, яно глядзелася адарваным.
         showTagNotice(`«${alreadyAdded}» ужо ёсць`);
-    } else {
+    } else if (editedIndex === null) {
         new_term.tags.push(normalizedValue);
+    } else {
+        new_term.tags.splice(editedIndex, 0, normalizedValue);
     }
+
+    editedIndex = null;
 
     newTag.value = '';
     newTagInput.value.input.focus();

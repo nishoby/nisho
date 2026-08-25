@@ -1534,8 +1534,10 @@ a.user-tag:active {
 /* «ужо ёсць» — побач з полем тэгаў, а не ўсплыўшы наверсе экрана */
 .tags-notice {
     margin: 0.375rem 0 0;
-    font-size: 1.2rem;
-    color: #494949;
+    /* той самы чырвоны і памер, што ў памылак формы: гэта таксама адказ
+       «так зрабіць нельга», проста пра тэг */
+    font-size: 1rem;
+    color: #f56c6c;
     line-height: 1.4;
 }
 
@@ -1877,4 +1879,16 @@ form.complaint_form .reason-choose .el-radio.is-checked .el-radio__label {
    не ў тым памеры. */
 .complaint_form .el-textarea__inner {
     font-size: 1.25rem;
+}
+
+/* дапаможная фраза пры подпісе поля — шэрая, таго ж памеру, што падказкі ў палях */
+.label-hint {
+    font-size: 1.2rem;
+    color: #a8abb2;
+    font-weight: 400;
+}
+
+/* слова ў пілюлі націскаецца — вяртае тэг у поле для праўкі */
+.add-word__tags-input-tag-text {
+    cursor: text;
 }
