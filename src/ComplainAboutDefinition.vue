@@ -16,7 +16,7 @@
         >
             <button type="reset" class="cross" @click="router.back()"></button>
             <div class="complaint-block">
-                <p class="complaint-subtitle">Мы выдаляем такія тлумачэнні...</p>
+                <p class="complaint-subtitle">Мы выдаляем такія словы:</p>
                 <div class="complaint-desc">
                     <ol>
                         <li>Унутраныя жарты без кантэксту</li>
@@ -25,13 +25,13 @@
                         <li>Выказванні нянавісці, здзекі, дыскрымінацыя, падбухторванне да гвалту</li>
                         <li>
                             Тэксты, што парушаюць іншыя нашыя
-                            <router-link :to="{ name: 'rules' }" target="_blank">гайдлайны</router-link>
+                            <router-link :to="{ name: 'rules' }" target="_blank">правілы</router-link>
                         </li>
                     </ol>
                 </div>
             </div>
 
-            <div class="complaint-block" v-if="definition">
+            <div class="complaint-block complaint-chosen" v-if="definition">
                 <p class="complaint-subtitle">Вы выбралі:</p>
                 <div class="complaint-desc">
                     <router-link
@@ -52,17 +52,31 @@
                 </div>
             </div>
 
-            <el-form-item label="Чаму трэба выдаліць тлумачэнне:" prop="reason">
+            <el-form-item prop="reason">
+                <template #label>
+                    Што не так са словам:
+                    <span class="label-hint">(яго тлумачэннем ці тэгам)</span>
+                </template>
                 <el-radio-group v-model="complaint.reason" class="reason-choose">
                     <el-radio label="unclear-term"> унутраны жарт без кантэксту ці не рэальны тэрмін;</el-radio>
                     <el-radio label="personal-data"> імя ці іншыя асабістыя дадзеныя;</el-radio>
                     <el-radio label="hostile-language"> мова варожасці;</el-radio>
+                    <!-- асобны шлях: не выдаліць, а паправіць. Такіх зваротаў найбольш,
+                         і раней яны ішлі пад «іншае» разам са скаргамі на змест -->
+                    <el-radio label="fix-mistake"> проста памылка ў тэксце — трэба выправіць;</el-radio>
                     <el-radio label="other"> іншае </el-radio>
                 </el-radio-group>
             </el-form-item>
 
             <el-form-item prop="comment">
-                <el-input v-model="complaint.comment" type="textarea" :rows="4" />
+                <!-- расцягваецца пад тэкст замест таго, каб трымаць пастаянную вышыню
+                     на чатыры радкі, якая пуставала ў большасці скаргаў -->
+                <el-input
+                    v-model="complaint.comment"
+                    type="textarea"
+                    :autosize="{ minRows: 2 }"
+                    placeholder="Патлумач сваю скаргу"
+                />
             </el-form-item>
 
             <input class="submit-btn" type="submit" value="Паскардзіцца" :disabled="loading" />
