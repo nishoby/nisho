@@ -80,6 +80,24 @@ const OUTCOMES = {
     kept: 'адпраўлена на сайт',
 };
 
+// Спіс банаў — рэч дадатковая, і яна не мае права зваліць чаргу скаргаў.
+//
+// Так ужо было: табліца `ban` з'явілася ў базе пазней за старонку, і адна
+// памылка «няма такой табліцы» ператварала ўсю чаргу ў надпіс «не
+// загрузілася». Мадэратар пры гэтым бачыў паломку там, дзе ўсё астатняе
+// працавала. Тут памылка азначае роўна адно: спіс банаў пусты.
+async function loadBans() {
+    try {
+        return await fetchAll(() =>
+            supabase.from('ban').select('id, user_id, until, reason, comment, created_at').is('lifted_at', null)
+        );
+    } catch (error) {
+        console.error(error);
+
+        return [];
+    }
+}
+
 async function loadModeration() {
     // 1. Усе скаргі. Іх дзясяткі, не тысячы, таму бяром разам з разгледжанымі:
     //    з іх жа збіраецца і гісторыя, і лічбы «колькі скаргаў гэтага чалавека
@@ -95,9 +113,7 @@ async function loadModeration() {
 
     // 1а. Хто зараз у бане. Патрэбна нават калі скаргаў няма: спіс банаў —
     //     асобны выгляд той жа старонкі.
-    const bans = await fetchAll(() =>
-        supabase.from('ban').select('id, user_id, until, reason, comment, created_at').is('lifted_at', null)
-    );
+    const bans = await loadBans();
 
     // Бан, у якога скончыўся тэрмін, база не гасіць — ён проста перастае
     // дзейнічаць. Значыць, адсякаць пратэрмінаваныя трэба тут.
