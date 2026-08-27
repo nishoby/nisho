@@ -66,6 +66,14 @@
                         Мае словы
                     </router-link>
                 </el-row>
+                <!-- Пункт бачны толькі мадэратарам. Астатнія пра яго не ведаюць:
+                     не «недаступна», а проста няма — прапаноўваць дзверы, у якія
+                     не пусцяць, няма сэнсу. -->
+                <el-row style="padding-bottom: 10px" v-if="moderator">
+                    <router-link style="text-decoration: underline" :to="{ name: 'moderation' }">
+                        Мадэрацыя
+                    </router-link>
+                </el-row>
                 <el-button @click="signOut" type="success">Выхад</el-button>
             </div>
             <div v-else>
@@ -112,6 +120,7 @@
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getUser } from './auth.js';
+import { isModerator, forgetModerator } from './moderator.js';
 import { supabase } from './supabase.js';
 import IconHamburger from './icons/IconHamburger.vue';
 import { Checked } from '@element-plus/icons-vue';
@@ -120,13 +129,17 @@ import { commonError } from './error.js';
 
 const route = useRoute();
 const account = ref();
+const moderator = ref(false);
 const oldAccountName = ref('');
 const accountName = ref('');
 const search = ref(route.query.poshuk?.trim() || '');
 
-supabase.auth.onAuthStateChange((event, session) => {
+supabase.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN') {
         account.value = session.user;
+        // увайшоў іншы чалавек — папярэдні адказ пра правы больш не варты нічога
+        forgetModerator();
+        moderator.value = await isModerator();
     }
 });
 const router = useRouter();
@@ -174,10 +187,13 @@ async function signOut() {
         return;
     }
     account.value = null;
+    forgetModerator();
+    moderator.value = false;
 }
 
 onMounted(async () => {
     account.value = await getUser();
+    moderator.value = await isModerator();
 
     oldAccountName.value = account.value ? account.value.user_metadata.username : '';
     accountName.value = account.value ? account.value.user_metadata.username : '';

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { isModerator } from './moderator.js';
 import Terms from './Terms.vue';
 import AllTags from './AllTags.vue';
 import Term from './Term.vue';
@@ -18,6 +19,7 @@ import DefaultLayout from './DefaultLayout.vue';
 import SimplifiedLayout from './SimplifiedLayout.vue';
 import ComplainAboutDefinition from './ComplainAboutDefinition.vue';
 import UserWords from './UserWords.vue';
+import Moderation from './Moderation.vue';
 import NotFoundPage from './NotFoundPage.vue';
 import { getUser } from './auth.js';
 import { ElMessage } from 'element-plus';
@@ -32,6 +34,18 @@ const onlyAuthorized = async () => {
         };
     }
     return true;
+};
+
+// Без паведамлення і без спасылкі на логін: чалавек, які трапіў сюды
+// выпадкова, не павінен даведацца, што такая старонка ўвогуле ёсць.
+const onlyModerator = async () => {
+    if (await isModerator()) {
+        return true;
+    }
+
+    return {
+        name: 'terms',
+    };
 };
 
 const main = [
@@ -191,6 +205,26 @@ const main = [
                 name: 'user-words',
                 path: '',
                 component: UserWords,
+            },
+        ],
+    },
+    // Старонка мадэрацыі. Схаваны пункт у меню — гэта ветлівасць, а не ахова:
+    // адрас можна набраць рукамі. Таму тут стаіць праверка правоў, а хто не
+    // мадэратар — трапляе на галоўную, быццам такой старонкі і няма.
+    //
+    // Але і замок тут не апошняя лінія: сапраўдная абарона — правілы RLS у
+    // базе. Яны ўжо стаяць: чужыя скаргі аддаюцца толькі таму, хто запісаны
+    // ў табліцы `moderator`. Нават калі хтосьці адкрые гэтую старонку сілай,
+    // паказваць яму будзе няма чаго.
+    {
+        path: '/maderacyja',
+        component: DefaultLayout,
+        children: [
+            {
+                name: 'moderation',
+                path: '',
+                component: Moderation,
+                beforeEnter: [onlyModerator],
             },
         ],
     },
