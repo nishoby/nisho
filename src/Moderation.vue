@@ -107,14 +107,6 @@
             </button>
         </div>
 
-        <!-- Скаргі ўжо сапраўдныя, а запісваць рашэнні назад у базу яшчэ няма
-             чым. Пра гэта трэба сказаць уголас і на самой старонцы: інакш
-             мадэратар разбярэ ўсю чаргу, абновіць старонку — і ўбачыць яе
-             цэлай. Гэты радок сыдзе разам з першымі функцыямі запісу. -->
-        <p class="note" v-if="view === 'queue' && !loading && !loadError && list.length">
-            Рашэнні пакуль не захоўваюцца — пасля абнаўлення чарга вернецца.
-        </p>
-
         <!-- Поўныя карткі — толькі для таго, што яшчэ трэба разабраць. Ужо
              разгледжанае паказваем радком: правіць там няма чаго, а слова,
              прыбранае з сайта, у выглядзе карткі і зусім не мае сэнсу —
@@ -619,7 +611,8 @@ import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from
 import { ElMessage } from 'element-plus';
 import { formatLongDate } from './date.js';
 import { getUser } from './auth.js';
-import { loadModeration } from './moderation-data.js';
+import { supabase } from './supabase.js';
+import { loadModeration, loadWord } from './moderation-data.js';
 import IconSkull from './icons/IconSkull.vue';
 import IconHistory from './icons/IconHistory.vue';
 import IconSauna from './icons/IconSauna.vue';
@@ -1245,16 +1238,52 @@ function addTag() {
     newTag.value = '';
 }
 
-function save(item) {
+// Памылку з базы паказваем як ёсць. Нашы функцыі кідаюць яе па-беларуску і па
+// справе («Слова ... ужо ёсць у слоўніку»), а калі прыйшло нешта іншае — гэта
+// паломка, і хаваць яе за ветлівай фразай значыла б схаваць прычыну.
+function complain(error) {
+    console.error(error);
+    ElMessage.error(error?.message || 'Не выйшла запісаць — паспрабуй яшчэ раз');
+}
+
+async function save(item) {
     // Спярша пытаемся, ці было што зменена, і толькі потым пішам: калі
     // параўноўваць пасля запісу, картка ўжо роўная чарнавіку і адказ заўсёды
     // выходзіць «нічога не мянялі».
     const changed = isDirty(item);
 
-    // Здымак таго, як слова выглядала да праўкі. Без яго «адмяніць» вяртала б
-    // рашэнне, але не тэкст: мадэратар выправіў слова, націснуў «Гатова»,
-    // перадумаў — і арыгінала ўжо нідзе няма. Скасаваць трэба ўсё дзеянне,
-    // а не яго палову.
+    // Пішам тое, што ў чарнавіку, толькі калі правілі менавіта гэтую картку.
+    // Чарнавік адзін на ўсю старонку; без гэтай умовы «Гатова» на нечапанай
+    // картцы сцірала слова пустымі радкамі з чарнавіка.
+    const next =
+        editing.value === item.id
+            ? {
+                  term: draft.term.trim(),
+                  content: draft.content.trim(),
+                  example: draft.example.trim(),
+                  tags: [...draft.tags],
+              }
+            : { term: item.term, content: item.content, example: item.example, tags: [...item.tags] };
+
+    // Спярша база, потым картка. Наадварот было б хутчэй на выгляд, але
+    // няшчыра: калі запіс не пройдзе, чалавек убачыць разабраную чаргу, якой
+    // на самой справе няма.
+    const { error } = await supabase.rpc('moderate_keep', {
+        def_id: item.id,
+        term_name: next.term,
+        new_content: next.content,
+        new_example: next.example,
+        new_tags: next.tags,
+    });
+
+    if (error) {
+        complain(error);
+        return;
+    }
+
+    // Здымак таго, як слова выглядала да праўкі. Такі ж ляжыць і ў базе —
+    // гэты патрэбны толькі каб «адмяніць» спрацавала імгненна, не пытаючыся
+    // нанова.
     item.before = {
         term: item.term,
         content: item.content,
@@ -1262,15 +1291,10 @@ function save(item) {
         tags: [...item.tags],
     };
 
-    // І пішам толькі тады, калі правілі менавіта гэтую картку. Чарнавік адзін
-    // на ўсю старонку; без гэтай умовы «Гатова» на нечапанай картцы сцірала
-    // слова пустымі радкамі з чарнавіка.
-    if (editing.value === item.id) {
-        item.term = draft.term.trim();
-        item.content = draft.content.trim();
-        item.example = draft.example.trim();
-        item.tags = [...draft.tags];
-    }
+    item.term = next.term;
+    item.content = next.content;
+    item.example = next.example;
+    item.tags = next.tags;
 
     // «Гатова» заўсёды вяртае слова на сайт — незалежна ад таго, правілі яго
     // ці проста прачыталі і вырашылі, што ўсё нармальна
@@ -1293,24 +1317,58 @@ function save(item) {
 // «Адмяніць» скасоўвае толькі тое, што зрабіў мадэратар: слова вяртаецца ў
 // чаргу поўнай карткай, з тым тэкстам, які быў да праўкі. Са скаргай і з самім
 // словам у базе нічога не адбываецца.
-function reopen(item) {
-    if (item.before) {
-        item.term = item.before.term;
-        item.content = item.before.content;
-        item.example = item.before.example;
-        item.tags = [...item.before.tags];
-        item.before = null;
+async function reopen(item) {
+    const { error } = await supabase.rpc('moderate_reopen', { def_id: item.id });
+
+    if (error) {
+        complain(error);
+        return;
+    }
+
+    // Тэкст бяром у базы, а не з памяці браўзера: пасля перазагрузкі здымка
+    // тут няма, і без запыту картка вярнулася б з праўленым тэкстам, хоць
+    // у слоўніку ўжо ляжыць ранейшы.
+    const fresh = await loadWord(item.id);
+
+    if (fresh) {
+        item.term = fresh.term;
+        item.content = fresh.content;
+        item.example = fresh.example;
+        item.tags = fresh.tags;
+        item.hidden = fresh.hidden;
+    }
+
+    item.before = null;
+
+    // Лічыльнік «апрацавана сёння» мусіць сысціся: разабраў — плюс адзін,
+    // перадумаў — мінус. Але толькі калі рашэнне было сённяшняе; адмена
+    // мінулатыднёвага нічога сёння не адымае, затое дадае картку ў чаргу,
+    // і на гэтую картку расце сама порцыя.
+    if (item.resolvedAt === today()) {
+        if (item.outcome === 'выдалена з сайта') {
+            stats.removed = Math.max(0, stats.removed - 1);
+        } else {
+            stats.fixed = Math.max(0, stats.fixed - 1);
+        }
+    } else {
+        batchTotal.value += 1;
     }
 
     item.resolved = false;
     item.outcome = null;
     item.seq = 0;
     item.resolvedAt = null;
-    item.hidden = false;
     ElMessage.info('Слова вярнулася на мадэрацыю');
 }
 
-function hide(item) {
+async function hide(item) {
+    const { error } = await supabase.rpc('moderate_hide', { def_id: item.id });
+
+    if (error) {
+        complain(error);
+        return;
+    }
+
     cancel();
     item.hidden = true;
     item.resolved = true;

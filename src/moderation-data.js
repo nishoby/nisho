@@ -260,4 +260,33 @@ function build({ complaints, definitions, links, people, everything }) {
     return { cards: [...cards.values()] };
 }
 
-export { loadModeration };
+// Перачытвае адно слова з базы.
+//
+// Патрэбна пасля «адмяніць»: база вяртае тэкст, які быў да праўкі, а старонка
+// пра яго можа ўжо не ведаць — здымак жыве ў браўзеры і не перажывае
+// перазагрузку. Замест таго каб адгадваць, пытаемся ў базы.
+async function loadWord(definitionId) {
+    const rows = await fetchAll(() =>
+        supabase.from('definition').select('id, content, example, hidden_at, term(id, name)').in('id', [definitionId])
+    );
+
+    const definition = rows[0];
+
+    if (!definition) {
+        return null;
+    }
+
+    const links = await fetchAll(() =>
+        supabase.from('definition_tag').select('definition_id, tag(name)').in('definition_id', [definitionId])
+    );
+
+    return {
+        term: definition.term?.name || '',
+        content: definition.content || '',
+        example: definition.example || '',
+        tags: links.map((link) => link.tag?.name).filter(Boolean),
+        hidden: Boolean(definition.hidden_at),
+    };
+}
+
+export { loadModeration, loadWord };
