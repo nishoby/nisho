@@ -1,3 +1,7 @@
+// Першым радком наўмысна: гэты файл чытае хвост адраса, які Supabase прыбірае
+// адразу пасля таго, як разбярэ. Падключэнне ніжэй за кліент базы — і чытаць
+// ужо няма чаго.
+import './welcome.js';
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';

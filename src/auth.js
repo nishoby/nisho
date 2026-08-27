@@ -61,4 +61,17 @@ async function restorePassword(email) {
     }
 }
 
-export { getUser, signInWithGoogle, signUp, signIn, restorePassword };
+// Новы пароль замест забытага.
+//
+// Спасылка з ліста прыводзіць чалавека на сайт ужо ўвайшоўшым — Supabase
+// робіць гэта сам, — таму тут не трэба ні старога пароля, ні пошты: проста
+// мяняем пароль таму, хто зараз у сесіі.
+async function setPassword(password) {
+    const { error } = await supabase.auth.updateUser({ password });
+
+    if (error) {
+        throw error;
+    }
+}
+
+export { getUser, signInWithGoogle, signUp, signIn, restorePassword, setPassword };

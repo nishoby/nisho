@@ -24,9 +24,8 @@
                 />
             </el-form-item>
             <el-form-item label="Пароль" prop="password">
-                <el-input
+                <PasswordInput
                     class="password_input"
-                    type="password"
                     name="password"
                     id="password_input"
                     v-model="signInData.password"
@@ -57,6 +56,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { reactive, ref } from 'vue';
+import PasswordInput from './PasswordInput.vue';
 import { signInWithGoogle, signIn } from './auth.js';
 import { ElMessage } from 'element-plus';
 import { commonError } from './error.js';
@@ -87,6 +87,35 @@ const signInData = reactive({
     password: '',
 });
 
+// Чаму не пусціла.
+//
+// Раней тут быў адзін агульны тэкст на ўсё, апроч няправільнага пароля, —
+// «не турбуйцеся, вы ўсё зрабілі правільна». А прычыны бываюць якраз такія,
+// дзе зрабіць трэба: пацвердзіць пошту, пачакаць пасля некалькіх спробаў.
+// Чалавек чытаў, што ўсё добра, і націскаў «Уваход» яшчэ раз.
+//
+// Supabase піша прычыны па-англійску і не абяцае іх нязменнасці, таму
+// пазнаём па кавалку радка, а не па поўным супадзенні.
+function loginError(error) {
+    const said = String(error?.message || '').toLowerCase();
+
+    if (said.includes('invalid login credentials')) {
+        return 'Няправільная пошта ці пароль';
+    }
+
+    if (said.includes('not confirmed')) {
+        return 'Пошта яшчэ не пацверджаная — зазірні ў ліст ад Нішо і націсні спасылку ў ім';
+    }
+
+    // «занадта часта» прыходзіць у некалькіх выглядах: і як rate limit, і як
+    // «you can only request this after N seconds»
+    if (said.includes('rate limit') || said.includes('only request this after') || said.includes('too many')) {
+        return 'Занадта шмат спробаў запар. Крыху пачакай і паспрабуй зноў';
+    }
+
+    return commonError;
+}
+
 const submit = async () => {
     if (!form.value) {
         return;
@@ -99,11 +128,7 @@ const submit = async () => {
             ElMessage.success('Паспяховая аўтарызацыя');
             await router.push({ name: 'terms' });
         } catch (e) {
-            let message = commonError;
-            if (typeof e === 'object' && e.message && e.message === 'Invalid login credentials') {
-                message = 'Неверный email ці пароль';
-            }
-            ElMessage.error(message);
+            ElMessage.error(loginError(e));
             throw e;
         } finally {
             loading.value = false;

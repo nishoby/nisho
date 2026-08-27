@@ -3803,3 +3803,134 @@ body.is-moderating #bmc-wbtn {
     font-size: 1rem;
     color: rgba(73, 73, 73, 0.7);
 }
+
+/* ── Пасля рэгістрацыі ──────────────────────────────────────────────────────
+   Экран замест формы. Пакуль пошта не пацверджаная, рабіць на сайце няма
+   чаго — і хаваць гэта за трохсекундным усплываючым радком нельга. */
+.registration-sent {
+    gap: 0.75rem;
+}
+
+.registration-sent p {
+    margin: 0;
+    /* Старонка рэгістрацыі раўнуе ўсё па цэнтры, але тут не подпіс, а два
+       сказы: пасярэдзіне яны рвуцца з абодвух бакоў і чытаюцца цяжэй.
+       Злева — як і подпісы палёў у самой форме. */
+    text-align: left;
+    color: #494949;
+    line-height: 1.4;
+}
+
+/* падказка пра «Спам» — самым ціхім тэкстам: яна патрэбная не ўсім */
+.registration-sent_hint {
+    font-size: 1rem;
+    color: rgba(73, 73, 73, 0.7);
+}
+
+.registration-sent .account {
+    margin-top: 0.75rem;
+}
+
+/* «дашлі яшчэ раз» — тэкставая кнопка ў радку падказкі, а не асобнае дзеянне
+   пад ім: яна патрэбная толькі таму, хто ўжо чытае гэты радок. Выгляд той
+   самы, што ў спасылак старонкі. */
+.registration-resend {
+    padding: 0;
+    border: none;
+    font: inherit;
+    color: #9442ce;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* пакуль ідзе адлік — не спасылка, а проста тэкст: націскаць няма чаго */
+.registration-resend:disabled {
+    color: rgba(73, 73, 73, 0.7);
+    text-decoration: none;
+    cursor: default;
+}
+
+/* Паведамленне з двух радкоў: першы кажа, што здарылася, другі — што рабіць.
+   Памеры і колеры не свае: бярэ ўсё ад звычайнага паведамлення бібліятэкі,
+   толькі дазваляе яму быць у два радкі. */
+.notice-message .el-message__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.notice-note_main {
+    margin: 0;
+    font-weight: 700;
+}
+
+.notice-note_body {
+    margin: 0;
+}
+
+/* ── Аўтазапаўненне ─────────────────────────────────────────────────────────
+   Браўзер залівае падстаўленае поле сваім блакітным. Звычайны background яго
+   не бярэ: колер малюецца асобным пластом паверх фону, і адзіны спосаб яго
+   закрыць — унутраны цень на ўсю вышыню поля.
+
+   Пералічваем і hover, і focus, і active: без гэтага блакітны вяртаецца, як
+   толькі ў поле тыцнуць. А доўгі transition трымае колер, пакуль браўзер
+   спрабуе вярнуць свой праз анімацыю. */
+.add-word_form input:-webkit-autofill,
+.add-word_form input:-webkit-autofill:hover,
+.add-word_form input:-webkit-autofill:focus,
+.add-word_form input:-webkit-autofill:active,
+.login_form input:-webkit-autofill,
+.login_form input:-webkit-autofill:hover,
+.login_form input:-webkit-autofill:focus,
+.login_form input:-webkit-autofill:active,
+.registration_form input:-webkit-autofill,
+.registration_form input:-webkit-autofill:hover,
+.registration_form input:-webkit-autofill:focus,
+.registration_form input:-webkit-autofill:active {
+    -webkit-text-fill-color: #494949;
+    caret-color: #494949;
+    box-shadow: 0 0 0 100px #eaeaea inset;
+    transition: background-color 100000s ease-in-out 0s;
+}
+
+/* ── Вока пры пароле ────────────────────────────────────────────────────────
+   Кнопка большая за свой значок: значок 1.25rem, а націскальная вобласць
+   з падушкай — 2.75rem (44px): звычайны мінімум, у які пэўна трапляе палец. На тэлефоне трапіць пальцам у сам малюнак амаль
+   немагчыма, і мішэнь мусіць быць большая за тое, што відаць.
+
+   Вылазіць за правы край поля на велічыню ўласнай падушкі, каб значок стаў
+   роўна ў тым жа месцы, дзе быў бы без яе. */
+.password-eye {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    margin-right: -0.75rem;
+    border: none;
+    background: none;
+    color: rgba(73, 73, 73, 0.7);
+    cursor: pointer;
+    transition: transform 0.12s ease;
+}
+
+/* у спакоі прыглушаны, пад курсорам — асноўны колер тэксту: значок побач з
+   тым, што чалавек друкуе, і крычаць яму няма чаго */
+.password-eye:hover,
+.password-eye:focus-visible {
+    outline: none;
+    color: #494949;
+}
+
+.password-eye:active {
+    transform: scale(0.88);
+}
+
+/* 2rem, а не памер тэксту побач: вока — плоская шырокая форма, і яго
+   відочная вышыня ўдвая меншая за квадрат, у якім яно стаіць. Роўны з
+   літарамі квадрат дае значок, які чытаецца драбнютка. */
+.password-eye_icon {
+    width: 2rem;
+    height: 2rem;
+    flex: none;
+}
