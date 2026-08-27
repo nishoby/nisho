@@ -54,8 +54,8 @@
 
             <el-form-item prop="reason">
                 <template #label>
-                    Што не так са словам:
-                    <span class="label-hint">(яго тлумачэннем ці тэгам)</span>
+                    Што не так са словам
+                    <span class="label-hint">(яго тлумачэннем ці тэгам):</span>
                 </template>
                 <el-radio-group v-model="complaint.reason" class="reason-choose">
                     <el-radio label="unclear-term"> унутраны жарт без кантэксту ці не рэальны тэрмін;</el-radio>
@@ -120,9 +120,13 @@ const complaint = reactive({
     reason: '',
     comment: '',
 });
+// Даўжыні на каментар няма наўмысна. Раней стаяла «мінімум 10 сымбалей», і
+// гэта было правіла ні пра што: удакладненне бывае ў два словы і зусім
+// слушнае — назваць само слова, паказаць на тэг, напісаць «імя». Чалавек,
+// які бачыць чырвоны радок пад полем, не дапісвае думку, а прыдумляе словы
+// дзеля лічбы — і мадэратар чытае гэтыя прыдуманыя словы.
 const rules = reactive({
     reason: [{ required: true, message: 'Абавязкова', trigger: 'blur' }],
-    comment: [{ min: 10, message: 'мінімум 10 сымбалей', trigger: 'blur' }],
 });
 const form = ref();
 const submit = async () => {

@@ -52,6 +52,23 @@
                 </button>
             </template>
             <div v-if="account">
+                <!-- Бан — першым радком, да пошты і імя. Чалавек адкрывае
+                     профіль якраз таму, што сайт з ім раптам спрачаецца, і
+                     адказ мусіць стаяць там, дзе вока пачынае. Тут ён поўны:
+                     дакуль, за што і словамі мадэратара — усплываючае
+                     паведамленне на старонцы дадавання знікае, а сюды можна
+                     вярнуцца і перачытаць. -->
+                <el-row class="profile-ban" v-if="myBanRow">
+                    <span class="profile-ban_main">
+                        Ты ў бане да {{ formatLongDate(myBanRow.until) }} {{ banPhrase(myBanRow.reason) }}.
+                    </span>
+                    <span class="profile-ban_why" v-if="myBanRow.comment">{{ myBanRow.comment }}</span>
+                    <span class="profile-ban_calm">
+                        Словы, з якімі ўсё добра, застаюцца на сайце. Пакуль адпачываеш, можаш пачытаць
+                        <router-link :to="{ name: 'rules' }">правілы</router-link>.
+                    </span>
+                </el-row>
+
                 <el-row style="padding-bottom: 10px"> Email: {{ account.email }}</el-row>
                 <el-row style="padding-bottom: 10px">
                     Ваша імя:
@@ -121,6 +138,8 @@ import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getUser } from './auth.js';
 import { isModerator, forgetModerator } from './moderator.js';
+import { myBan, forgetMyBan, banPhrase } from './bans.js';
+import { formatLongDate } from './date.js';
 import { supabase } from './supabase.js';
 import IconHamburger from './icons/IconHamburger.vue';
 import { Checked } from '@element-plus/icons-vue';
@@ -130,6 +149,8 @@ import { commonError } from './error.js';
 const route = useRoute();
 const account = ref();
 const moderator = ref(false);
+// Свой бан, калі ён ёсць. null — значыць, усё добра.
+const myBanRow = ref(null);
 const oldAccountName = ref('');
 const accountName = ref('');
 const search = ref(route.query.poshuk?.trim() || '');
@@ -137,9 +158,12 @@ const search = ref(route.query.poshuk?.trim() || '');
 supabase.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN') {
         account.value = session.user;
-        // увайшоў іншы чалавек — папярэдні адказ пра правы больш не варты нічога
+        // увайшоў іншы чалавек — папярэднія адказы пра правы і пра бан больш
+        // не вартыя нічога
         forgetModerator();
+        forgetMyBan();
         moderator.value = await isModerator();
+        myBanRow.value = await myBan();
     }
 });
 const router = useRouter();
@@ -188,12 +212,15 @@ async function signOut() {
     }
     account.value = null;
     forgetModerator();
+    forgetMyBan();
     moderator.value = false;
+    myBanRow.value = null;
 }
 
 onMounted(async () => {
     account.value = await getUser();
     moderator.value = await isModerator();
+    myBanRow.value = account.value ? await myBan() : null;
 
     oldAccountName.value = account.value ? account.value.user_metadata.username : '';
     accountName.value = account.value ? account.value.user_metadata.username : '';
