@@ -1553,7 +1553,6 @@ a.user-tag:active {
     }
 }
 
-
 /* поле тэгаў пачынаецца з аднаго радка, як астатнія палі, і расцягваецца
    само, калі пілюлі не змяшчаюцца — flex-wrap і min-height замест фіксаванай
    вышыні на два радкі */
@@ -1561,7 +1560,6 @@ a.user-tag:active {
     min-height: calc(3.875rem - 2px);
     align-content: flex-start;
 }
-
 
 /* свая падказка ўнутры поля тэгаў: шэрая, як у астатніх палях, умее пераносіцца.
    Па кліку поле ловіць фокус самім wrapper'ам, таму падказцы клікі не патрэбныя */
@@ -1578,7 +1576,6 @@ a.user-tag:active {
     line-height: 1.4;
     pointer-events: none;
 }
-
 
 /* «ужо ёсць» — побач з полем тэгаў, а не ўсплыўшы наверсе экрана */
 .tags-notice {
@@ -1989,7 +1986,6 @@ form.complaint_form .reason-choose .el-radio.is-checked .el-radio__label {
    цяжэйшы наўмысна: агульнае правіла .card > :first-child зносіць верхні
    адступ першаму элементу, і роўнае па вазе правіла яму прайграе. */
 
-
 .moderation-complaint_head {
     display: flex;
     flex-wrap: wrap;
@@ -2161,8 +2157,6 @@ form.complaint_form .reason-choose .el-radio.is-checked .el-radio__label {
     background: white;
 }
 
-
-
 /* у акне бана гэта, наадварот, галоўнае дзеянне — там яна залітая */
 .ban-dialog .moderation-btn--pink {
     color: white;
@@ -2170,8 +2164,6 @@ form.complaint_form .reason-choose .el-radio.is-checked .el-radio__label {
     border-color: transparent;
     background: linear-gradient(180deg, #e0338a 0%, #f0619f 100%);
 }
-
-
 
 /* Бан — не залітая кнопка, а толькі абрысоўка з чэрапам. Заліваем ружовым
    тое, што робяць часта (выдаліць слова); бан здараецца рэдка, і крычаць яму
@@ -2183,7 +2175,6 @@ form.complaint_form .reason-choose .el-radio.is-checked .el-radio__label {
     border-color: #f090bb;
     background: white;
 }
-
 
 .moderation-btn_icon {
     /* 14px — роўна памер уласнай сеткі значка, каб рыска не расла разам з
@@ -2307,7 +2298,7 @@ form.complaint_form .reason-choose .el-radio.is-checked .el-radio__label {
 .moderation-author {
     display: flex;
     flex-wrap: wrap;
-        /* па ніжнім краі: злева два радкі (імя і лічбы), і кнопка становіцца
+    /* па ніжнім краі: злева два радкі (імя і лічбы), і кнопка становіцца
        ў адзін радок з лічбамі, а не з імем */
     align-items: flex-end;
     justify-content: space-between;
@@ -2321,6 +2312,11 @@ form.complaint_form .reason-choose .el-radio.is-checked .el-radio__label {
     display: flex;
     flex-direction: column;
     gap: 0.125rem;
+    /* Сціскаецца тэкст, а не тое, што справа: доўгае імя аўтара не павінна
+       выштурхоўваць пазнаку бана пад сябе — месца ў яе тое ж, што ў кнопкі
+       «Забаніць аўтара» на суседняй картцы, і вока шукае яе там. */
+    flex: 1 1 12rem;
+    min-width: 0;
 }
 
 /* Імя аўтара — той самы выгляд, што на картках слоў: фіялетавы #a976ea,
@@ -2352,13 +2348,6 @@ form.complaint_form .reason-choose .el-radio.is-checked .el-radio__label {
 .moderation-author_bad {
     color: #f56c6c;
 }
-
-.moderation-author_banned {
-    font-size: 1.125rem;
-    color: #f56c6c;
-}
-
-
 
 /* Нумар запыту — з правага краю шапкі. Ён не для чытання, а для апазнавання:
    па ім відаць, ці разбіралі гэты запыт, і ёсць чым назваць яго ў размове.
@@ -2607,6 +2596,10 @@ body.is-moderating #bmc-wbtn {
     color: rgba(73, 73, 73, 0.7);
     cursor: pointer;
     transition: transform 0.12s ease;
+    /* не сціскаецца і не пераносіцца: надпіс з двух словаў, і разарваны
+       папалам ён чытаецца горш, чым сціснуты блок злева */
+    flex: none;
+    white-space: nowrap;
 }
 
 /* у спакоі шэры, ружавее пад курсорам: каб не палохаў чэрапам кожную картку,
@@ -2625,12 +2618,24 @@ body.is-moderating #bmc-wbtn {
     color: #e0338a;
 }
 
+/* Пазнака «Аўтар забанены» — тое ж месца і той жа значок, што ў кнопкі, але
+   гэта ўжо не дзеянне. Здымаем усё, што абяцае націск: падкрэсліванне,
+   курсор і зжым пад пальцам. */
+.moderation-ban--mark {
+    text-decoration: none;
+    cursor: default;
+}
+
+.moderation-ban--mark:hover,
+.moderation-ban--mark:active {
+    transform: none;
+}
+
 .moderation-ban_icon {
     width: 1.125rem;
     height: 1.125rem;
     flex: none;
 }
-
 
 /* ── Акно бана ──────────────────────────────────────────────────────────────
    Тэрміны — самі кнопкі: выбар тэрміну і ёсць пацвярджэнне, асобнага
@@ -2926,7 +2931,6 @@ body.is-moderating #bmc-wbtn {
 .moderation-card .moderation-outcome,
 .moderation-card .moderation-card-num,
 .moderation-card .moderation-author_stats,
-.moderation-card .moderation-author_banned,
 .moderation-card .moderation-hint,
 .moderation-card .moderation-btn,
 .moderation-card .moderation-ban {
@@ -3203,7 +3207,6 @@ body.is-moderating #bmc-wbtn {
     transform: scale(0.88);
 }
 
-
 @media screen and (max-width: 576px) {
     .moderation-recent {
         padding: 1.25rem;
@@ -3294,9 +3297,6 @@ body.is-moderating #bmc-wbtn {
 .moderation-praise--on {
     text-decoration: none;
 }
-
-
-
 
 /* Поле для новага тэга стаіць у радку заўсёды і нічым сябе не выдае: ні
    рамкі, ні заліўкі, ні пры навядзенні, ні пад курсорам. Пасля пілюль проста

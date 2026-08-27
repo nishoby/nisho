@@ -399,29 +399,37 @@
                                 item.author.removed
                             }}</span>
                         </span>
-                        <span class="moderation-author_banned" v-if="item.author.banned">
-                            <template v-if="item.author.bannedUntil">
-                                забанены да {{ formatLongDate(item.author.bannedUntil) }}
-                            </template>
-                            <template v-else>забанены</template>
-                            — новыя словы дадаваць не можа
-                        </span>
                     </div>
 
                     <!-- Бан — з правага краю радка з імем, а не ў радку рашэнняў
                          унізе: ён пра чалавека, а не пра слова, і стаіць там,
                          дзе лічбы, якія яго апраўдваюць. Ціхі, без рамкі і фону:
                          спатрэбіцца рэдка, і крычаць яму няма чаго. -->
-                    <button
-                        v-if="!showHistory"
-                        class="moderation-ban"
-                        :class="{ 'moderation-ban--on': item.author.banned }"
-                        type="button"
-                        @click="item.author.banned ? unban(item) : askBan(item)"
-                    >
-                        <IconSkull class="moderation-ban_icon" />
-                        {{ item.author.banned ? 'Зняць бан' : 'Забаніць аўтара' }}
-                    </button>
+                    <template v-if="!showHistory">
+                        <!-- Ужо забанены — на тым жа месцы і з тым жа значком, але
+                             гэта ўжо не кнопка, а пазнака: націскаць няма чаго.
+                             Чалавек можа быць аўтарам некалькіх слоў у чарзе, і
+                             пазнака стаіць на кожнай ягонай картцы — інакш адну
+                             разбіраеш ведаючы пра бан, а суседнюю ўжо не.
+
+                             Шэрая, а не ружовая: гэта не папярэджанне і не
+                             дзеянне, а факт. Ружовым на старонцы гарыць тое, што
+                             прыбірае, і чэрап такога ж колеру на кожнай картцы
+                             аўтара крычаў бы гучней за самі скаргі.
+
+                             Ні даты, ні тлумачэння тут няма наўмысна: за што і
+                             дакуль — у спісе «Хто ў бане», дзе бан адзін на
+                             чалавека. На картцы разбіраюць слова, а не чалавека. -->
+                        <span class="moderation-ban moderation-ban--mark" v-if="item.author.banned">
+                            <IconSkull class="moderation-ban_icon" />
+                            Аўтар забанены
+                        </span>
+
+                        <button v-else class="moderation-ban" type="button" @click="askBan(item)">
+                            <IconSkull class="moderation-ban_icon" />
+                            Забаніць аўтара
+                        </button>
+                    </template>
                 </div>
 
                 <!-- Рашэнне па запыце — у самым нізе карткі, пасля ўсяго, што
@@ -461,7 +469,7 @@
 
             <p class="note" v-if="!bans.length">Нікога ў бане няма.</p>
 
-            <p class="moderation-recent_row" v-for="ban of bans" :key="ban.name">
+            <p class="moderation-recent_row" v-for="ban of bans" :key="ban.id">
                 <span class="moderation-recent_term">{{ ban.name }}</span>
                 <span class="moderation-recent_what">{{ ban.reason }}</span>
                 <span class="moderation-recent_num">да {{ formatLongDate(ban.until) }}</span>
@@ -809,10 +817,28 @@ const list = computed(() => {
         : base.filter((i) => i.complaints.some((c) => c.by === chosen.name));
 });
 
-// Паласа ўнізе — не справаздача, а магчымасць перадумаць: памылку заўважаюць
-// праз хвіліну пасля націску, а не праз паўгадзіны. Таму тут толькі апошняе,
-// а ўвесь тыдзень жыве ў «гісторыі», куды ідуць знарок.
-const justDone = computed(() => done.value.slice(0, 3));
+// Паласа ўнізе — не справаздача, а магчымасць перадумаць. Раней тут стаялі
+// тры апошнія карткі, і гэта аказалася замала: разбор ідзе не адным прысестам,
+// а вяртаешся да яго праз дзень — і тое, што хочацца перагледзець, ужо
+// вывалілася з паласы, хоць і засталося свежым.
+//
+// Таму мера тут не «колькі радкоў», а «за які час»: сёння і ўчора. Лічба
+// адна і мяняецца адной лічбай; усё старэйшае жыве ў «гісторыі», куды ідуць
+// знарок.
+const JUST_DAYS = 2;
+
+const justDone = computed(() => done.value.filter((i) => withinDays(i.resolvedAt, JUST_DAYS)));
+
+// Ці трапляе дзень у апошнія N дзён, лічачы сённяшні першым. Дзень тут —
+// радок «2026-08-28», таму лічым па датах, а не па гадзінах: рашэнне,
+// прынятае ўчора ў 23:50, не мусіць знікаць з паласы праз дзесяць хвілін.
+function withinDays(day, days) {
+    if (!day) {
+        return true;
+    }
+
+    return (new Date(today()) - new Date(day)) / 86400000 < days;
+}
 
 // Колькі жыве гісторыя. Адна лічба на дзве рэчы: столькі ж часу рашэнне можна
 // і адмяніць. Два розныя тэрміны прыйшлося б тлумачыць — «радок бачны, а кнопкі
@@ -932,9 +958,12 @@ onMounted(async () => {
     ME.value = account?.user_metadata?.username || account?.user_metadata?.name || '';
 
     try {
-        const { cards } = await loadModeration();
+        const loaded = await loadModeration();
 
-        items.value = cards;
+        items.value = loaded.cards;
+        // База трымае кароткі код прычыны, а спіс паказвае словы — тэксты
+        // жывуць тут, у BAN_REASONS, і база пра іх не ведае.
+        bans.value = loaded.bans.map((ban) => ({ ...ban, reason: banLabel(ban.reason) }));
     } catch (error) {
         // Прычын дзве: скаргі не чытаюцца (правы) ці сетка не адказала. Для
         // таго, хто адкрыў старонку, гэта адно і тое ж — «зараз не выйшла», —
@@ -1436,6 +1465,10 @@ const BAN_REASONS = [
 ];
 
 const banReasons = BAN_REASONS;
+
+// Код з базы → кароткая назва. Не знайшлі — паказваем сам код: лепш незразумелае
+// слова, чым пусты радок, па якім не зразумець, ці ёсць там наогул прычына.
+const banLabel = (code) => BAN_REASONS.find((r) => r.id === code)?.label || code || '';
 // «Іншае» без словаў нічога не тлумачыць — тады каментар абавязковы.
 // Тэрмін і прычына абавязковыя, падрабязнасці — не: тры прычыны і так
 // гавораць самі за сябе, а дапісаць ёсць што не заўсёды.
@@ -1467,67 +1500,105 @@ function askBanPerson(who) {
     banDialog.value = true;
 }
 
-function ban(term) {
+// Ставіць пазнаку бана на чалавека ва ўсіх картках. Люстэрка forgetBan:
+// той самы чалавек можа быць і аўтарам, і скаржнікам, і пазнака мусіць
+// з'явіцца ў абодвух месцах, а не толькі там, дзе націснулі.
+function markBan(userId, until) {
+    for (const item of items.value) {
+        const people = [item.author, ...(item.complaints || []).map((c) => c.by_person)];
+
+        for (const person of people) {
+            if (person?.id === userId) {
+                person.banned = true;
+                person.bannedUntil = until;
+            }
+        }
+    }
+}
+
+async function ban(term) {
     const target = banTarget.value;
 
-    if (!target || !term) {
+    if (!target || !term || !target.person?.id) {
+        return;
+    }
+
+    const { error } = await supabase.rpc('moderate_ban', {
+        who: target.person.id,
+        days: term.days,
+        ban_reason: banReason.value,
+        ban_comment: banComment.value.trim(),
+    });
+
+    if (error) {
+        complain(error);
         return;
     }
 
     const until = new Date();
     until.setDate(until.getDate() + term.days);
 
-    if (target.person) {
-        target.person.banned = true;
-        target.person.bannedUntil = until.toISOString();
-        // тое, што чалавек убачыць замест формы
-        target.person.banReason = BAN_REASONS.find((r) => r.id === banReason.value)?.phrase || '';
-        target.person.banComment = banComment.value.trim();
+    markBan(target.person.id, until.toISOString());
 
-        bans.value = [
-            {
-                name: target.name,
-                until,
-                reason: BAN_REASONS.find((r) => r.id === banReason.value)?.label || '',
-                comment: banComment.value.trim(),
-                person: target.person,
-            },
-            ...bans.value.filter((b) => b.name !== target.name),
-        ];
-    }
+    // Новы бан замест старога, як і ў базе: адзін чалавек — адзін радок
+    // у спісе, іначай «зняць бан» здымала б адзін, а другі заставаўся б.
+    bans.value = [
+        {
+            id: `new-${target.person.id}`,
+            user_id: target.person.id,
+            name: target.name,
+            until: until.toISOString(),
+            reason: banLabel(banReason.value),
+            comment: banComment.value.trim(),
+        },
+        ...bans.value.filter((b) => b.user_id !== target.person.id),
+    ];
 
-    // Картку закрывае толькі бан аўтара слова. Бан скаржніка яе не кранае:
-    // слова застаецца на разгляд, бо да яго вінаватасць не мае дачынення.
-    if (target.kind === 'author' && target.item) {
-        target.item.resolved = true;
-        target.item.seq = ++resolveSeq;
-        target.item.resolvedAt = today();
-        target.item.outcome = `аўтар забанены да ${formatLongDate(until)}`;
-    }
+    // Картка застаецца ў чарзе наўмысна. Бан — гэта пра чалавека, а слова
+    // ўсё роўна трэба разабраць: пакінуць ці прыбраць. Калі закрыць картку
+    // тут, скарга ў базе засталася б адкрытай, і слова вярнулася б у чаргу
+    // пры наступным адкрыцці старонкі — толькі ўжо без тлумачэння, чаму.
 
     banDialog.value = false;
     banTarget.value = null;
     chosenTerm.value = null;
-    ElMessage.success(`${target.name} забанены на ${term.label} — да ${formatLongDate(until)}`);
+    ElMessage.success(`${target.name || 'Чалавек'} забанены на ${term.label} — да ${formatLongDate(until)}`);
 }
 
-function unban(item) {
-    item.author.banned = false;
-    item.author.bannedUntil = null;
-    bans.value = bans.value.filter((b) => b.person !== item.author);
-    ElMessage.success('Бан зняты');
+// Здымае бан з чалавека ва ўсіх картках адразу. Адзін і той жа чалавек можа
+// стаяць і аўтарам аднаго слова, і скаржнікам у другім — і калі пазнака сыдзе
+// толькі з таго месца, дзе націснулі, у суседняй картцы ён застанецца
+// «забаненым», хоць бану ўжо няма.
+function forgetBan(userId) {
+    for (const item of items.value) {
+        if (item.author?.id === userId) {
+            item.author.banned = false;
+            item.author.bannedUntil = null;
+        }
+
+        for (const complaint of item.complaints || []) {
+            if (complaint.by_person?.id === userId) {
+                complaint.by_person.banned = false;
+                complaint.by_person.bannedUntil = null;
+            }
+        }
+    }
+
+    bans.value = bans.value.filter((b) => b.user_id !== userId);
 }
 
 // Зняць бан са спісу банаў. Той жа вынік, што і «Зняць бан» на картцы, толькі
 // адсюль здымаецца і з тых, у каго карткі на старонцы няма.
-function liftBan(ban) {
-    if (ban.person) {
-        ban.person.banned = false;
-        ban.person.bannedUntil = null;
+async function liftBan(ban) {
+    const { error } = await supabase.rpc('moderate_unban', { who: ban.user_id });
+
+    if (error) {
+        complain(error);
+        return;
     }
 
-    bans.value = bans.value.filter((b) => b !== ban);
-    ElMessage.success(`Бан з ${ban.name} зняты`);
+    forgetBan(ban.user_id);
+    ElMessage.success(ban.name ? `Бан з ${ban.name} зняты` : 'Бан зняты');
 }
 </script>
 

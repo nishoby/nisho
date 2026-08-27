@@ -36,20 +36,42 @@ async function fetchAll(make) {
 
 const unique = (list) => [...new Set(list.filter(Boolean))];
 
-// «2023-10-10T…» → «10.10.2023». Рэжам радок, а не праганяем праз Date:
-// у базе стаіць timestamp без гадзіннага пояса, і браўзер зрушыў бы дату
-// на суткі тым, хто чытае з іншага боку зямлі.
+// Дата з базы ў мясцовы дзень.
+//
+// У базе `timestamp` без гадзіннага пояса, а пішацца туды UTC. Радок «без Z»
+// браўзер прачытаў бы як мясцовы час — і рашэнне, прынятае ў дзве ночы, легла
+// б учорашнім днём. Таму спярша кажам, што гэта UTC, і толькі потым пытаемся
+// пра дзень: дзень тут — той, які бачыць чалавек на сваім гадзінніку, бо з ім
+// жа ён і параўноўвае «сёння».
+function localDay(stamp) {
+    const at = new Date(/[zZ]$|[+-]\d\d:?\d\d$/.test(stamp) ? stamp : stamp + 'Z');
+    const pad = (n) => String(n).padStart(2, '0');
+
+    return { y: at.getFullYear(), m: pad(at.getMonth() + 1), d: pad(at.getDate()) };
+}
+
+// «2023-10-10T…» → «10.10.2023»
 function dmy(stamp) {
     if (!stamp) {
         return '';
     }
 
-    const [y, m, d] = stamp.slice(0, 10).split('-');
+    const { y, m, d } = localDay(stamp);
 
     return `${d}.${m}.${y}`;
 }
 
-const day = (stamp) => (stamp ? stamp.slice(0, 10) : null);
+// «2023-10-10T…» → «2023-10-10»: па такім дні групуецца гісторыя і з ім жа
+// параўноўваецца сённяшні.
+function day(stamp) {
+    if (!stamp) {
+        return null;
+    }
+
+    const { y, m, d } = localDay(stamp);
+
+    return `${y}-${m}-${d}`;
+}
 
 // Што запісалі як вынік скаргі. Слоўнік маленькі наўмысна: два зыходы, якія
 // мадэратар і бачыць на картцы.
@@ -71,8 +93,27 @@ async function loadModeration() {
             .order('created_at', { ascending: true })
     );
 
+    // 1а. Хто зараз у бане. Патрэбна нават калі скаргаў няма: спіс банаў —
+    //     асобны выгляд той жа старонкі.
+    const bans = await fetchAll(() =>
+        supabase.from('ban').select('id, user_id, until, reason, comment, created_at').is('lifted_at', null)
+    );
+
+    // Бан, у якога скончыўся тэрмін, база не гасіць — ён проста перастае
+    // дзейнічаць. Значыць, адсякаць пратэрмінаваныя трэба тут.
+    const active = bans.filter((ban) => new Date(ban.until) > new Date());
+
     if (!complaints.length) {
-        return { cards: [] };
+        const names = active.length
+            ? await fetchAll(() =>
+                  supabase
+                      .from('user_profile')
+                      .select('user_id, name')
+                      .in('user_id', unique(active.map((ban) => ban.user_id)))
+              )
+            : [];
+
+        return { cards: [], bans: withNames(active, new Map(names.map((p) => [p.user_id, p.name || '']))) };
     }
 
     const definitionIds = unique(complaints.map((c) => c.definition_id));
@@ -94,7 +135,7 @@ async function loadModeration() {
 
     // 4. Імёны тых, хто скардзіўся. Аўтарскія імёны прыйшлі разам са словам,
     //    а скаржнікі — асобна, з-за двух шляхоў да профілю.
-    const peopleIds = unique(complaints.map((c) => c.user_id));
+    const peopleIds = unique([...complaints.map((c) => c.user_id), ...active.map((ban) => ban.user_id)]);
     const people = peopleIds.length
         ? await fetchAll(() => supabase.from('user_profile').select('user_id, name').in('user_id', peopleIds))
         : [];
@@ -104,11 +145,25 @@ async function loadModeration() {
     //    Адзін запыт замест дзясяткаў — і без спісу з сотняў нумароў у адрасе.
     const everything = await fetchAll(() => supabase.from('definition').select('id, user_id, term_id, hidden_at'));
 
-    return build({ complaints, definitions, links, people, everything });
+    return build({ complaints, definitions, links, people, everything, active });
 }
 
-function build({ complaints, definitions, links, people, everything }) {
+// Спіс банаў з імёнамі. Імя ў профілі можа быць пустое — тады паказваем сам
+// бан без подпісу, а не хаваем радок: чалавек без імя ўсё роўна ў бане.
+function withNames(bans, nameOf) {
+    return bans.map((ban) => ({
+        id: ban.id,
+        user_id: ban.user_id,
+        name: nameOf.get(ban.user_id) || '',
+        until: ban.until,
+        reason: ban.reason,
+        comment: ban.comment || '',
+    }));
+}
+
+function build({ complaints, definitions, links, people, everything, active }) {
     const nameOf = new Map(people.map((p) => [p.user_id, p.name || '']));
+    const bannedUntil = new Map(active.map((ban) => [ban.user_id, ban.until]));
 
     // Колькі ў кожнага слоў і колькі з іх прыбралі з сайта.
     const written = new Map();
@@ -185,7 +240,8 @@ function build({ complaints, definitions, links, people, everything }) {
             // заслужана, — але кожная з іх сапраўдная.
             liked: 0,
             praised: 0,
-            banned: false,
+            banned: bannedUntil.has(userId),
+            bannedUntil: bannedUntil.get(userId) || null,
         };
     };
 
@@ -257,7 +313,7 @@ function build({ complaints, definitions, links, people, everything }) {
         }
     }
 
-    return { cards: [...cards.values()] };
+    return { cards: [...cards.values()], bans: withNames(active, nameOf) };
 }
 
 // Перачытвае адно слова з базы.
