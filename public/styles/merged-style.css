@@ -4017,6 +4017,12 @@ body.is-moderating #bmc-wbtn {
     transform: translateY(0.125rem);
 }
 
+/* Чэрап у сваім квадраце намаляваны нізка — паднімаем, пакуль не стаў на
+   базавую лінію шрыфта побач (замерана: цэнтры разыходзіліся на 7px) */
+.profile-stat_skull {
+    transform: translateY(-0.4375rem);
+}
+
 /* назва слова ў радку — як імёны і спасылкі сайта */
 .profile-stat_word {
     font-weight: 700;
@@ -4130,11 +4136,14 @@ body.is-moderating #bmc-wbtn {
     color: #494949;
 }
 
-/* значэнне з зорачкамі побач — у адзін радок */
+/* Доўгае значэнне (пошта) не вылазіць з рамкі, а абразаецца
+   шматкроп'ем; цалкам яго відаць пры навядзенні і ў праўцы */
 .profile-row_value {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .profile-row_hint {

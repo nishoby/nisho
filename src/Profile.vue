@@ -54,7 +54,9 @@
             <span class="profile-row_label">Пошта</span>
 
             <div class="profile-row_line" v-if="editing !== 'email'">
-                <span class="profile-row_value">{{ account ? account.email : '' }}</span>
+                <span class="profile-row_value" :title="account ? account.email : ''">{{
+                    account ? account.email : ''
+                }}</span>
                 <button
                     class="profile-edit"
                     type="button"
@@ -128,6 +130,30 @@
                             >{{ plural(stats.banDays, 'дзень', 'дні', 'дзён') }} у бане</span
                         >
                     </p>
+                    <p class="profile-stat" v-if="stats.disliked">
+                        <span class="profile-stat_num">{{ stats.disliked }}</span>
+                        <span class="profile-stat_like profile-stat_like--row"><IconDislike /></span>
+                        <span class="profile-stat_label">
+                            {{
+                                plural(
+                                    stats.disliked,
+                                    'непадабайка атрыманая',
+                                    'непадабайкі атрымана',
+                                    'непадабаек атрымана'
+                                )
+                            }}
+                        </span>
+                    </p>
+                    <p class="profile-stat" v-if="stats.approved">
+                        <span class="profile-stat_num">{{ stats.approved }}</span>
+                        <!-- той жа сцяжок, якім скардзяцца на картках -->
+                        <span class="profile-stat_like profile-stat_like--row profile-stat_flag">
+                            <IconFlag />
+                        </span>
+                        <span class="profile-stat_label">
+                            {{ plural(stats.approved, 'паспяховая скарга', 'паспяховыя скаргі', 'паспяховых скаргаў') }}
+                        </span>
+                    </p>
                     <p class="profile-stat" v-if="stats.given">
                         <span class="profile-stat_num">{{ stats.given }}</span>
                         <span class="profile-stat_like profile-stat_like--row"><IconLike /></span>
@@ -142,27 +168,18 @@
                             }}
                         </span>
                     </p>
-                    <p class="profile-stat" v-if="stats.tagsUsed">
-                        <span class="profile-stat_num">{{ stats.tagsUsed }}</span>
-                        <span class="profile-stat_label">
-                            {{ plural(stats.tagsUsed, 'тэг ужыты', 'тэгі ўжыта', 'тэгаў ужыта') }}
-                        </span>
-                    </p>
-                    <p class="profile-stat" v-if="stats.approved">
-                        <span class="profile-stat_num">{{ stats.approved }}</span>
-                        <!-- той жа сцяжок, якім скардзяцца на картках -->
-                        <span class="profile-stat_like profile-stat_like--row profile-stat_flag">
-                            <IconFlag />
-                        </span>
-                        <span class="profile-stat_label">
-                            {{ plural(stats.approved, 'паспяховая скарга', 'паспяховыя скаргі', 'паспяховых скарг') }}
-                        </span>
-                    </p>
-                    <p class="profile-stat" v-if="stats.disliked">
-                        <span class="profile-stat_num">{{ stats.disliked }}</span>
+                    <p class="profile-stat" v-if="stats.disgiven">
+                        <span class="profile-stat_num">{{ stats.disgiven }}</span>
                         <span class="profile-stat_like profile-stat_like--row"><IconDislike /></span>
                         <span class="profile-stat_label">
-                            {{ plural(stats.disliked, 'непадабайка', 'непадабайкі', 'непадабаек') }}
+                            {{
+                                plural(
+                                    stats.disgiven,
+                                    'непадабайка раздадзеная',
+                                    'непадабайкі раздадзена',
+                                    'непадабаек раздадзена'
+                                )
+                            }}
                         </span>
                     </p>
                     <p class="profile-stat" v-if="stats.removed">
@@ -172,7 +189,13 @@
                             <IconSkull />
                         </span>
                         <span class="profile-stat_label">
-                            {{ plural(stats.removed, 'выдаленае слова', 'выдаленыя словы', 'выдаленых слоў') }}
+                            {{ plural(stats.removed, 'слова выдалена', 'словы выдалена', 'слоў выдалена') }}
+                        </span>
+                    </p>
+                    <p class="profile-stat" v-if="stats.tagsUsed">
+                        <span class="profile-stat_num">{{ stats.tagsUsed }}</span>
+                        <span class="profile-stat_label">
+                            {{ plural(stats.tagsUsed, 'тэг ужыты', 'тэгі ўжыта', 'тэгаў ужыта') }}
                         </span>
                     </p>
                 </el-collapse-item>
@@ -239,6 +262,7 @@ const hasMore = computed(() =>
             stats.tagsUsed ||
             stats.approved ||
             stats.disliked ||
+            stats.disgiven ||
             stats.removed
     )
 );
@@ -248,6 +272,7 @@ const hasMore = computed(() =>
 // заўсёды 0 — падзякам яшчэ няма дзе захоўвацца ў базе; калі з'явяцца,
 // лічба ажыве сама.
 const stats = reactive({
+    disgiven: 0,
     onSite: 0,
     removed: 0,
     praised: 0,
@@ -346,6 +371,13 @@ async function loadStats(userId) {
         stats.tagsUsed = new Set(
             mine.flatMap((row) => (row.tags || []).map((tag) => tag.trim().toLowerCase()).filter(Boolean))
         ).size;
+    }
+
+    // колькі непадабаек раздадзена іншым
+    const { data: disgiven } = await supabase.from('votes').select('id').eq('user_id', userId).eq('type', 'downvote');
+
+    if (disgiven) {
+        stats.disgiven = disgiven.length;
     }
 
     // колькі лайкаў раздадзена іншым
