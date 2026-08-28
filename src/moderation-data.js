@@ -313,6 +313,7 @@ function build({ complaints, definitions, links, people, everything, active }) {
             comment: c.comment || '',
             date: dmy(c.created_at),
             status: c.resolved_status,
+            done: Boolean(c.resolved_at),
             repeat,
             praised: false,
             dismissed: false,
@@ -329,7 +330,45 @@ function build({ complaints, definitions, links, people, everything, active }) {
         }
     }
 
+    for (const card of cards.values()) {
+        card.complaints = visible(card.complaints);
+    }
+
     return { cards: [...cards.values()], bans: withNames(active, nameOf) };
+}
+
+// Што з усіх скаргаў на слова паказваць мадэратару.
+//
+// Дагэтуль паказваліся ўсе — і разгледжаныя таксама. Слова з доўгай гісторыяй
+// ператваралася ў сцяну з дзесяці блокаў, дзе адзін і той жа чалавек стаяў
+// пяць разоў запар, і сярод іх трэба было адшукаць тое новае, дзеля чаго
+// картка ўвогуле трапіла ў чаргу.
+//
+// Цяпер:
+//   1. Пакуль ёсць неразгледжаныя — паказваем толькі іх. Разгледжаныя нікуды
+//      не знікаюць: яны ў гісторыі слова, і туды можна зазірнуць.
+//   2. Некалькі скаргаў ад аднаго чалавека складваюцца ў адну. Застаецца
+//      апошняя — у ёй самы свежы тэкст, — а колькі іх было, кажа лічба.
+function visible(all) {
+    const open = all.filter((c) => !c.done);
+    const shown = open.length ? open : all;
+
+    const byPerson = new Map();
+
+    for (const c of shown) {
+        const key = c.by_id || c.id;
+        const seen = byPerson.get(key);
+
+        if (!seen) {
+            byPerson.set(key, { ...c, sameCount: 1 });
+            continue;
+        }
+
+        // трымаем апошнюю скаргу чалавека, але лічым усе
+        byPerson.set(key, { ...c, sameCount: seen.sameCount + 1, repeat: seen.repeat || c.repeat });
+    }
+
+    return [...byPerson.values()];
 }
 
 // Перачытвае адно слова з базы.

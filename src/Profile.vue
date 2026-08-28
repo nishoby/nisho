@@ -26,59 +26,97 @@
             </p>
         </div>
 
-        <!-- Наладкі — звычайным узорам: значэнне ў рамцы, аловачак унутры;
-             па націску рамка становіцца полем з «Захаваць» і «Адмена». -->
-        <div class="profile-row">
-            <span class="profile-row_label">Лагін</span>
+        <!-- Уліковы запіс. Тры пары «подпіс — значэнне» стаяць заўсёды і не
+             ссоўваюцца: па націску «Змяніць» значэнне на тым самым месцы
+             робіцца полем, вакол яго з'яўляецца шэрая рамка. Нічога не
+             пераскоквае, чытаць нанова не трэба — відаць, што менавіта правіш.
 
-            <div class="profile-row_line" v-if="editing !== 'name'">
-                <span class="profile-row_value">{{ savedName || '—' }}</span>
-                <button
-                    class="profile-edit"
-                    type="button"
-                    title="Змяніць лагін"
-                    aria-label="Змяніць лагін"
-                    @click="startEdit('name')"
-                >
-                    <IconEdit />
-                </button>
+             Пароль паказваецца кропкамі: звыклая ўмоўнасць, кажа «ён ёсць»,
+             не паказваючы яго. У праўцы гэта пустое поле — не чапаеш, значыць
+             пароль не мяняецца. -->
+        <div class="profile-account" :class="{ 'profile-account--edit': editing === 'account' }">
+            <div class="profile-account_lines">
+                <div class="profile-account_line">
+                    <!-- Подпісы паказваем толькі ў праўцы: у спакойным стане імя,
+                         пошта і кропкі пароля пазнаюцца самі, і тры назвы над імі —
+                         лішнія словы на самай віднай картцы старонкі. -->
+                    <span class="profile-row_label" v-if="editing === 'account'">Лагін:</span>
+                    <!-- Імя вядзе да сваіх слоў — тым жа шляхам, што імя аўтара на
+                         картках. Фіялетавае з падкрэсленнем, бо гэта спасылка, а не
+                         радок дадзеных. -->
+                    <router-link
+                        class="profile-account_value profile-account_name"
+                        v-if="editing !== 'account' && account"
+                        :to="{ name: 'terms', query: { autar: account.id } }"
+                    >
+                        {{ savedName || '—' }}
+                    </router-link>
+                    <span class="profile-account_value" v-else-if="editing !== 'account'">—</span>
+                    <el-input class="profile-account_input profile-account_input--name" v-model="form.name" v-else />
+                </div>
+
+                <div class="profile-account_line">
+                    <span class="profile-row_label" v-if="editing === 'account'">
+                        Пошта:
+                        <!-- Пошта не мяняецца імгненна: спярша ліст-пацверджанне на
+                             новы адрас. Кажам гэта пры подпісе і загадзя, а не пасля
+                             націску, — іначай чалавек бачыць стары адрас і думае, што
+                             нічога не спрацавала. -->
+                        <span class="profile-row_hint" v-if="editing === 'account'">
+                            новы адрас трэба будзе пацвердзіць лістом
+                        </span>
+                    </span>
+                    <span
+                        class="profile-account_value"
+                        v-if="editing !== 'account'"
+                        :title="account ? account.email : ''"
+                        >{{ account ? account.email : '' }}</span
+                    >
+                    <el-input class="profile-account_input" v-model="form.email" type="email" v-else />
+                </div>
+
+                <div class="profile-account_line">
+                    <span class="profile-row_label" v-if="editing === 'account'">Пароль:</span>
+                    <span class="profile-account_value" v-if="editing !== 'account'">••••••••</span>
+                    <PasswordInput
+                        class="profile-account_input"
+                        v-model="pass.next"
+                        placeholder="Пакінь пустым, каб не мяняць"
+                        v-else
+                    />
+                </div>
+
+                <!-- Два дадатковыя палі вылазяць толькі калі пароль пачалі мяняць:
+                     пакуль поле пустое, іх няма і яны не займаюць месца. -->
+                <template v-if="editing === 'account' && pass.next">
+                    <div class="profile-account_line">
+                        <span class="profile-row_label">Паўтары новы:</span>
+                        <PasswordInput class="profile-account_input" v-model="pass.again" />
+                    </div>
+                    <div class="profile-account_line">
+                        <span class="profile-row_label">Цяперашні пароль:</span>
+                        <!-- Пытаемся не дзеля бюракратыі: без старога пароля кожны, хто
+                             дарваўся да незамкнёнага браўзера, мяняе пароль і замыкае
+                             гаспадара за дзвярыма. -->
+                        <PasswordInput class="profile-account_input" v-model="pass.old" />
+                        <span class="profile-row_hint">Не менш за шэсць знакаў.</span>
+                    </div>
+                </template>
+
+                <p class="tags-notice" v-if="passNotice">{{ passNotice }}</p>
+                <span class="profile-row_hint profile-row_hint--notice" v-if="emailNotice">{{ emailNotice }}</span>
             </div>
-            <div class="profile-row_edit" v-else>
-                <el-input v-model="draft" @keydown.enter="saveName" @keydown.esc="cancelEdit" />
-                <!-- «Адмена» злева, «Захаваць» справа з краю: галоўнае дзеянне —
-                     апошняе, да чаго даходзіць вока і палец -->
+
+            <!-- Словам, а не аловачкам: значок стаў бы ў тым самым куце, што і
+                 крыжык «зачыніць», і два значкі побач спрачаліся б за ўвагу. -->
+            <button class="profile-textbtn" type="button" v-if="editing !== 'account'" @click="startEdit('account')">
+                Змяніць
+            </button>
+
+            <span class="profile-row_actions" v-else>
                 <button class="profile-cancel" type="button" @click="cancelEdit">Адмена</button>
-                <button class="profile-save" type="button" @click="saveName">Захаваць</button>
-            </div>
-        </div>
-
-        <div class="profile-row">
-            <span class="profile-row_label">Пошта</span>
-
-            <div class="profile-row_line" v-if="editing !== 'email'">
-                <span class="profile-row_value" :title="account ? account.email : ''">{{
-                    account ? account.email : ''
-                }}</span>
-                <button
-                    class="profile-edit"
-                    type="button"
-                    title="Змяніць пошту"
-                    aria-label="Змяніць пошту"
-                    @click="startEdit('email')"
-                >
-                    <IconEdit />
-                </button>
-            </div>
-            <div class="profile-row_edit" v-else>
-                <el-input v-model="draft" type="email" @keydown.enter="saveEmail" @keydown.esc="cancelEdit" />
-                <button class="profile-cancel" type="button" @click="cancelEdit">Адмена</button>
-                <button class="profile-save" type="button" @click="saveEmail">Захаваць</button>
-            </div>
-
-            <!-- пошта не мяняецца імгненна: спярша ліст-пацверджанне на новы
-                 адрас — кажам гэта адразу пасля «Захаваць», іначай чалавек
-                 бачыць стары адрас і думае, што нічога не спрацавала -->
-            <span class="profile-row_hint profile-row_hint--notice" v-if="emailNotice">{{ emailNotice }}</span>
+                <button class="profile-save" type="button" :disabled="saving" @click="saveAccount">Захаваць</button>
+            </span>
         </div>
 
         <!-- Статыстыка: тры галоўныя лічбы адразу (плюс узнагароды і бан, калі
@@ -93,8 +131,11 @@
             <el-collapse class="profile-collapse" v-if="hasMore">
                 <el-collapse-item name="more">
                     <template #title>
-                        <span class="profile-stat profile-stat_stars" v-if="stars">
-                            <span class="profile-stat_label">Узровень:</span>
+                        <!-- Слова «Узровень» прыбранае: званне гаворыць само за сябе, а
+                             подпіс над ім быў трэцім радком запар. Хто не зразумее —
+                             убачыць падказку пры навядзенні. -->
+                        <span class="profile-stat profile-stat_stars hover-hint-anchor" v-if="stars">
+                            <span class="hover-hint">Узровень</span>
                             <span class="profile-stat_rank">{{ rank }}</span>
                             <IconStar class="profile-stat_star" v-for="n of stars" :key="n" />
                         </span>
@@ -102,39 +143,51 @@
                     </template>
 
                     <p class="profile-stat" v-if="score">
-                        <span class="profile-stat_num">{{ score }}</span>
+                        <span class="profile-stat_lead">
+                            <span class="profile-stat_num">{{ score }}</span>
+                        </span>
                         <span class="profile-stat_label"
                             >{{ plural(score, 'бал', 'балы', 'балаў') }} за актыўнасць</span
                         >
                     </p>
                     <p class="profile-stat" v-if="stats.onSite">
-                        <span class="profile-stat_num">{{ stats.onSite }}</span>
+                        <span class="profile-stat_lead">
+                            <span class="profile-stat_num">{{ stats.onSite }}</span>
+                        </span>
                         <span class="profile-stat_label"
                             >{{ plural(stats.onSite, 'слова', 'словы', 'слоў') }} на сайце</span
                         >
                     </p>
                     <p class="profile-stat" v-if="stats.liked">
-                        <span class="profile-stat_num">{{ stats.liked }}</span>
-                        <span class="profile-stat_like profile-stat_like--row"><IconLike /></span>
+                        <span class="profile-stat_lead">
+                            <span class="profile-stat_num">{{ stats.liked }}</span>
+                            <span class="profile-stat_like profile-stat_like--row"><IconLike /></span>
+                        </span>
                         <span class="profile-stat_label">
                             {{ plural(stats.liked, 'падабайка атрыманая', 'падабайкі атрымана', 'падабаек атрымана') }}
                         </span>
                     </p>
                     <p class="profile-stat" v-if="stats.praised">
-                        <span class="profile-stat_num">{{ stats.praised }}</span>
+                        <span class="profile-stat_lead">
+                            <span class="profile-stat_num">{{ stats.praised }}</span>
+                        </span>
                         <span class="profile-stat_label">
                             {{ plural(stats.praised, 'узнагарода', 'узнагароды', 'узнагарод') }} ад мадэратараў
                         </span>
                     </p>
                     <p class="profile-stat" v-if="stats.banDays">
-                        <span class="profile-stat_num">{{ stats.banDays }}</span>
+                        <span class="profile-stat_lead">
+                            <span class="profile-stat_num">{{ stats.banDays }}</span>
+                        </span>
                         <span class="profile-stat_label"
                             >{{ plural(stats.banDays, 'дзень', 'дні', 'дзён') }} у бане</span
                         >
                     </p>
                     <p class="profile-stat" v-if="stats.disliked">
-                        <span class="profile-stat_num">{{ stats.disliked }}</span>
-                        <span class="profile-stat_like profile-stat_like--row"><IconDislike /></span>
+                        <span class="profile-stat_lead">
+                            <span class="profile-stat_num">{{ stats.disliked }}</span>
+                            <span class="profile-stat_like profile-stat_like--row profile-stat_dislike"><IconDislike /></span>
+                        </span>
                         <span class="profile-stat_label">
                             {{
                                 plural(
@@ -147,18 +200,22 @@
                         </span>
                     </p>
                     <p class="profile-stat" v-if="stats.approved">
-                        <span class="profile-stat_num">{{ stats.approved }}</span>
-                        <!-- той жа сцяжок, якім скардзяцца на картках -->
-                        <span class="profile-stat_like profile-stat_like--row profile-stat_flag">
-                            <IconFlag />
+                        <span class="profile-stat_lead">
+                            <span class="profile-stat_num">{{ stats.approved }}</span>
+                            <!-- той жа сцяжок, якім скардзяцца на картках -->
+                            <span class="profile-stat_like profile-stat_like--row profile-stat_flag">
+                                <IconFlag />
+                            </span>
                         </span>
                         <span class="profile-stat_label">
                             {{ plural(stats.approved, 'паспяховая скарга', 'паспяховыя скаргі', 'паспяховых скаргаў') }}
                         </span>
                     </p>
                     <p class="profile-stat" v-if="stats.given">
-                        <span class="profile-stat_num">{{ stats.given }}</span>
-                        <span class="profile-stat_like profile-stat_like--row"><IconLike /></span>
+                        <span class="profile-stat_lead">
+                            <span class="profile-stat_num">{{ stats.given }}</span>
+                            <span class="profile-stat_like profile-stat_like--row"><IconLike /></span>
+                        </span>
                         <span class="profile-stat_label">
                             {{
                                 plural(
@@ -171,8 +228,10 @@
                         </span>
                     </p>
                     <p class="profile-stat" v-if="stats.disgiven">
-                        <span class="profile-stat_num">{{ stats.disgiven }}</span>
-                        <span class="profile-stat_like profile-stat_like--row"><IconDislike /></span>
+                        <span class="profile-stat_lead">
+                            <span class="profile-stat_num">{{ stats.disgiven }}</span>
+                            <span class="profile-stat_like profile-stat_like--row profile-stat_dislike"><IconDislike /></span>
+                        </span>
                         <span class="profile-stat_label">
                             {{
                                 plural(
@@ -185,45 +244,56 @@
                         </span>
                     </p>
                     <p class="profile-stat" v-if="stats.removed">
-                        <span class="profile-stat_num">{{ stats.removed }}</span>
-                        <!-- той жа чэрап, што пры бане на мадэрацыі -->
-                        <span class="profile-stat_like profile-stat_like--row profile-stat_skull">
-                            <IconSkull />
+                        <span class="profile-stat_lead">
+                            <span class="profile-stat_num">{{ stats.removed }}</span>
+                            <!-- той жа чэрап, што пры бане на мадэрацыі -->
+                            <span class="profile-stat_like profile-stat_like--row profile-stat_skull">
+                                <IconSkull />
+                            </span>
                         </span>
                         <span class="profile-stat_label">
                             {{ plural(stats.removed, 'слова выдалена', 'словы выдалена', 'слоў выдалена') }}
                         </span>
                     </p>
                     <p class="profile-stat" v-if="stats.tagsUsed">
-                        <span class="profile-stat_num">{{ stats.tagsUsed }}</span>
+                        <span class="profile-stat_lead">
+                            <span class="profile-stat_num">{{ stats.tagsUsed }}</span>
+                        </span>
                         <span class="profile-stat_label">
                             {{ plural(stats.tagsUsed, 'тэг ужыты', 'тэгі ўжыта', 'тэгаў ужыта') }}
                         </span>
                     </p>
+                    <!-- Слова наперадзе, за ім тлумачэнне: гэта подпісы да сваіх
+                         слоў, а не радкі падліку. Стаяць у самым нізе акардэона,
+                         пад лічбамі, і разам з імі знікаюць, калі ён закрыты. -->
+                    <div class="profile-words" v-if="stats.top || stats.first">
+                        <p class="profile-stat" v-if="stats.top">
+                            <router-link
+                                class="profile-stat_word"
+                                :to="{ name: 'term', params: { id: stats.top.term_id } }"
+                            >
+                                {{ stats.top.term }}
+                            </router-link>
+                            <!-- спярша палец, потым лічба — як на картках слоў, дзе
+                             лічыльнік галасоў стаіць за самой кнопкай -->
+                            <!-- лічба, потым знак — як у радках падліку вышэй -->
+                            <span class="profile-stat_note">
+                                {{ stats.top.likes }} <span class="profile-stat_like"><IconLike /></span> — самае
+                                папулярнае
+                            </span>
+                        </p>
+                        <p class="profile-stat" v-if="stats.first">
+                            <router-link
+                                class="profile-stat_word"
+                                :to="{ name: 'term', params: { id: stats.first.term_id } }"
+                            >
+                                {{ stats.first.term }}
+                            </router-link>
+                            <span class="profile-stat_note">{{ stats.first.when }} — першае слова</span>
+                        </p>
+                    </div>
                 </el-collapse-item>
             </el-collapse>
-
-            <!-- Слова наперадзе, тлумачэнне за ім ціхім тэкстам: гэта подпісы
-                 да сваіх слоў, а не радкі падліку. Пад акардэонам, асобным
-                 абзацам. -->
-            <div class="profile-words" v-if="stats.top || stats.first">
-                <p class="profile-stat" v-if="stats.top">
-                    <router-link class="profile-stat_word" :to="{ name: 'term', params: { id: stats.top.term_id } }">
-                        {{ stats.top.term }}
-                    </router-link>
-                    <!-- спярша палец, потым лічба — як на картках слоў, дзе
-                         лічыльнік галасоў стаіць за самой кнопкай -->
-                    <span class="profile-stat_note">
-                        <span class="profile-stat_like"><IconLike /></span> {{ stats.top.likes }} — самае папулярнае
-                    </span>
-                </p>
-                <p class="profile-stat" v-if="stats.first">
-                    <router-link class="profile-stat_word" :to="{ name: 'term', params: { id: stats.first.term_id } }">
-                        {{ stats.first.term }}
-                    </router-link>
-                    <span class="profile-stat_note">{{ stats.first.when }} — першае слова</span>
-                </p>
-            </div>
         </div>
 
         <!-- Лексіка 18+ — мацюкі і сэксуалізаванае. Пазнака слова — дарослы тэг,
@@ -240,11 +310,11 @@
             <p class="profile-adult_title">Паказваць лексіку 18+:</p>
 
             <p class="profile-stat profile-adult_sub">
-                <span class="profile-stat_label">мацюкі</span>
+                <span class="profile-stat_label">Мацюкі</span>
                 <el-switch class="profile-switch" :model-value="showMat" @change="setShowMat" />
             </p>
             <p class="profile-stat profile-adult_sub">
-                <span class="profile-stat_label">сэкс</span>
+                <span class="profile-stat_label">Сэкс</span>
                 <el-switch class="profile-switch" :model-value="showSex" @change="setShowSex" />
             </p>
         </div>
@@ -268,7 +338,12 @@
             <p class="profile-dialog_note">Твае словы застануцца ў слоўніку, проста без імя аўтара.</p>
 
             <template #footer>
-                <button class="moderation-btn moderation-btn--pink" type="button" :disabled="deleting" @click="deleteAccount">
+                <button
+                    class="moderation-btn moderation-btn--pink"
+                    type="button"
+                    :disabled="deleting"
+                    @click="deleteAccount"
+                >
                     Выдаліць акаўнт
                 </button>
             </template>
@@ -286,7 +361,7 @@ import { myBan, banPhrase } from './bans.js';
 import { formatLongDate } from './date.js';
 import { showMat, showSex, setShowMat, setShowSex } from './adult.js';
 import { commonError } from './error.js';
-import IconEdit from './icons/IconEdit.vue';
+import PasswordInput from './PasswordInput.vue';
 import IconStar from './icons/IconStar.vue';
 import IconLike from './icons/IconLike.vue';
 import IconDislike from './icons/IconDislike.vue';
@@ -300,7 +375,6 @@ const myBanRow = ref(null);
 // што зараз захавана і што рэдагуецца: 'name', 'email' ці нічога
 const savedName = ref('');
 const editing = ref(null);
-const draft = ref('');
 const emailNotice = ref('');
 
 // Выдаленне акаўнта. Само выдаленне робіць база: браўзер выдаліць уліковы
@@ -526,62 +600,119 @@ onMounted(async () => {
     }
 });
 
-function startEdit(field) {
-    editing.value = field;
-    draft.value = field === 'name' ? savedName.value : account.value?.email || '';
+// Уліковы запіс правіцца адным заходам: лагін, пошта і — калі захочуць —
+// пароль. Пустыя палі пароля значаць «не чапаць».
+const form = reactive({ name: '', email: '' });
+const pass = reactive({ old: '', next: '', again: '' });
+const passNotice = ref('');
+const saving = ref(false);
+
+function startEdit() {
+    editing.value = 'account';
+    form.name = savedName.value;
+    form.email = account.value?.email || '';
+    pass.old = '';
+    pass.next = '';
+    pass.again = '';
+    passNotice.value = '';
 }
 
 function cancelEdit() {
     editing.value = null;
-    draft.value = '';
+    pass.old = '';
+    pass.next = '';
+    pass.again = '';
+    passNotice.value = '';
 }
 
-async function saveName() {
-    const typed = draft.value.trim();
+async function saveAccount() {
+    const name = form.name.trim();
+    const email = form.email.trim();
 
-    // пустое ці тое ж самае — проста зачыняем праўку, захоўваць няма чаго
-    if (!typed || typed === savedName.value) {
-        cancelEdit();
-        return;
-    }
+    passNotice.value = '';
 
-    const { data, error } = await supabase.auth.updateUser({ data: { username: typed } });
-
-    if (error) {
-        ElMessage.error(commonError);
-        throw error;
-    }
-
-    savedName.value = data.user.user_metadata.username;
-    ElMessage.success('Лагін зменены');
-    cancelEdit();
-}
-
-async function saveEmail() {
-    const typed = draft.value.trim();
-
-    if (!typed || typed === account.value?.email) {
-        cancelEdit();
-        return;
-    }
-
-    if (!typed.includes('@')) {
+    if (email && !email.includes('@')) {
         ElMessage.error('Гэта не падобна на пошту');
         return;
     }
 
-    const { error } = await supabase.auth.updateUser({ email: typed });
+    // Пароль правяраем да ўсякага запісу: калі ён не сыдзецца, лепш не пачынаць
+    // мяняць лагін — інакш палова захаваецца, палова не, і чалавек не зразумее,
+    // што ў выніку адбылося.
+    if (pass.next) {
+        if (pass.next.length < 6) {
+            passNotice.value = 'Новы пароль — не менш за шэсць знакаў';
+            return;
+        }
 
-    if (error) {
-        ElMessage.error(commonError);
-        throw error;
+        if (pass.next !== pass.again) {
+            passNotice.value = 'Паролі не супадаюць';
+            return;
+        }
+
+        if (!pass.old) {
+            passNotice.value = 'Каб змяніць пароль, увядзі цяперашні';
+            return;
+        }
     }
 
-    // Пошта не мяняецца імгненна: Supabase спярша шле ліст-пацверджанне на
-    // новы адрас. Таму стары адрас застаецца на экране, а побач — тлумачэнне,
-    // чаму так і што рабіць.
-    emailNotice.value = `Даслалі ліст на ${typed} — пацвердзі яго, і пошта зменіцца.`;
-    cancelEdit();
+    saving.value = true;
+
+    try {
+        if (pass.next) {
+            // Стары пароль правяраем адзіным спосабам, які дае Supabase:
+            // спрабуем увайсці з ім. Атрымалася — пароль правільны, і мы
+            // застаемся ў той самай сесіі; не — набіраў не гаспадар.
+            const { error: wrong } = await supabase.auth.signInWithPassword({
+                email: account.value?.email,
+                password: pass.old,
+            });
+
+            if (wrong) {
+                passNotice.value = 'Цяперашні пароль не падыходзіць';
+                return;
+            }
+        }
+
+        // Лагін, пошта і пароль пішуцца рознымі запытамі: пошта мяняецца толькі
+        // пасля пацверджання ў лісце, астатняе — адразу. Мяшаць іх у адзін
+        // запыт значыла б не ведаць, што менавіта не спрацавала.
+        if (name && name !== savedName.value) {
+            const { data, error } = await supabase.auth.updateUser({ data: { username: name } });
+
+            if (error) {
+                throw error;
+            }
+
+            savedName.value = data.user.user_metadata.username;
+        }
+
+        if (pass.next) {
+            const { error } = await supabase.auth.updateUser({ password: pass.next });
+
+            if (error) {
+                throw error;
+            }
+        }
+
+        if (email && email !== account.value?.email) {
+            const { error } = await supabase.auth.updateUser({ email });
+
+            if (error) {
+                throw error;
+            }
+
+            emailNotice.value = `Даслалі ліст на ${email} — пацвердзі яго, і пошта зменіцца.`;
+        }
+
+        ElMessage.success(pass.next ? 'Захавана, пароль зменены' : 'Захавана');
+        cancelEdit();
+    } catch (error) {
+        console.error(error);
+        ElMessage.error(commonError);
+    } finally {
+        saving.value = false;
+    }
 }
 </script>
 

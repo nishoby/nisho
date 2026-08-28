@@ -36,7 +36,10 @@
                     :aria-label="view === 'bans' ? 'Назад да скаргаў' : 'Хто ў бане'"
                     @click="view = view === 'bans' ? 'queue' : 'bans'"
                 >
-                    <IconSauna class="moderation-history_icon" v-if="view !== 'bans'" />
+                    <!-- Словам, а не значком: лазня была здагадкай пра бан, а не яго
+                         назвай — здагадвацца тут няма чаго. Побач стаіць гадзіннік
+                         гісторыі, і два значкі запар зліваліся ў адну мішэнь. -->
+                    <template v-if="view !== 'bans'">Бан</template>
                     <template v-else>скаргі</template>
                 </button>
 
@@ -154,10 +157,14 @@
                                          рашэнне мадэратара, і глядзець трэба ўважлівей. -->
                                     <span
                                         class="moderation-again"
-                                        v-if="c.repeat"
+                                        v-if="c.repeat || c.sameCount > 1"
                                         title="на гэтае слова ўжо скардзіліся, і яго вярнулі на сайт"
                                         >паўторная</span
                                     >
+                                    <!-- колькі разоў гэты чалавек скардзіўся на гэтае слова:
+                                         яго скаргі складзеныя ў адну, каб адно імя не стаяла
+                                         пяць разоў запар -->
+                                    <span class="moderation-again_num" v-if="c.sameCount > 1">№{{ c.sameCount }}</span>
                                     скарга ад:
                                     <IconStar
                                         class="badge"
@@ -656,7 +663,6 @@ import { loadModeration, loadWord } from './moderation-data.js';
 import { BAN_REASONS, banLabel } from './bans.js';
 import IconSkull from './icons/IconSkull.vue';
 import IconHistory from './icons/IconHistory.vue';
-import IconSauna from './icons/IconSauna.vue';
 import IconCross from './icons/IconCross.vue';
 import IconStar from './icons/IconStar.vue';
 import IconUndo from './icons/IconUndo.vue';
