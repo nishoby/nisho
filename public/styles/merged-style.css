@@ -354,7 +354,9 @@ button {
     gap: 0.5rem;
 }
 
-/* крыжык выдалення — як у чыпа адбору: рыска на ўсю вышыню пілюлі і × за ёй */
+/* крыжык выдалення — як у чыпа адбору: рыска на ўсю вышыню пілюлі і × за ёй.
+   Чорны, а не колеру тэксту: на зялёным цёмна-шэры чытаўся замала — знак мусіць
+   быць відаць як кнопка, а не як частка слова */
 .add-word__tags-input-tag .el-tag__close {
     margin-left: 0.5rem;
     margin-right: 0;
@@ -363,12 +365,12 @@ button {
     height: 100%;
     width: auto;
     padding-left: 0.5rem;
-    color: inherit;
+    color: #2b2b2b;
 }
 
 .add-word__tags-input-tag .el-tag__close:hover {
     background: none;
-    color: inherit;
+    color: #2b2b2b;
 }
 
 .add-word__tags-input-tag {
@@ -621,6 +623,38 @@ button {
 
 .add-btn {
     margin: 0 1rem;
+    /* пад подпіс, які вылазіць з-пад плюса */
+    position: relative;
+}
+
+/* Подпіс да плюса. Вісіць па-за патокам, каб з'яўленне не рухала суседнія
+   значкі; чорны з белым — як кнопка «Гатова», іншых колераў не заводзім. */
+.add-btn_label {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 0.375rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    background: #3a3a3a;
+    font-size: 1rem;
+    color: #ffffff;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+}
+
+/* Толькі там, дзе мышка сапраўды ёсць: на тэлефоне націск таксама лічыцца
+   навядзеннем, і подпіс міргаў бы пры кожным пераходзе. */
+@media (hover: hover) {
+    .add-btn:hover .add-btn_label,
+    .add-btn:focus-visible .add-btn_label {
+        opacity: 1;
+        /* стаў бачным — значыць і націскаецца: з яго вядзе тая ж спасылка */
+        pointer-events: auto;
+    }
 }
 
 .add-btn,
@@ -1557,8 +1591,11 @@ a.user-tag:active {
    само, калі пілюлі не змяшчаюцца — flex-wrap і min-height замест фіксаванай
    вышыні на два радкі */
 .add-word__tags-input-wrapper {
+    /* тая ж вышыня, што ў астатніх палёў формы, каб радок не скакаў */
     min-height: calc(3.875rem - 2px);
-    align-content: flex-start;
+    /* Раней тут стаяў flex-start: поле ўводу было на ўсю вышыню і само трымала
+       радок. Цяпер у радку адны пілюлі — яны ніжэйшыя за поле і ліплі ўверх. */
+    align-content: center;
 }
 
 /* свая падказка ўнутры поля тэгаў: шэрая, як у астатніх палях, умее пераносіцца.
@@ -2502,6 +2539,23 @@ span.card-title.moderation-editable {
    проста ў ім міргае курсор. */
 .moderation-tags-edit .add-word__tags-input-tag-text:focus {
     outline: none;
+}
+
+/* «Плюс» і пілюля-набор тут шэрыя, а не зялёныя, — у колер суседніх тэгаў
+   мадэрацыі (гл. ніжэй, чаму яны шэрыя). Зялёны кружок сярод шэрых пілюль
+   цягнуў бы вока на сябе якраз тады, калі глядзець трэба на слова. */
+.moderation-tags-edit .tags-add,
+.moderation-tags-edit .tags-typing {
+    background: #eaeaea;
+}
+
+/* Падказка пра Enter — толькі пакуль пішуць. Стаіць там жа, дзе паведамленне
+   «ужо ёсць», і таго ж памеру, толькі шэрая: гэта не памылка, а тлумачэнне. */
+.tags-enter-hint {
+    margin: 0.375rem 0 0;
+    font-size: 1rem;
+    color: #a8abb2;
+    line-height: 1.4;
 }
 
 /* Тэгі на мадэрацыі — шэрыя, а не зялёныя. Тут яны не заклік перайсці па
@@ -4056,18 +4110,33 @@ body.is-moderating #bmc-wbtn {
 .profile-stat_stars {
     display: inline-flex;
     align-items: center;
+    /* прамежак паміж званнем і зорачкамі */
     gap: 0.25rem;
+    flex-wrap: wrap;
 }
 
-/* «Статус:» — чорны подпіс, як «Лагін» і «Пошта», без зрухаў: пачынаецца
-   з той жа лініі. Само званне — фіялетавае. */
+/* «Узровень:» — подпіс да звання, а не радок статыстыкі. Таму і выглядае як
+   подпіс «Паказваць лексіку 18+:» вышэй: той жа памер і той жа суцэльны колер.
+   Раней ён быў буйнейшы і прыглушаны — і чытаўся нароўні са званнем, хоць
+   галоўнае ў гэтым радку якраз званне. */
+.profile-stat_stars .profile-stat_label {
+    /* подпіс займае ўвесь радок — званне з зорачкамі пераходзяць на наступны,
+       слупком, як «Лагін» і «Пошта» вышэй. Адсюль і прамежак 0.375rem: той жа,
+       што паміж подпісам і значэннем у тых радках */
+    flex-basis: 100%;
+    margin-bottom: calc(0.375rem - 0.25rem);
+    font-size: 16px;
+    color: #494949;
+}
+
 .profile-stat_rank {
     color: #9442ce;
 }
 
-/* пасля звання — паветра перад лічбамі: званне само па сабе, лік асобна */
+/* званне цяпер стаіць загалоўкам акардэона — свае прамежкі яму дае загаловак,
+   а ўласны водступ знізу зрушваў бы стрэлку адносна тэксту */
 .profile-stat.profile-stat_stars {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
 }
 
 .profile-stat_star {
@@ -4082,6 +4151,16 @@ body.is-moderating #bmc-wbtn {
     gap: 0.375rem;
 }
 
+/* Тонкія лініі паміж блокамі профілю — той самай таўшчыні і колеру, што ў
+   акардэона «Статыстыка» ніжэй. Без іх лагін, пошта, лексіка і ўзровень
+   зліваліся ў адзін слуп радкоў, дзе не відаць, дзе канчаецца адно і
+   пачынаецца другое. Першы блок лініі не мае: над ім і так край карткі. */
+.profile-row + .profile-row,
+.profile-adult {
+    border-top: 1px solid #eaeaea;
+    padding-top: 0.75rem;
+}
+
 .profile-row_line,
 .profile-row_edit {
     display: flex;
@@ -4089,20 +4168,19 @@ body.is-moderating #bmc-wbtn {
     gap: 0.75rem;
 }
 
-/* значэнне заўсёды ў рамцы — адразу відаць, што яго можна правіць; аловачак
-   унутры, з правага краю. Тая ж шырыня, што ў поля праўкі: рамка не скача. */
+/* Пакуль не правяць, лагін і пошта — проста тэкст. Раней яны стаялі ў шэрым
+   полі і выглядалі як увод, у які чамусьці нельга пісаць. Полем яны робяцца
+   толькі пасля націску на аловачак — тады і з'яўляецца шэрая падкладка.
+   Вышыня радка тая ж, што ў поля праўкі, каб пры пераходзе нічога не скакала. */
 .profile-row_line {
     box-sizing: border-box;
-    width: 20rem;
-    max-width: 100%;
-    /* падцягваем да апошняга радка: без гэтага паміж лічбамі і стрэлкай
-       заставалася прыкметная дзірка */
-    margin-top: -0.375rem;
+    /* на ўсю шырыню карткі, як палі на ўваходзе: кароткія абрубкі пасярод
+       шырокай карткі выглядалі неахайна */
+    width: 100%;
     justify-content: space-between;
-    padding: 0.375rem 0.375rem 0.375rem 0.75rem;
-    background: white;
-    border: 1px solid #868686;
-    border-radius: 0.5rem;
+    padding: 0.375rem 0.375rem 0.375rem 0;
+    background: none;
+    border: none;
 }
 
 /* Поле цягнецца, а калі кнопкам не хапае месца (тэлефон) — яны самі
@@ -4114,7 +4192,6 @@ body.is-moderating #bmc-wbtn {
 
 .profile-row_edit .el-input {
     flex: 1 1 14rem;
-    max-width: 20rem;
 }
 
 /* У праўцы поле шэрае, як на рэгістрацыі, і роўна той жа велічыні, што
@@ -4139,7 +4216,13 @@ body.is-moderating #bmc-wbtn {
     box-shadow: none;
 }
 
-.profile-row_label,
+/* подпісы над палямі — драбнейшыя, як «Лагін» і «Пароль» на ўваходзе;
+   самі значэнні застаюцца асноўнага памеру */
+.profile-row_label {
+    font-size: 1rem;
+    color: #494949;
+}
+
 .profile-row_value {
     font-size: 1.25rem;
     color: #494949;
@@ -4196,7 +4279,7 @@ body.is-moderating #bmc-wbtn {
     color: #e0338a;
 }
 
-/* залітыя дзеянні — «Захаваць» і «Выхад» у меню: адзін выгляд */
+/* залітыя дзеянні — «Захаваць» у профілі і «Выхад» у меню: адна форма */
 .profile-save,
 .person-menu_exit {
     padding: 0.375rem 1rem;
@@ -4210,6 +4293,13 @@ body.is-moderating #bmc-wbtn {
     transition: transform 0.12s ease;
 }
 
+/* «Выхад» — чорны, як «Гатова». Зялёны на сайце значыць «зроблена, ідзём
+   далей»; выхад нікуды не вядзе, ён проста зачыняе дзверы за сабой. */
+.person-menu_exit {
+    background: #3a3a3a;
+    color: #ffffff;
+}
+
 .profile-save:hover,
 .person-menu_exit:hover {
     transform: scale(0.96);
@@ -4220,18 +4310,41 @@ body.is-moderating #bmc-wbtn {
    націскальнасць кажа стрэлка. */
 .profile-collapse {
     --el-collapse-header-font-size: 1.25rem;
-    /* загаловак чорны, як асноўны тэкст: гэта раздзел, а не спасылка */
-    --el-collapse-header-text-color: #494949;
+    /* загаловак фіялетавы, як званне і спасылкі — адна сям-я акцэнтаў */
+    --el-collapse-header-text-color: #9442ce;
     --el-collapse-header-height: 3rem;
     --el-collapse-border-color: #eaeaea;
     --el-collapse-content-font-size: 1.25rem;
     box-sizing: border-box;
-    width: 20rem;
-    max-width: 100%;
+    width: 100%;
 }
 
+/* Загалоўкам акардэона служыць радок звання, а ён двухрадковы: подпіс
+   «Узровень:», пад ім само званне з зорачкамі. Фіксаваную вышыню бібліятэкі
+   таму здымаем, а стрэлку трымаем на першым радку, а не пасярэдзіне. */
 .profile-collapse .el-collapse-item__header {
+    height: auto;
+    /* стрэлка стаіць на радку са званнем, а не пасярэдзіне двух радкоў:
+       націскаюць на званне, і стрэлка мусіць быць пры ім */
+    align-items: flex-end;
+    /* бібліятэка ставіць міжрадкоўе роўным сваёй вышыні загалоўка (48px) — на
+       адзін радок гэта нябачна, а на два разганяе іх на паўэкрана */
+    line-height: normal;
+    padding: 0.75rem 0;
     font-family: 'PT Sans';
+}
+
+/* званне ўнутры загалоўка займае ўсю яго шырыню — інакш перанос радка ўнутры
+   яго не спрацоўвае і званне вывальваецца з-пад загалоўка */
+.profile-collapse .el-collapse-item__header .profile-stat_stars {
+    flex: 1;
+    min-width: 0;
+}
+
+/* роўна па сярэдзіне звання: прыціснутая да нізу стрэлка стаяла на тры пікселі
+   ніжэй за яго — замерана, не на вока */
+.profile-collapse .el-collapse-item__arrow {
+    margin-bottom: 3px;
 }
 
 .profile-collapse .el-collapse-item__content {
@@ -4243,4 +4356,248 @@ body.is-moderating #bmc-wbtn {
     flex-direction: column;
     gap: 0.375rem;
     color: #494949;
+}
+
+/* ── Перамыкач 18+ у профілі ────────────────────────────────────────────────
+   Уключана = наш зялёны (як «Захаваць»), выключана — шэры бібліятэкі.
+   Радок з перамыкачом крыху вышэйшы за тэкставы — цэнтруем як астатнія. */
+.profile-switch {
+    --el-switch-on-color: #9ffc70;
+}
+
+/* дзве падкучкі 18+ — з водступам, як укладзеныя пункты; пакуль галоўны
+   перамыкач выключаны, яны бляклыя і нічога не вырашаюць */
+/* Сетка з двух слупкоў, а не два асобныя радкі: подпісы розныя па даўжыні
+   («мацюкі» і «сэкс»), і пры простым радку перамыкачы стаялі ўразбег. Сетка
+   раўняе іх сама, і будзе раўняць далей, які б подпіс ні дадалі. */
+.profile-adult {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    align-items: center;
+    gap: 0.375rem 0.75rem;
+}
+
+/* Подпіс над двума перамыкачамі — не радок са сваім перамыкачом, а загаловак
+   да іх. Таму колер той жа, што ў подпісаў радкоў, а водступу знізу няма:
+   яго дае агульны прамежак блока. */
+.profile-adult_title {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: #494949;
+}
+
+/* радок раствараецца ў сетцы, і подпіс з перамыкачом становяцца яе ячэйкамі —
+   інакш яны выраўноўваліся б кожны ўнутры свайго радка, а не паміж радкамі */
+.profile-adult_sub {
+    display: contents;
+}
+
+/* водступ укладзенага пункта пераехаў на подпіс: самога радка ў раскладцы
+   больш няма */
+.profile-adult_sub .profile-stat_label {
+    padding-left: 1.5rem;
+}
+
+/* Ціхі ружовы тэкст у самым нізе — наш колер усяго, што прыбірае. Не кнопка:
+   кнопка запрашае націснуць, а гэтае дзеянне запрашаць не мусіць. Пацвярджэнне
+   ўсё роўна папярэдзіць, што вярнуць нельга. */
+.profile-danger {
+    border-top: 1px solid #eaeaea;
+    padding-top: 0.75rem;
+}
+
+.profile-delete {
+    padding: 0;
+    border: none;
+    background: none;
+    font-family: 'PT Sans';
+    font-size: 1rem;
+    color: #e0338a;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* тлумачэнні ў акне пацверджання — тым жа ціхім, што подпісы ў профілі */
+.profile-dialog_note {
+    margin: 0.75rem 0 0;
+    font-size: 1rem;
+    color: rgba(73, 73, 73, 0.7);
+    line-height: 1.4;
+}
+
+/* ── Падказаныя тэгі пад полем ──────────────────────────────────────────────
+   Пілюлі таго ж выгляду, што тэгі на картках; неабраныя — светла-шэрыя,
+   абраныя — зялёныя, як усё выбранае на сайце. */
+.tag-suggest {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+/* Заклік стаіць асобным радком над спісам: побач з тэгамі ён чытаўся б як
+   першы з іх, а на тэлефоне рваўся б пасярод сказа. */
+.tag-suggest_label {
+    flex-basis: 100%;
+    margin-bottom: -0.125rem;
+    font-size: 1rem;
+    color: rgba(73, 73, 73, 0.7);
+}
+
+.tag-suggest_item {
+    padding: 0.1875rem 0.625rem 0.3125rem;
+    border: none;
+    border-radius: 0.75rem;
+    background: #eaeaea;
+    font-family: 'PT Sans';
+    font-size: 1rem;
+    color: #494949;
+    cursor: pointer;
+    transition: transform 0.12s ease;
+}
+
+.tag-suggest_item:hover {
+    transform: scale(0.96);
+}
+
+.tag-suggest_item--on {
+    background: #9ffc70;
+    color: #2b2b2b;
+}
+
+/* «Плюс» на месцы поля ўводу тэга — зялёны кружок памерам з пілюлю тэга.
+   Быў чорны, як кнопка «Гатова»: відаць добра, але пры націску колер скакаў з
+   чорнага ў зялёны і ператварэнне ў тэг развальвалася. Цяпер колер, вышыня і
+   круглы бок тыя самыя, што ў пілюлі, — мяняецца адна даўжыня. */
+.tags-add {
+    position: relative;
+    flex: 0 0 auto;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: #9ffc70;
+    /* знак — той жа чорны, што крыжыкі на тэгах побач */
+    color: #2b2b2b;
+    cursor: pointer;
+    /* сціскаецца пры навядзенні тым жа рухам, што тэгі і крыжыкі — новага
+       колеру для наведзенага стану не заводзім */
+    transition: transform 0.12s ease;
+}
+
+.tags-add:hover {
+    transform: scale(0.9);
+}
+
+.tags-add:active {
+    transform: scale(0.8);
+}
+
+/* сам знак малюем дзвюма рыскамі, а не літарай: так ён трапляе ў цэлыя пікселі
+   і не залежыць ад таго, як шрыфт малюе «+» */
+.tags-add::before,
+.tags-add::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background: currentColor;
+}
+
+/* 12×2 у крузе 32: цэнтр на 16, значыць рыска пачынаецца на 10 і на 15 —
+   абодва цэлыя пікселі, край не размываецца */
+.tags-add::before {
+    width: 0.75rem;
+    height: 2px;
+    margin: -1px 0 0 -0.375rem;
+}
+
+.tags-add::after {
+    width: 2px;
+    height: 0.75rem;
+    margin: -0.375rem 0 0 -1px;
+}
+
+/* Пілюля, у якой набіраюць. Тыя ж колер, вышыня, закругленне і памер літар, што
+   ў гатовых тэгаў побач: тэг не «ператвараецца» пасля Enter, ён ужо ім выглядае. */
+.tags-typing {
+    display: inline-flex;
+    align-items: center;
+    /* каб 2rem у анімацыі значылі 2rem разам з палямі — роўна кружок */
+    box-sizing: border-box;
+    height: 2rem;
+    padding: 0 0.5rem 0 0.75rem;
+    border-radius: 1rem;
+    background: #9ffc70;
+    color: #494949;
+    font-size: 1rem;
+    /* пілюля выцягваецца з кружка, а крыжык выязджае з-пад яе краю.
+       Самае выцягванне запускае Add.vue: канцавую шырыню там замяраюць, бо ў
+       CSS яна невядомая — залежыць ад слова */
+    overflow: hidden;
+}
+
+/* нябачны двайнік тэксту: з яго бяром шырыню поля. Стаіць па-за патокам,
+   каб не расціскаў пілюлю */
+.tags-typing_mirror {
+    position: absolute;
+    visibility: hidden;
+    white-space: pre;
+    font-family: 'PT Sans';
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+/* агульнае правіла поля дае яму flex: 1 1 6rem — тут шырыня свая, па літарах */
+.tags-typing .add-word__tags-input.el-input {
+    flex: 0 0 auto;
+    min-width: 0;
+    /* поле «вялікага» памеру вышэйшае за пілюлю і вылазіла за яе краі */
+    --el-input-height: 2rem;
+}
+
+.tags-typing .add-word__tags-input .el-input__inner {
+    height: auto;
+    font-family: 'PT Sans';
+    font-size: 1rem;
+    color: #494949;
+}
+
+/* крыжык — як у гатовых тэгаў: рыска на ўсю вышыню пілюлі і × за ёй */
+.tags-typing_close {
+    position: relative;
+    align-self: stretch;
+    width: 1.375rem;
+    margin-left: 0.5rem;
+    padding: 0;
+    border: none;
+    border-left: 1px solid currentColor;
+    background: none;
+    /* той жа чорны, што і на гатовых тэгах */
+    color: #2b2b2b;
+    cursor: pointer;
+}
+
+.tags-typing_close::before,
+.tags-typing_close::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.875rem;
+    height: 2px;
+    /* цэнтр крыжыка зрушаны ўправа ад рыскі: 0.5rem паміж імі, як у тэгаў */
+    margin: -1px 0 0 -0.1875rem;
+    border-radius: 1px;
+    background: currentColor;
+}
+
+.tags-typing_close::before {
+    transform: rotate(45deg);
+}
+
+.tags-typing_close::after {
+    transform: rotate(-45deg);
 }

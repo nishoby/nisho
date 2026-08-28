@@ -328,7 +328,7 @@
                     <div>
                         <div
                             class="add-word__tags-input-wrapper moderation-tags-edit moderation-f-tags"
-                            @click="focusTagInput($event)"
+                            @click="wrapperClick(item, $event)"
                         >
                             <el-tag
                                 v-for="(tag, index) in tagsOf(item)"
@@ -352,17 +352,43 @@
                                 >
                             </el-tag>
 
-                            <el-input
-                                v-model="newTag"
-                                class="add-word__tags-input"
-                                :placeholder="tagsOf(item).length ? '' : 'надрукуй тэг і націсні Enter'"
-                                @focus="beginEdit(item)"
-                                @keydown.enter.prevent="addTagTo(item)"
-                                @keydown.delete="onTagBackspace"
-                                @blur="addTagTo(item)"
-                            />
+                            <!-- «Плюс» і поле — адно месца, як у форме дадавання слова:
+                                 націснуў, і кружок выцягваецца ў пілюлю, у якой ужо
+                                 пішаш. Крыжык на ёй — перадумаць. -->
+                            <span v-if="typingTagFor === item.id" class="tags-typing">
+                                <span class="tags-typing_mirror" ref="tagMirror">{{ newTag }}</span>
+                                <el-input
+                                    v-model="newTag"
+                                    class="add-word__tags-input"
+                                    :style="{ width: tagWidth }"
+                                    @keydown.enter.prevent="addTagTo(item)"
+                                    @keydown.delete="onTagBackspace"
+                                    @blur="addTagTo(item)"
+                                />
+                                <!-- mousedown.prevent: інакш поле згубіць фокус раней
+                                     за націск і недапісанае паспее дадацца тэгам -->
+                                <button
+                                    class="tags-typing_close"
+                                    type="button"
+                                    title="Не дадаваць"
+                                    @mousedown.prevent
+                                    @click="cancelTag"
+                                ></button>
+                            </span>
+                            <button
+                                v-else
+                                class="tags-add"
+                                type="button"
+                                title="Дадаць тэг"
+                                @click="openTagInput(item, $event)"
+                            ></button>
                         </div>
                         <p v-if="tagNotice && editing === item.id" class="tags-notice">{{ tagNotice }}</p>
+                        <!-- пра Enter кажам толькі пакуль пішуць: у радку няма подпісу,
+                             дзе гэта магло б вісець увесь час -->
+                        <p v-else-if="typingTagFor === item.id" class="tags-enter-hint">
+                            напішы тэг, націсні Enter
+                        </p>
                     </div>
                 </div>
 
@@ -711,6 +737,7 @@ const REASONS = {
     'personal-data': 'асабістыя дадзеныя',
     'hostile-language': 'мова варожасці',
     'fix-mistake': 'памылка ў тэксце',
+    'add-tag': 'не хапае тэга',
     other: 'іншае',
 };
 
@@ -1039,6 +1066,8 @@ function beginEdit(item) {
     editing.value = item.id;
     openFields.value = [];
     newTag.value = '';
+    // перайшлі ў іншую картку — недапісаны тэг не пераязджае туды разам з намі
+    typingTagFor.value = null;
     tagNotice.value = '';
     draft.term = item.term;
     draft.content = item.content;
@@ -1166,6 +1195,7 @@ function cancel() {
     /* спіс, а не Set: адкрытыя палі перабіраюцца праз includes і filter */
     openFields.value = [];
     newTag.value = '';
+    typingTagFor.value = null;
     tagNotice.value = '';
 }
 
@@ -1182,13 +1212,65 @@ function showTagNotice(text) {
     tagNoticeTimer = setTimeout(() => (tagNotice.value = ''), 3000);
 }
 
-// Націск па вольным месцы радка ставіць курсор у поле новага тэга. Поле шукаем
-// у самім радку, па якім тыцнулі: спасылка ref тут была б масівам на ўсе карткі.
-function focusTagInput(event) {
-    if (event.target.closest('.el-tag')) {
+// Поле новага тэга з'яўляецца толькі калі ў ім пішуць; астатні час на яго месцы
+// стаіць «плюс». Трымаем нумар карткі, а не проста «так/не»: радкоў на старонцы
+// дваццаць, а набор ідзе заўсёды ў адным.
+const typingTagFor = ref(null);
+const tagMirror = ref();
+const tagWidth = ref('0.5rem');
+
+// Пілюля расце разам з наборам. Сам input расці не ўмее, таму побач стаіць
+// нябачны двайнік з тым жа тэкстам — з яго і бяром шырыню. Ён унутры v-for,
+// таму Vue кладзе спасылку ў масіў, хоць жывы двайнік заўсёды адзін.
+watch(newTag, async () => {
+    await nextTick();
+
+    const mirror = Array.isArray(tagMirror.value) ? tagMirror.value[0] : tagMirror.value;
+
+    // 8px — пустая пілюля, каб яна не схлопвалася ў адзін крыжык
+    tagWidth.value = `${Math.max(8, (mirror?.offsetWidth ?? 0) + 2)}px`;
+});
+
+// Радок шукаем ад таго, па чым тыцнулі: спасылка ref тут была б масівам на ўсе
+// карткі, а нам патрэбны роўна той, дзе цяпер пішуць.
+async function openTagInput(item, event) {
+    const row = event.currentTarget.closest('.add-word__tags-input-wrapper');
+
+    beginEdit(item);
+    typingTagFor.value = item.id;
+    await nextTick();
+
+    row?.querySelector('.tags-typing input')?.focus();
+
+    // Пілюля выцягваецца з кружка «плюса»: колер, вышыня і круглы бок у іх
+    // аднолькавыя, таму на вока гэта не падмена аднаго другім, а расцяжка.
+    const pill = row?.querySelector('.tags-typing');
+
+    if (pill?.animate) {
+        pill.animate(
+            [
+                { minWidth: '0px', maxWidth: '2rem' },
+                { minWidth: '0px', maxWidth: `${pill.offsetWidth}px` },
+            ],
+            { duration: 140, easing: 'ease-out' }
+        );
+    }
+}
+
+// Крыжык на пілюлі — «перадумаў»: набранае знікае, поле складваецца назад у плюс
+function cancelTag() {
+    newTag.value = '';
+    typingTagFor.value = null;
+}
+
+// Націск па вольным месцы радка адчыняе поле. Клікі па самих пілюлях і кнопках
+// усплываюць сюды таксама — свае справы яны робяць самі.
+function wrapperClick(item, event) {
+    if (event.target !== event.currentTarget) {
         return;
     }
-    event.currentTarget.querySelector('input')?.focus();
+
+    openTagInput(item, event);
 }
 
 // Праўка тэга на месцы: тэкст пілюлі — contenteditable, і пасля Enter ці
@@ -1240,6 +1322,9 @@ function addTagTo(item) {
     beginEdit(item);
     newTag.value = typed;
     addTag();
+    // Тэг гатовы — пілюля закрываецца назад у плюс. Пустая пілюля з адным
+    // крыжыкам чыталася б як памылка, а не як «пішы далей».
+    typingTagFor.value = null;
 }
 
 // Backspace у пустым полі прыбірае апошні тэг — звычка з любога поля з пілюлямі

@@ -64,7 +64,11 @@
                 <div class="card-info">
                     <!-- адбор па аўтары: тыя ж поўныя карткі, што і на галоўнай,
                          а не ўціснуты спіс старонкі «Мае словы» -->
+                    <!-- Аўтар можа знікнуць: калі чалавек выдаліў акаўнт, слова
+                         застаецца ў слоўніку, а імя пры ім проста не паказваем.
+                         Застаецца адна дата — картка ад гэтага не ламаецца. -->
                     <router-link
+                        v-if="item.user"
                         :to="{
                             name: 'terms',
                             query: { autar: item.user.user_id },
@@ -141,6 +145,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { supabase } from './supabase.js';
 import { formatLongDate, formatLocalDateTime } from './date.js';
+import { hiddenByAdult, adultFilterOn } from './adult.js';
 import { vote, getVoteResult } from './vote.js';
 import { getUser } from './auth.js';
 import IconDislike from './icons/IconDislike.vue';
@@ -401,13 +406,13 @@ const shuffle = (ids) => {
 const score = (row) => (row.vote_result?.upvotes || 0) - (row.vote_result?.downvotes || 0);
 
 const buildIds = async (mode) => {
-    const rows = [];
+    let rows = [];
     const step = 1000;
     // бяром порцыямі: у API ёсць столь на колькасць радкоў у адным адказе
     for (let from = 0; ; from += step) {
         let idQuery = supabase
             .from('terms')
-            .select('definition_id, created_at, vote_result')
+            .select('definition_id, created_at, vote_result, tags')
             .range(from, from + step - 1);
         if (searchQuery) {
             idQuery = idQuery.filter('term', 'ilike', `%${searchQuery}%`);
@@ -425,8 +430,23 @@ const buildIds = async (mode) => {
         }
     }
 
+    // чалавек выключыў 18+ — дарослыя словы выпадаюць з любога парадку.
+    // Адсяваем тут, а не на старонцы: так на кожнай старонцы роўна 15 слоў
+    // і лічыльнік старонак не хлусіць.
+    if (adultFilterOn.value) {
+        rows = rows.filter((row) => !hiddenByAdult(row.tags));
+    }
+
     if (mode === 'random') {
         return shuffle(rows.map((row) => row.definition_id));
+    }
+
+    // «спачатку новыя» праз спіс нумароў — патрэбна толькі пры схаваным 18+
+    if (mode === 'last') {
+        return rows
+            .slice()
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .map((row) => row.definition_id);
     }
 
     // «Мае любімыя»: пошук і тэгі ўжо адпрацавалі вышэй, застаецца пакінуць
@@ -468,7 +488,9 @@ const fetchPageByIds = async (mode) => {
 };
 
 const fetchTerms = async () => {
-    if (sort.value === 'random' || sort.value === 'popular' || sort.value === 'favorites') {
+    // пры схаваным 18+ і звычайны парадак будуецца спісам нумароў: інакш
+    // старонкі атрымліваліся б дзіравыя пасля адсейвання
+    if (sort.value === 'random' || sort.value === 'popular' || sort.value === 'favorites' || adultFilterOn.value) {
         await fetchPageByIds(sort.value);
         return;
     }

@@ -45,8 +45,10 @@
             </div>
             <div class="profile-row_edit" v-else>
                 <el-input v-model="draft" @keydown.enter="saveName" @keydown.esc="cancelEdit" />
-                <button class="profile-save" type="button" @click="saveName">Захаваць</button>
+                <!-- «Адмена» злева, «Захаваць» справа з краю: галоўнае дзеянне —
+                     апошняе, да чаго даходзіць вока і палец -->
                 <button class="profile-cancel" type="button" @click="cancelEdit">Адмена</button>
+                <button class="profile-save" type="button" @click="saveName">Захаваць</button>
             </div>
         </div>
 
@@ -69,8 +71,8 @@
             </div>
             <div class="profile-row_edit" v-else>
                 <el-input v-model="draft" type="email" @keydown.enter="saveEmail" @keydown.esc="cancelEdit" />
-                <button class="profile-save" type="button" @click="saveEmail">Захаваць</button>
                 <button class="profile-cancel" type="button" @click="cancelEdit">Адмена</button>
+                <button class="profile-save" type="button" @click="saveEmail">Захаваць</button>
             </div>
 
             <!-- пошта не мяняецца імгненна: спярша ліст-пацверджанне на новы
@@ -83,19 +85,22 @@
              яны не нулявыя), астатняе — у класічным акардэоне ніжэй. Нулявыя
              радкі не паказваюцца нідзе. -->
         <div class="profile-stats">
-            <!-- зорачкі — асобным радком над баламі, і кожнай прыступцы сваё
-                 званне: адна — памочнік рэдактара, дзве — рэдактар са стажам,
-                 тры — галоўны рэдактар -->
-            <p class="profile-stat profile-stat_stars" v-if="stars">
-                <span class="profile-stat_label">Статус:</span>
-                <span class="profile-stat_rank">{{ rank }}</span>
-                <IconStar class="profile-stat_star" v-for="n of stars" :key="n" />
-            </p>
-
-            <!-- класічны акардэон з бібліятэкі: загаловак, стрэлка справа,
-                 змест раскрываецца ўніз -->
+            <!-- Класічны акардэон з бібліятэкі, але загалоўкам яму служыць сам
+                 радок звання: слова «Статыстыка» над ім было б трэцім подпісам
+                 запар і нічога не дадавала б. Стрэлка справа, змест уніз.
+                 «Статыстыка» застаецца толькі як запасны загаловак — для таго,
+                 хто яшчэ не набраў ніводнай зорачкі і звання не мае. -->
             <el-collapse class="profile-collapse" v-if="hasMore">
-                <el-collapse-item title="Статыстыка" name="more">
+                <el-collapse-item name="more">
+                    <template #title>
+                        <span class="profile-stat profile-stat_stars" v-if="stars">
+                            <span class="profile-stat_label">Узровень:</span>
+                            <span class="profile-stat_rank">{{ rank }}</span>
+                            <IconStar class="profile-stat_star" v-for="n of stars" :key="n" />
+                        </span>
+                        <span v-else>Статыстыка</span>
+                    </template>
+
                     <p class="profile-stat" v-if="score">
                         <span class="profile-stat_num">{{ score }}</span>
                         <span class="profile-stat_label"
@@ -206,8 +211,10 @@
                     <router-link class="profile-stat_word" :to="{ name: 'term', params: { id: stats.top.term_id } }">
                         {{ stats.top.term }}
                     </router-link>
+                    <!-- спярша палец, потым лічба — як на картках слоў, дзе
+                         лічыльнік галасоў стаіць за самой кнопкай -->
                     <span class="profile-stat_note">
-                        {{ stats.top.likes }} <span class="profile-stat_like"><IconLike /></span> — самае папулярнае
+                        <span class="profile-stat_like"><IconLike /></span> {{ stats.top.likes }} — самае папулярнае
                     </span>
                 </p>
                 <p class="profile-stat" v-if="stats.first">
@@ -218,6 +225,54 @@
                 </p>
             </div>
         </div>
+
+        <!-- Лексіка 18+ — мацюкі і сэксуалізаванае. Пазнака слова — дарослы тэг,
+             таму ўсё трымаецца на ўжо існуючай сістэме тэгаў.
+
+             Перамыкачы два, і абодва самастойныя: мацюкі і сэкс — розныя рэчы,
+             каму гідкая лаянка, той не абавязкова хавае размову пра цела.
+             Трэцяга, галоўнага, няма наўмысна: ён нічога не вырашаў сам, толькі
+             дадаваў лішні крок паміж чалавекам і тым, што ён хоча ўключыць.
+
+             Стаіць апошнім: званне і словы — пра самога чалавека, а гэта
+             наладка таго, як яму паказваць сайт. -->
+        <div class="profile-adult">
+            <p class="profile-adult_title">Паказваць лексіку 18+:</p>
+
+            <p class="profile-stat profile-adult_sub">
+                <span class="profile-stat_label">мацюкі</span>
+                <el-switch class="profile-switch" :model-value="showMat" @change="setShowMat" />
+            </p>
+            <p class="profile-stat profile-adult_sub">
+                <span class="profile-stat_label">сэкс</span>
+                <el-switch class="profile-switch" :model-value="showSex" @change="setShowSex" />
+            </p>
+        </div>
+
+        <!-- Выдаленне акаўнта — апошнім пунктам і ціхім тэкстам: рэч рэдкая і
+             незваротная, крычаць ёй няма чаго, а стаяць яна мусіць там, дзе яе
+             прывыклі шукаць — у самым нізе наладак. -->
+        <div class="profile-danger" v-if="CAN_DELETE_ACCOUNT">
+            <button class="profile-delete" type="button" @click="askDelete = true">Выдаліць акаўнт</button>
+        </div>
+
+        <!-- Той жа выгляд, што ў пацверджання бана на мадэрацыі: аднолькавыя
+             рэчы — адзін выгляд. Перадумаць — крыжыкам зверху, таму асобнай
+             «Адмены» тут няма, як і там. -->
+        <el-dialog v-model="askDelete" width="30rem" align-center custom-class="ban-dialog profile-dialog">
+            <p class="ban-dialog_q">Выдаліць акаўнт?</p>
+            <!-- Кажам загадзя і тое, што знікне, і тое, што застанецца: без
+                 другога паловы людзей будуць думаць, што забіраюць з сабой і
+                 свае словы. -->
+            <p class="profile-dialog_note">Лагін і пошта знікнуць назаўжды — вярнуць іх нельга.</p>
+            <p class="profile-dialog_note">Твае словы застануцца ў слоўніку, проста без імя аўтара.</p>
+
+            <template #footer>
+                <button class="moderation-btn moderation-btn--pink" type="button" :disabled="deleting" @click="deleteAccount">
+                    Выдаліць акаўнт
+                </button>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -229,6 +284,7 @@ import { supabase } from './supabase.js';
 import { getUser } from './auth.js';
 import { myBan, banPhrase } from './bans.js';
 import { formatLongDate } from './date.js';
+import { showMat, showSex, setShowMat, setShowSex } from './adult.js';
 import { commonError } from './error.js';
 import IconEdit from './icons/IconEdit.vue';
 import IconStar from './icons/IconStar.vue';
@@ -246,6 +302,42 @@ const savedName = ref('');
 const editing = ref(null);
 const draft = ref('');
 const emailNotice = ref('');
+
+// Выдаленне акаўнта. Само выдаленне робіць база: браўзер выдаліць уліковы
+// запіс не можа наогул, гэта права ёсць толькі ў функцыі на баку сервера.
+// Функцыя ж і здымае аўтарства са слоў, пакідаючы самі словы ў слоўніку.
+//
+// Пакуль той функцыі ў базе няма, пункт не паказваем: кнопка, якая на націск
+// адказвае памылкай, горшая за адсутнасць кнопкі. Ставім true, калі
+// delete_my_account() з'явіцца — больш нічога мяняць не трэба.
+const CAN_DELETE_ACCOUNT = false;
+
+const askDelete = ref(false);
+const deleting = ref(false);
+
+async function deleteAccount() {
+    deleting.value = true;
+
+    try {
+        const { error } = await supabase.rpc('delete_my_account');
+
+        if (error) {
+            throw error;
+        }
+
+        // Выходзім самі, не чакаючы: запісу ўжо няма, і сесія ў руках трымае
+        // мёртвы ключ — любы наступны запыт усё роўна атрымаў бы адмову.
+        await supabase.auth.signOut();
+        askDelete.value = false;
+        router.push({ name: 'terms' });
+        ElMessage.success('Акаўнт выдалены');
+    } catch (error) {
+        console.error(error);
+        ElMessage.error('Не выйшла выдаліць акаўнт — паспрабуй пазней');
+    } finally {
+        deleting.value = false;
+    }
+}
 
 // ці ёсць за стрэлачкай хоць адзін ненулявы радок — інакш яна не паказваецца
 const hasMore = computed(() =>
@@ -378,11 +470,27 @@ async function loadStats(userId) {
         stats.given = given.length;
     }
 
-    // свае скаргі, пасля якіх слова сапраўды прыбралі
-    const { data: complaints } = await supabase.from('complaint').select('resolved_status').eq('user_id', userId);
+    // Свае скаргі, якія нечаму паслужылі.
+    //
+    // Раней лічыліся толькі тыя, пасля якіх слова прыбралі. Але дзве прычыны
+    // слова не прыбіраюць наогул: «памылка ў тэксце» і «хачу дадаць тэг». Іх
+    // карысць у тым, што слова паправілі, а не ў тым, што яго не стала, — і
+    // чалавек, які заўважыў апіску, заставаўся ні з чым. Іх лічым, як толькі
+    // мадэратар скаргу закрыў; адкрытыя («created») не лічым — яны яшчэ нічым
+    // не скончыліся.
+    const HELPFUL_REASONS = new Set(['fix-mistake', 'add-tag']);
+
+    const { data: complaints } = await supabase
+        .from('complaint')
+        .select('reason, resolved_status')
+        .eq('user_id', userId);
 
     if (complaints) {
-        stats.approved = complaints.filter((row) => row.resolved_status === 'hidden').length;
+        stats.approved = complaints.filter(
+            (row) =>
+                row.resolved_status === 'hidden' ||
+                (HELPFUL_REASONS.has(row.reason) && row.resolved_status && row.resolved_status !== 'created')
+        ).length;
     }
 
     // колькі дзён праведзена ў бане — па ўсіх банах, і адбытых, і цяперашнім.

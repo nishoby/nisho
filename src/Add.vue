@@ -47,14 +47,14 @@
         <el-form-item label="Слова:" prop="term_name">
             <el-input v-model="new_term.term_name" placeholder="Напішы слова" />
         </el-form-item>
-        <el-form-item label="Тлумачэнне:" prop="definition">
+        <el-form-item label="Вызначэнне:" prop="definition">
             <!-- пачынаецца з двух радкоў і расцягваецца пад тэкст, а не трымае
                  пастаянную вышыню на пяць радкоў, якая пуставала для кароткіх слоў -->
             <el-input
                 v-model="new_term.definition"
                 type="textarea"
                 :autosize="{ minRows: 2 }"
-                placeholder="Дай азначэнне свайму слову. Паспрабуй напісаць яго як мага больш нейтральна і зразумела."
+                placeholder="Дай вызначэнне свайму слову. Паспрабуй напісаць яго як мага больш нейтральна і зразумела."
             />
         </el-form-item>
         <el-form-item label="Прыклад:" prop="example">
@@ -66,13 +66,15 @@
             />
         </el-form-item>
         <el-form-item prop="tags">
-            <!-- падказка пра Enter стаіць пры подпісе, а не ў полі: у полі яна знікае
-                 акурат тады, калі чалавек пачынае пісаць і Enter яму патрэбны -->
-            <template #label> Тэгі: <span class="label-hint">(надрукуй свой тэг, націсні Enter)</span> </template>
+            <!-- Падказка пра Enter стаіць пры подпісе, а не ў полі: у полі яна знікла б
+                 акурат тады, калі чалавек пачынае пісаць і Enter яму патрэбны.
+                 Пакуль поле зачыненае, подпіс пусты: пра тое, што тэг варта дадаць,
+                 і так кажа радок пад полем. -->
+            <template #label>
+                Тэгі:
+                <span class="label-hint" v-if="typingTag">(напішы тэг, націсні Enter)</span>
+            </template>
             <div class="add-word__tags-input-wrapper" @click="handleTagsWrapperClick">
-                <!-- свая падказка замест убудаванай: убудаваная не ўмее пераносіцца
-                     на другі радок, а гэты тэкст на тэлефоне ў адзін не змяшчаецца -->
-                <span v-if="!new_term.tags.length && !newTag" class="tags-placeholder"> Напішы тэг </span>
                 <el-tag
                     v-for="tag in new_term.tags"
                     :key="tag"
@@ -102,25 +104,63 @@
                         ×
                     </button>
                 </span>
-                <el-input
-                    v-model="newTag"
-                    ref="newTagInput"
-                    size="large"
-                    class="add-word__tags-input"
-                    @input="refreshTagHint"
-                    @keydown.enter.prevent="handleAddTag"
-                    @keydown.delete="handleBackspace"
-                    @blur="handleAddTag"
-                />
+                <!-- «Плюс» і поле — адно і тое ж месца: націснуў плюс, і ён на месцы
+                     робіцца пілюляй, у якой ужо пішаш. Пілюля расце па літарах —
+                     шырыню бярэм з нябачнага двайніка, бо сам input расці не ўмее -->
+                <span v-if="typingTag" class="tags-typing" ref="tagPill">
+                    <span class="tags-typing_mirror" ref="tagMirror">{{ newTag }}</span>
+                    <el-input
+                        v-model="newTag"
+                        ref="newTagInput"
+                        size="large"
+                        class="add-word__tags-input"
+                        :style="{ width: tagWidth }"
+                        @input="refreshTagHint"
+                        @keydown.enter.prevent="handleAddTag"
+                        @keydown.delete="handleBackspace"
+                        @blur="handleTagBlur"
+                    />
+                    <!-- mousedown.prevent: інакш поле губляе фокус раней за націск,
+                         спрацоўвае @blur і недапісанае паспявае дадацца тэгам -->
+                    <button
+                        class="tags-typing_close"
+                        type="button"
+                        title="Не дадаваць"
+                        @mousedown.prevent
+                        @click="cancelTag"
+                    ></button>
+                </span>
+                <!-- пакуль не пішуць, месца ўводу займае «плюс»: у радку відаць
+                     толькі самі тэгі, а «плюс» сам кажа, што тут можна дадаць -->
+                <button v-else class="tags-add" type="button" title="Дадаць тэг" @click="openTagInput"></button>
             </div>
             <p v-if="tagNotice" class="tags-notice">{{ tagNotice }}</p>
+
+            <!-- Падказка знізу: тэгі, якімі карыстаюцца часцей за ўсё.
+                 Націснуў — тэг дадаўся ў поле вышэй, націснуў яшчэ раз —
+                 знік. Гэта не асобны механізм: тыя ж тэгі, проста без
+                 набору рукамі. «18+», «мацюкі», «сэкс» і «эратычнае» тут не
+                 выпадкова — па іх сайт хавае дарослае ад тых, хто яго выключыў. -->
+            <div class="tag-suggest">
+                <span class="tag-suggest_label">Дадай тэг са спісу ці прыдумай свой</span>
+                <button
+                    v-for="name of SUGGESTED_TAGS"
+                    :key="name"
+                    class="tag-suggest_item"
+                    :class="{ 'tag-suggest_item--on': hasTag(name) }"
+                    type="button"
+                    @click="toggleTag(name, !hasTag(name))"
+                >
+                    {{ name }}
+                </button>
+            </div>
         </el-form-item>
         <input class="submit-btn" type="submit" value="Гатова" :disabled="loading" />
     </el-form>
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { nextTick, onMounted, reactive, ref, watch } from 'vue';
 import { supabase } from './supabase.js';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
@@ -131,6 +171,53 @@ import { formatLongDate } from './date.js';
 const router = useRouter();
 const newTag = ref('');
 const newTagInput = ref();
+
+// Поле ўводу тэга з'яўляецца толькі калі ў ім пішуць; астатні час на яго месцы
+// стаіць «плюс». Дзеля гэтага фокус ставім не адразу, а пасля перамалёўкі.
+const typingTag = ref(false);
+const tagPill = ref();
+
+const openTagInput = async () => {
+    typingTag.value = true;
+    await nextTick();
+    newTagInput.value?.input?.focus();
+
+    // Пілюля выцягваецца з кружка «плюса»: колер, вышыня і круглы бок у іх
+    // аднолькавыя, таму на вока гэта не падмена аднаго другім, а расцяжка.
+    // Канцавую шырыню бяром замерам — у CSS яе не запішаш, яна залежыць ад слова.
+    // min-width: 0 у кадрах абавязковы: без яго пілюля не мае права стаць
+    // вузейшай за свой змест і абмежаванне шырыні на яе не дзейнічае.
+    const pill = tagPill.value;
+
+    if (pill?.animate) {
+        pill.animate(
+            [
+                { minWidth: '0px', maxWidth: '2rem' },
+                { minWidth: '0px', maxWidth: `${pill.offsetWidth}px` },
+            ],
+            { duration: 140, easing: 'ease-out' }
+        );
+    }
+};
+
+// Пілюля расце разам з наборам. Сам input расці не ўмее, таму побач стаіць
+// нябачны двайнік з тым жа тэкстам і тым жа шрыфтам — з яго і бяром шырыню.
+const tagMirror = ref();
+const tagWidth = ref('0.5rem');
+
+watch(newTag, async () => {
+    await nextTick();
+    // 8px — пустая пілюля, каб яна не схлопвалася ў адзін крыжык
+    tagWidth.value = `${Math.max(8, (tagMirror.value?.offsetWidth ?? 0) + 2)}px`;
+});
+
+// Крыжык на пілюлі — «перадумаў»: набранае знікае, поле складваецца назад у плюс
+const cancelTag = () => {
+    newTag.value = '';
+    tagHint.value = '';
+    editedIndex = null;
+    typingTag.value = false;
+};
 
 const loading = ref(false);
 
@@ -233,6 +320,38 @@ const submit = async () => {
     });
 };
 
+// Тэгі, якія падказваем пад полем. Першыя чатыры — дарослыя: па іх сайт хавае
+// слова ад тых, хто выключыў адпаведную катэгорыю 18+. «Эратычнае» — мякчэйшы
+// сусед «сэксу»: хаваецца тым жа перамыкачом, але не абяцае большага, чым ёсць.
+const SUGGESTED_TAGS = [
+    '18+',
+    'мацюкі',
+    'сэкс',
+    'эратычнае',
+    'слэнг',
+    'дыялект',
+    'русізм',
+    'паланізм',
+    'англіцызм',
+    'лаянка',
+];
+
+// Падказаны тэг дадаецца ў той жа спіс, што і набраны рукамі.
+const hasTag = (name) => new_term.tags.some((tag) => tag.trim().toLowerCase() === name);
+
+function toggleTag(name, on) {
+    if (on) {
+        if (!hasTag(name)) {
+            // з вялікай літары, як усе тэгі на сайце
+            new_term.tags.push(name[0].toUpperCase() + name.slice(1));
+        }
+
+        return;
+    }
+
+    new_term.tags = new_term.tags.filter((tag) => tag.trim().toLowerCase() !== name);
+}
+
 const tagNotice = ref('');
 let tagNoticeTimer = null;
 
@@ -267,7 +386,7 @@ const startEditTag = (tag) => {
     tagHint.value = '';
     // падказка не мусіць выскокваць адразу: чалавек прыйшоў правіць, а не набіраць новае
     hintDismissedFor.value = tag;
-    newTagInput.value.input.focus();
+    openTagInput();
 };
 
 const handleRemoveTag = (tag) => {
@@ -395,11 +514,26 @@ const handleAddTag = () => {
     editedIndex = null;
 
     newTag.value = '';
-    newTagInput.value.input.focus();
+    // Тэг гатовы — пілюля закрываецца назад у плюс. Пустая зялёная пілюля з адным
+    // крыжыком чыталася б як памылка, а не як «пішы далей».
+    typingTag.value = false;
 };
 
-const handleTagsWrapperClick = () => {
-    newTagInput.value.input.focus();
+// Сышоў з поля — недапісанае ўсё роўна захоўваем, а поле хаваецца назад пад «плюс».
+const handleTagBlur = () => {
+    handleAddTag();
+    typingTag.value = false;
+};
+
+const handleTagsWrapperClick = (event) => {
+    // Клік па пустой падкладцы адчыняе поле. А вось клікі па самих тэгах і
+    // кнопках усплываюць сюды таксама — і крыжык «перадумаў» тут жа адчыняў
+    // поле нанова. Свае справы яны робяць самі.
+    if (event.target !== event.currentTarget) {
+        return;
+    }
+
+    openTagInput();
 };
 </script>
 
