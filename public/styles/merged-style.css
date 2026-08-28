@@ -526,10 +526,14 @@ button {
     height: 0.15rem;
     background-color: #eaeaea;
 }
+/* Кнопка Gmail — не галоўнае дзеянне на старонцы, а запасны шлях, і памерам
+   мусіць саступаць чорнаму «Увахаду». Была 392×60 пры 149×56 у яго — удвая
+   шырэйшая і вышэйшая, і на экране чыталася як галоўная. Цяпер хугае свой
+   тэкст і роўная яму па вышыні. */
 .gmail-registration {
     margin: 1.5rem auto;
-    width: 24.5rem;
-    height: 3.75rem;
+    width: fit-content;
+    height: 3.5rem;
     display: flex;
     align-items: center;
     border: 1px solid #000000;
@@ -545,12 +549,14 @@ button {
 }
 .gmail-registration-btn {
     height: 90%;
-    padding-left: 2.75rem;
+    /* аднолькавыя з двух бакоў: 2.75rem злева пры пустым правым баку рабілі
+       надпіс несіметрычным у сваёй жа рамцы */
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
     font-weight: 400;
-    font-size: 1.75rem;
+    font-size: 1.25rem;
     line-height: 2.25rem;
     color: rgba(58, 58, 58, 1);
-    letter-spacing: -0.08rem;
     text-align: center;
     background-color: white;
     border-left: 0.08rem solid rgba(58, 58, 58, 1);
@@ -590,6 +596,11 @@ button {
 .container {
     margin: 0 auto;
     width: 42.5rem;
+    /* Ад 650px і ніжэй кантэйнер ідзе ва ўсю шырыню, а вышэй трымае свае
+       42.5rem = 680px. Паміж 651 і 679 гэтыя два правілы пакідалі дзірку:
+       кантэйнер быў шырэйшы за акно, і старонка ехала ўбок гарызантальнай
+       пракруткай. Мяжа па змесце, а не па лічбе брэйкпойнта. */
+    max-width: 100%;
 }
 .search-autocomplete {
     min-width: 300px;
@@ -1422,11 +1433,8 @@ a.user-tag:active {
         margin: 2rem auto;
     }
     .gmail-registration {
-        width: 18rem;
+        width: fit-content;
         margin: 1.75rem auto;
-    }
-    .gmail-registration-btn {
-        font-size: 1.25rem;
     }
     .login-submit-btn {
         height: 3.75rem;
@@ -4625,10 +4633,14 @@ body.is-moderating #bmc-wbtn {
 }
 
 /* «Выхад» — чорны, як «Гатова». Зялёны на сайце значыць «зроблена, ідзём
-   далей»; выхад нікуды не вядзе, ён проста зачыняе дзверы за сабой. */
+   далей»; выхад нікуды не вядзе, ён проста зачыняе дзверы за сабой.
+
+   І круглы, а не з кутамі: «Увахад» на старонцы ўваходу — пілюля, і пара да
+   яго мусіць мець тую ж форму. 3.125rem — той самы радыус, што ў яго. */
 .person-menu_exit {
     background: #3a3a3a;
     color: #ffffff;
+    border-radius: 3.125rem;
 }
 
 .profile-save:hover,
@@ -5247,4 +5259,12 @@ form.complaint_form .reason-choose .el-radio.reason-gap {
     .my-words-head .sort-trigger {
         font-size: 1rem;
     }
+}
+
+/* Месца пад вертыкальную пракрутку трымаем заўсёды. Без гэтага кароткія
+   старонкі (Багі, Падтрымаць) не маюць пракруткі і атрымліваюць на 15px больш
+   шырыні, чым доўгія (Правілы, Пра праект, Каманда, FAQ), — і пры пераходзе па
+   бургер-меню картка кожны раз скача ўбок, хоць сама яна ўсюды роўна 680px. */
+html {
+    scrollbar-gutter: stable;
 }

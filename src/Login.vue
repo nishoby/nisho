@@ -42,7 +42,7 @@
                 <div class="divider-line"></div>
             </div>
             <div class="gmail-registration">
-                <img class="gmail-img" style="width: 2rem" src="/assets/img/gmail.svg" alt="" />
+                <img class="gmail-img" style="width: 1.5rem" src="/assets/img/gmail.svg" alt="" />
                 <button class="gmail-registration-btn" type="button" @click="signInWithGoogle">Логін праз Gmail</button>
             </div>
             <div class="account">
