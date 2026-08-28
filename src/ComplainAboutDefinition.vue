@@ -3,7 +3,7 @@
         <h1 class="title title-white">
             <button class="back-btn" type="button" aria-label="Назад" @click="router.back()">
                 <img src="/assets/img/back.svg" alt="" /></button
-            >Паcкардзіцца мадэратару
+            >Адправіць на мадэрацыю
         </h1>
         <!-- Забаненаму форма скаргі не адчыняецца — замак у базе яе ўсё адно
              не прыме, і даваць пісаць тэкст, які нікуды не пойдзе, няма чаго.
@@ -16,7 +16,7 @@
                 На жаль, ты ў бане да {{ formatLongDate(ban.until) }} {{ banPhrase(ban.reason) }}.
             </p>
             <p class="banned-note_why" v-if="ban.comment">{{ ban.comment }}</p>
-            <p class="banned-note_calm">Пакуль бан дзейнічае, скардзіцца нельга.</p>
+            <p class="banned-note_calm">Пакуль бан дзейнічае, адпраўляць словы на мадэрацыю нельга.</p>
             <p class="banned-note_calm">
                 Пакуль адпачываеш, можаш пачытаць
                 <router-link :to="{ name: 'rules' }">правілы</router-link>.
@@ -102,12 +102,12 @@
                     type="textarea"
                     :autosize="{ minRows: 2 }"
                     :placeholder="
-                        complaint.reason === 'add-tag' ? 'Які тэг трэба дадаць?' : 'Патлумач сваю скаргу'
+                        complaint.reason === 'add-tag' ? 'Які тэг трэба дадаць?' : 'Патлумач, у чым справа'
                     "
                 />
             </el-form-item>
 
-            <input class="submit-btn" type="submit" value="Паскардзіцца" :disabled="loading" />
+            <input class="submit-btn" type="submit" value="На мадэрацыю" :disabled="loading" />
         </el-form>
     </div>
 </template>
@@ -125,7 +125,7 @@ const router = useRouter();
 const route = useRoute();
 const definition_id = route.query.id;
 
-// У бане скардзіцца нельга — замак стаіць у базе, а тут пра яго кажам
+// У бане адпраўляць нельга — замак стаіць у базе, а тут пра яго кажам
 // загадзя, замест формы.
 const ban = ref(null);
 
@@ -182,7 +182,7 @@ const submit = async () => {
             if (error) {
                 throw error;
             }
-            ElMessage.success('Паспяхова даданая скарга');
+            ElMessage.success('Слова адпраўленае на мадэрацыю');
             await router.back();
         } catch (error) {
             // Бан прыляцеў ужо пасля адкрыцця старонкі — форма саступае месца

@@ -45,20 +45,20 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import { supabase } from './supabase.js';
+import { adultFilterOn, hiddenByAdult } from './adult.js';
 
 const loading = ref(true);
 const failed = ref(false);
-const usage = ref(new Map());
-// словы, да якіх не прычаплены ніводзін тэг: у воблаку іх не відаць, а знайсці
-// іх інакш як гартаннем немагчыма
-const untagged = ref(0);
+const words = ref([]);
 
 // Той самы падлік, што на галоўнай фарбуе тэгі ў шэры/зялёны: забіраем тэгі
 // ўсіх слоў і лічым у браўзеры. Часовае рашэнне, пакуль слоў мала, — пры
 // дзясятках тысяч слоў лічыць трэба будзе ў базе.
+//
+// Загрузка толькі збірае словы; лічым ніжэй, у вылічным значэнні, — каб
+// перамыкач 18+ адразу перабіраў воблака, не ходзячы ў базу нанова.
 const loadTagUsage = async () => {
-    const counted = new Map();
-    let withoutTags = 0;
+    const rows = [];
     const step = 1000;
     for (let from = 0; ; from += step) {
         const { data, error } = await supabase
@@ -68,36 +68,49 @@ const loadTagUsage = async () => {
         if (error) {
             throw error;
         }
-        for (const row of data) {
-            if (!row.tags || !row.tags.length) {
-                withoutTags += 1;
-            }
-
-            const seen = new Set();
-            for (const raw of row.tags || []) {
-                const key = raw.trim().toLowerCase();
-                if (!key) {
-                    continue;
-                }
-                if (!counted.has(key)) {
-                    counted.set(key, { count: 0, spellings: new Set() });
-                }
-                const entry = counted.get(key);
-                // слова лічым адзін раз, нават калі тэг паўтараецца ў ім некалькі разоў
-                if (!seen.has(key)) {
-                    seen.add(key);
-                    entry.count += 1;
-                }
-                entry.spellings.add(raw);
-            }
-        }
+        rows.push(...data.map((row) => row.tags || []));
         if (data.length < step) {
             break;
         }
     }
-    usage.value = counted;
-    untagged.value = withoutTags;
+    words.value = rows;
 };
+
+// Воблака паказвае толькі тое, што чалавек можа адкрыць. Хто выключыў мацюкі
+// ці сэкс, той і ў спісе тэгаў іх не бачыць: пілюля, якая вядзе на пусты
+// спіс, — тупік, а не тэг. Прыбіраюцца яны самі, без спісу назваў: словы, якія
+// схаваныя, проста не лічацца, і тэг з нулём слоў у воблака не трапляе.
+// Заадно робяцца сумленнымі лічбы ў звычайных тэгаў: «школа» з дзесяццю
+// словамі, тры з якіх дарослыя, пакажа сем.
+const visibleWords = computed(() =>
+    adultFilterOn.value ? words.value.filter((tags) => !hiddenByAdult(tags)) : words.value
+);
+
+const usage = computed(() => {
+    const counted = new Map();
+    for (const tags of visibleWords.value) {
+        const seen = new Set();
+        for (const raw of tags) {
+            const key = raw.trim().toLowerCase();
+            if (!key) {
+                continue;
+            }
+            if (!counted.has(key)) {
+                counted.set(key, { count: 0, spellings: new Set() });
+            }
+            const entry = counted.get(key);
+            // слова лічым адзін раз, нават калі тэг паўтараецца ў ім некалькі разоў
+            if (!seen.has(key)) {
+                seen.add(key);
+                entry.count += 1;
+            }
+            entry.spellings.add(raw);
+        }
+    }
+    return counted;
+});
+
+const untagged = computed(() => visibleWords.value.filter((tags) => !tags.length).length);
 
 // «Мова» і «мова » — адзін тэг з рознымі напісаннямі; паказваем адно,
 // аддаючы перавагу акуратнаму малому напісанню без хвастовых прабелаў
