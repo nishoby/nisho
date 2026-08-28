@@ -83,9 +83,6 @@
              яны не нулявыя), астатняе — у класічным акардэоне ніжэй. Нулявыя
              радкі не паказваюцца нідзе. -->
         <div class="profile-stats">
-            <!-- пра чалавека, а не пра лічбы — таму сказ, а не радок табліцы -->
-            <p class="profile-stat profile-since" v-if="since">З намі з {{ since }}.</p>
-
             <!-- зорачкі — асобным радком над баламі, і кожнай прыступцы сваё
                  званне: адна — памочнік рэдактара, дзве — рэдактар са стажам,
                  тры — галоўны рэдактар -->
@@ -286,9 +283,6 @@ const stats = reactive({
     first: null,
 });
 
-// «З намі з верасня 2023» — дата рэгістрацыі ляжыць ва ўліковым запісе
-const since = computed(() => (account.value?.created_at ? monthYear(account.value.created_at) : ''));
-
 // «2026-08-09T…» → «09.08.2026»
 const dmy = (stamp) => {
     const at = new Date(/[zZ]$|[+-]dd:?dd$/.test(stamp) ? stamp : stamp + 'Z');
@@ -296,9 +290,6 @@ const dmy = (stamp) => {
 
     return pad(at.getDate()) + '.' + pad(at.getMonth() + 1) + '.' + at.getFullYear();
 };
-
-// «4 верасня 2026» → «верасня 2026»
-const monthYear = (stamp) => formatLongDate(stamp).split(' ').slice(1).join(' ');
 
 // «1 бал», «3 балы», «10 балаў» — лічым як у мове
 const plural = (n, one, few, many) => {

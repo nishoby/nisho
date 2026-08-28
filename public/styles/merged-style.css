@@ -3928,6 +3928,10 @@ body.is-moderating #bmc-wbtn {
 
 .profile-page {
     gap: 1.5rem;
+    /* Змест профілю вузкі, і на ўсю шырыню формы дадавання ён туліўся ў
+       левым куце. Картка — як формы ўваходу (той жа памер з сістэмы),
+       стаіць па цэнтры. */
+    max-width: 34.75rem;
 }
 
 .profile-page .profile-ban {
@@ -4021,6 +4025,11 @@ body.is-moderating #bmc-wbtn {
    базавую лінію шрыфта побач (замерана: цэнтры разыходзіліся на 7px) */
 .profile-stat_skull {
     transform: translateY(-0.4375rem);
+}
+
+/* і сцяг гэтак жа — на базавую лінію (замерана: не хапала 8px) */
+.profile-stat_flag {
+    transform: translateY(-0.375rem);
 }
 
 /* назва слова ў радку — як імёны і спасылкі сайта */
