@@ -393,10 +393,30 @@
                         <p v-if="tagNotice && editing === item.id" class="tags-notice">{{ tagNotice }}</p>
                         <!-- пра Enter кажам толькі пакуль пішуць: у радку няма подпісу,
                              дзе гэта магло б вісець увесь час -->
-                        <p v-else-if="typingTagFor === item.id" class="tags-enter-hint">
-                            напішы тэг, націсні Enter
-                        </p>
+                        <p v-else-if="typingTagFor === item.id" class="tags-enter-hint">напішы тэг, націсні Enter</p>
                     </div>
+                </div>
+
+                <!-- Тры дарослыя пілюлі — за рамкай. У рамцы правіцца само слова, і
+                     месца тут не для яго тэксту, а для пазнакі: гэта тое, што
+                     аўтары забываюць паставіць часцей за ўсё, і менавіта па ёй
+                     сайт хавае слова ад тых, хто дарослае выключыў. Астатнія
+                     сямнаццаць падказак засталіся на «Дадаць слова»: пад кожнай
+                     карткай спісу яны былі б сцяной.
+
+                     Відаць толькі ў той картцы, якую зараз правяць. -->
+                <div class="tag-suggest tag-suggest--moderation" v-if="editing === item.id">
+                    <button
+                        v-for="name of MODERATION_TAGS"
+                        :key="name"
+                        class="tag-suggest_item"
+                        :class="{ 'tag-suggest_item--on': hasSuggested(item, name) }"
+                        type="button"
+                        @mousedown.prevent
+                        @click="toggleSuggested(item, name)"
+                    >
+                        {{ name }}
+                    </button>
                 </div>
 
                 <!-- Аўтар і яго гісторыя. Лічбы патрэбныя, каб не банілі за адзін
@@ -659,6 +679,7 @@ import { ElMessage } from 'element-plus';
 import { formatLongDate } from './date.js';
 import { getUser } from './auth.js';
 import { supabase } from './supabase.js';
+import { MODERATION_TAGS } from './suggested-tags.js';
 import { loadModeration, loadWord } from './moderation-data.js';
 import { BAN_REASONS, banLabel } from './bans.js';
 import IconSkull from './icons/IconSkull.vue';
@@ -1084,6 +1105,24 @@ function beginEdit(item) {
 // Тэгі відаць з крыжыкамі заўсёды: радок і ёсць свой уласны рэдактар.
 const tagsOf = (item) => (editing.value === item.id ? draft.tags : item.tags);
 
+// Пілюля са спісу: першы націск ставіць тэг, другі здымае. Параўноўваем без
+// уліку рэгістра — інакш «Інтэрнэт» у картцы і «інтэрнэт» у спісе выглядалі б
+// як два розныя тэгі, і націск дадаў бы другі побач з першым.
+const hasSuggested = (item, name) => tagsOf(item).some((tag) => tag.trim().toLowerCase() === name);
+
+function toggleSuggested(item, name) {
+    beginEdit(item);
+
+    if (hasSuggested(item, name)) {
+        draft.tags = draft.tags.filter((tag) => tag.trim().toLowerCase() !== name);
+        return;
+    }
+
+    // Дакладна так, як у спісе, з малой. addTag() робіць першую літару вялікай,
+    // і тут гэта была б памылка: у базе тэг ужо ляжыць з малой.
+    draft.tags.push(name);
+}
+
 // Дзе ў тэксце стаяў націск. Браўзеры завуць гэта па-рознаму, таму спрабуем
 // абодва спосабы; калі не выйшла — вернем null, і курсор стане ў канец.
 function caretOffsetFrom(event) {
@@ -1291,7 +1330,8 @@ function commitTag(item, index, event) {
         return;
     }
 
-    const normalized = typed[0].toUpperCase() + typed.slice(1);
+    // напісанне пакідаем чалавеку — гл. addTag() ніжэй
+    const normalized = typed;
 
     if (normalized === was) {
         el.textContent = was;
@@ -1343,10 +1383,15 @@ function onTagBackspace(event) {
 }
 
 function addTag() {
-    // крайнія прабелы прэч, двайныя ўнутры сціскаем, першая літара вялікая —
-    // усё, каб «школа», «Школа» і «школа » не сталі трыма рознымі тэгамі
-    const trimmed = newTag.value.trim().replace(/ +/g, ' ');
-    const normalized = trimmed && trimmed[0].toUpperCase() + trimmed.slice(1);
+    // Крайнія прабелы прэч, двайныя ўнутры сціскаем — праз іх у базе ўжо ляжаць
+    // асобна «школа» і «школа ». А вось першую літару не чапаем: раней яна
+    // рабілася вялікай «каб не было двух тэгаў», але ў базе 541 тэг з малой
+    // супраць 81 з вялікай, і падняцце якраз і давала другі тэг побач з першым.
+    // Напісанне — справа чалавека: малы рэгістр на ўсё ператвараў бы «ІТ», «ШІ» і
+    // «ЛГБТК+» у «іт», «ші», «лгбтк+», і скарот пераставаў чытацца як скарот.
+    // Прабелы ўсё ж прыбіраем: праз іх у базе ляжаць асобна «школа» і «школа », і
+    // гэта ўжо не выбар, а недагляд.
+    const normalized = newTag.value.trim().replace(/ +/g, ' ');
 
     if (!normalized) {
         return;

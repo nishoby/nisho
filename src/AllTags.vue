@@ -9,19 +9,34 @@
                     Не атрымалася загрузіць тэгі. Паспрабуй абнавіць старонку.
                 </p>
 
-                <div v-else class="tag-cloud">
-                    <router-link
-                        v-for="tag in cloud"
-                        :key="tag.key"
-                        class="tag-cloud__tag"
-                        :class="{ 'tag-cloud__tag--single': tag.count === 1 }"
-                        :style="{ fontSize: tag.size + 'rem' }"
-                        :title="tag.count + ' ' + wordsLabel(tag.count)"
-                        :to="{ name: 'terms', query: tag.query }"
-                    >
-                        {{ tag.name }}
-                    </router-link>
-                </div>
+                <template v-else>
+                    <!-- Словы без тэгаў — над воблакам і сваім радком. Гэта не літара
+                         алфавіту, а заклік да працы: у канцы воблака, дзе пілюля стаяла
+                         спярша, яе не бачыў ніхто. -->
+                    <p v-if="untaggedTag" class="tag-cloud tag-cloud--lead">
+                        <router-link
+                            class="tag-cloud__tag"
+                            :title="untaggedTag.count + ' ' + wordsLabel(untaggedTag.count)"
+                            :to="{ name: 'terms', query: untaggedTag.query }"
+                        >
+                            {{ untaggedTag.name }}
+                        </router-link>
+                    </p>
+
+                    <div class="tag-cloud">
+                        <router-link
+                            v-for="tag in cloud"
+                            :key="tag.key"
+                            class="tag-cloud__tag"
+                            :class="{ 'tag-cloud__tag--single': tag.count === 1 }"
+                            :style="{ fontSize: tag.size + 'rem' }"
+                            :title="tag.count + ' ' + wordsLabel(tag.count)"
+                            :to="{ name: 'terms', query: tag.query }"
+                        >
+                            {{ tag.name }}
+                        </router-link>
+                    </div>
+                </template>
             </div>
         </div>
     </div>
@@ -115,19 +130,15 @@ const cloud = computed(() => {
         }))
         .sort((a, b) => a.key.localeCompare(b.key, 'be'));
 
-    // словы без тэгаў — такая ж пілюля, але ў канцы: гэта не слова з алфавіту
-    if (untagged.value) {
-        cloud.push({
-            key: 'untagged',
-            name: 'Без тэгаў',
-            count: untagged.value,
-            query: { biez: 'tehau' },
-            size: 0.875 + (Math.log(untagged.value + 1) / maxLog) * 1.125,
-        });
-    }
-
     return cloud;
 });
+
+// Словы без тэгаў стаяць над воблакам асобна: гэта не літара алфавіту, а заклік
+// да працы. У канцы воблака, куды яны трапілі спярша, іх не бачыў ніхто — а
+// менавіта яны патрэбныя таму, хто прыйшоў дапамагаць.
+const untaggedTag = computed(() =>
+    untagged.value ? { name: 'Без тэгаў', count: untagged.value, query: { biez: 'tehau' } } : null
+);
 
 const wordsLabel = (count) => {
     const tens = count % 100;
