@@ -5,7 +5,26 @@
                 <img src="/assets/img/back.svg" alt="" /></button
             >Паcкардзіцца мадэратару
         </h1>
+        <!-- Забаненаму форма скаргі не адчыняецца — замак у базе яе ўсё адно
+             не прыме, і даваць пісаць тэкст, які нікуды не пойдзе, няма чаго.
+             Той жа экран, што на дадаванні слова: бан — адна рэч, і гаворыць
+             яна ўсюды аднолькава. -->
+        <div class="complaint_form banned-screen" v-if="ban">
+            <button type="reset" class="cross" @click="router.back()"></button>
+
+            <p class="banned-note_main">
+                На жаль, ты ў бане да {{ formatLongDate(ban.until) }} {{ banPhrase(ban.reason) }}.
+            </p>
+            <p class="banned-note_why" v-if="ban.comment">{{ ban.comment }}</p>
+            <p class="banned-note_calm">Пакуль бан дзейнічае, скардзіцца нельга.</p>
+            <p class="banned-note_calm">
+                Пакуль адпачываеш, можаш пачытаць
+                <router-link :to="{ name: 'rules' }">правілы</router-link>.
+            </p>
+        </div>
+
         <el-form
+            v-else
             :model="complaint"
             ref="form"
             :rules="rules"
@@ -90,12 +109,19 @@ import { supabase } from './supabase.js';
 import { ElMessage } from 'element-plus';
 import { useRoute, useRouter } from 'vue-router';
 import { commonError } from './error.js';
+import { myBan, forgetMyBan, banPhrase } from './bans.js';
+import { formatLongDate } from './date.js';
 
 const router = useRouter();
 const route = useRoute();
 const definition_id = route.query.id;
 
+// У бане скардзіцца нельга — замак стаіць у базе, а тут пра яго кажам
+// загадзя, замест формы.
+const ban = ref(null);
+
 onMounted(async () => {
+    ban.value = await myBan();
     await fetchDefinition();
 });
 
@@ -150,6 +176,17 @@ const submit = async () => {
             ElMessage.success('Паспяхова даданая скарга');
             await router.back();
         } catch (error) {
+            // Бан прыляцеў ужо пасля адкрыцця старонкі — форма саступае месца
+            // тлумачэнню, як і на дадаванні слова.
+            if (String(error?.message || '').includes('BANNED')) {
+                forgetMyBan();
+                ban.value = await myBan();
+
+                if (ban.value) {
+                    return;
+                }
+            }
+
             ElMessage.error(commonError);
             throw error;
         } finally {

@@ -3745,6 +3745,10 @@ body.is-moderating #bmc-wbtn {
    сказа пра бан. Тут ён поўны — усплываючае паведамленне на старонцы
    дадавання знікае, а сюды можна вярнуцца і перачытаць. */
 .profile-ban {
+    /* бібліятэка ставіць акну word-break: break-all, і «парушэнне» рвалася
+       на «п арушэнне» — вяртаем звычайны перанос па словах */
+    word-break: normal;
+    overflow-wrap: normal;
     flex-direction: column;
     gap: 0.375rem;
     margin-bottom: 0.75rem;
@@ -3757,18 +3761,6 @@ body.is-moderating #bmc-wbtn {
 .profile-ban_main {
     font-weight: 700;
     color: #e0338a;
-}
-
-/* словы мадэратара — гэта цытата, а не наш тэкст */
-.profile-ban_why {
-    font-style: italic;
-    color: #494949;
-}
-
-/* тое, што супакойвае, — самым ціхім тэкстам: чытаецца пасля, а не замест */
-.profile-ban_calm {
-    font-size: 1rem;
-    color: rgba(73, 73, 73, 0.7);
 }
 
 /* ── Пасля рэгістрацыі ──────────────────────────────────────────────────────
