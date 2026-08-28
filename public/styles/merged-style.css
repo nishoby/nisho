@@ -2790,7 +2790,9 @@ body.is-moderating #bmc-wbtn {
     font-family: 'PT Sans';
     font-size: 1.5rem;
     line-height: 1.35;
-    color: #3a3a3a;
+    /* наш ружовы — колер усяго, што на сайце забараняе і прыбірае; адным
+       голасам гаворыць і профіль, і старонка дадавання, і скарга */
+    color: #e0338a;
 }
 
 /* радок, які здымае галоўны страх — «мае словы выдалілі» */
@@ -3906,4 +3908,321 @@ body.is-moderating #bmc-wbtn {
     /* месца пад крыжык у правым верхнім куце, каб доўгі першы радок
        не заходзіў пад яго */
     padding-right: 2.5rem;
+}
+
+/* ── Профіль (канцэпт) ──────────────────────────────────────────────────────
+   Памеры толькі з лесвіцы сайта: 20 — тэкст і дзеянні, 16 — ціхія подпісы.
+   Колеры ўсе існуючыя. Аднолькавыя рэчы — адзін выгляд. */
+
+/* радок пра бан у меню — факт, а не пункт: ружовы і не націскаецца */
+.hamburger-dropdown .person-menu_ban.el-dropdown-menu__item.is-disabled {
+    color: #e0338a;
+    font-weight: 700;
+    cursor: default;
+}
+
+/* пункт вакол кнопкі выхаду не падсвечваецца, як звычайная спасылка меню */
+.hamburger-dropdown .person-menu_exit-item.el-dropdown-menu__item:hover {
+    background: transparent;
+}
+
+.profile-page {
+    gap: 1.5rem;
+}
+
+.profile-page .profile-ban {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    /* рыскі знізу няма: адразу пад блокам пачынаецца акардэон са сваёй
+       верхняй лініяй, і дзве рыскі запар дваіліся */
+    padding-bottom: 0.5rem;
+}
+
+/* статыстыка — роўны слупок: подпіс і адразу за ім тлустая лічба */
+.profile-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.profile-stat {
+    margin: 0;
+    display: flex;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+}
+
+/* слоўныя радкі — асобны абзац пасля лічбаў, з паветрам перад ім */
+/* у вузкай калонцы акардэона гэтыя радкі цякуць звычайным тэкстам, а не
+   флексам: інакш доўгі подпіс і назва слова ламаліся па кавалку */
+.profile-words .profile-stat {
+    display: block;
+}
+
+/* у радковым цячэнні шаблон з’ядае прабелы паміж кавалкамі — вяртаем іх */
+.profile-words .profile-stat_word {
+    margin: 0 0.375rem;
+}
+
+.profile-words {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    margin-top: 1rem;
+}
+
+/* Лайк-іконка ў подпісе. Каробачка фіксаванага памеру абавязковая: у самой
+   іконкі ўбудаваны width:100%, і без каробачкі яна разлятаецца на ўвесь
+   радок (ужо наступалі на гэта на мадэрацыі). */
+.profile-stat_like {
+    display: inline-flex;
+    /* тыя ж адносіны да тэксту, што ў лайка на картках галоўнай: іконка
+       прыкметна большая за шрыфт і стаіць з лічбай у адным цэнтры */
+    width: 2rem;
+    height: 2rem;
+    /* малюнак вялікага пальца сядзіць у сваім квадраце высока — апускаем на
+       пару пікселяў, каб цэнтр кулака стаў насупраць лічбы */
+    transform: translateY(0.1875rem);
+    /* лічба шчыльна пры іконцы, як на картках (там паміж імі 2px): пара
+       «палец+лік» чытаецца адным цэлым, а не двума суседзямі */
+    margin-right: -0.25rem;
+}
+
+/* подпіс з іконкай раўняецца па цэнтры, як радок галасоў на картцы */
+.profile-words .profile-stat_note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    vertical-align: middle;
+}
+
+/* іконка ў радку статыстыкі — шчыльна пры лічбе, пара «814+палец»;
+   усе знакі адным колерам тэксту */
+.profile-stat_like--row {
+    margin-left: -0.375rem;
+    color: #494949;
+}
+
+/* сцяжок і чэрап малююцца на ўвесь свой квадрат — падушка раўняе іх
+   бачны памер з пальцам, у якога ўнутры ёсць паветра */
+.profile-stat_flag,
+.profile-stat_skull {
+    /* крыху паветра вакол, каб не крычалі, але і не глухлі; уніз іх не
+       апускаем — гэта папраўка пад форму пальца, ім яна толькі шкодзіць */
+    /* на два пікселі драбней: па пікселю падушкі з кожнага боку */
+    padding: 0.4375rem;
+    box-sizing: border-box;
+    /* на пару пікселяў уніз — каб стаялі на адной рысе з лічбамі */
+    transform: translateY(0.125rem);
+}
+
+/* назва слова ў радку — як імёны і спасылкі сайта */
+.profile-stat_word {
+    font-weight: 700;
+    color: #9442ce;
+    text-decoration: underline;
+}
+
+/* дадатак пры факце (колькі лайкаў, калі гэта было) — ціхім */
+.profile-stat_note {
+    color: rgba(73, 73, 73, 0.7);
+}
+
+.profile-stat_label {
+    color: #494949;
+}
+
+.profile-stat_num {
+    font-weight: 700;
+    color: #383838;
+}
+
+.profile-stat_stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* «Статус:» — чорны подпіс, як «Лагін» і «Пошта», без зрухаў: пачынаецца
+   з той жа лініі. Само званне — фіялетавае. */
+.profile-stat_rank {
+    color: #9442ce;
+}
+
+/* пасля звання — паветра перад лічбамі: званне само па сабе, лік асобна */
+.profile-stat.profile-stat_stars {
+    margin-bottom: 0.5rem;
+}
+
+.profile-stat_star {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #9442ce;
+}
+
+.profile-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.profile-row_line,
+.profile-row_edit {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* значэнне заўсёды ў рамцы — адразу відаць, што яго можна правіць; аловачак
+   унутры, з правага краю. Тая ж шырыня, што ў поля праўкі: рамка не скача. */
+.profile-row_line {
+    box-sizing: border-box;
+    width: 20rem;
+    max-width: 100%;
+    /* падцягваем да апошняга радка: без гэтага паміж лічбамі і стрэлкай
+       заставалася прыкметная дзірка */
+    margin-top: -0.375rem;
+    justify-content: space-between;
+    padding: 0.375rem 0.375rem 0.375rem 0.75rem;
+    background: white;
+    border: 1px solid #868686;
+    border-radius: 0.5rem;
+}
+
+/* Поле цягнецца, а калі кнопкам не хапае месца (тэлефон) — яны самі
+   пераскокваюць радком ніжэй, і поле застаецца на ўсю шырыню. Звычайны
+   мабільны ўзор без асобных правілаў пад шырыню экрана. */
+.profile-row_edit {
+    flex-wrap: wrap;
+}
+
+.profile-row_edit .el-input {
+    flex: 1 1 14rem;
+    max-width: 20rem;
+}
+
+/* У праўцы поле шэрае, як на рэгістрацыі, і роўна той жа велічыні, што
+   рамка са значэннем: пераход у праўку без скачка памеру — проста
+   спакойна пішаш. Вышыню перабіваем знарок: клас формы дадавання дае
+   палям 62px, і поле «надзімалася» пры націску. */
+.profile-row_edit .el-input__wrapper {
+    background-color: #eaeaea;
+    box-shadow: none;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0 0.75rem;
+}
+
+.profile-page .profile-row_edit .el-input__inner {
+    height: 2.5rem;
+    font-size: 1.25rem;
+    color: #494949;
+}
+
+.profile-row_edit .el-input__wrapper.is-focus {
+    box-shadow: none;
+}
+
+.profile-row_label,
+.profile-row_value {
+    font-size: 1.25rem;
+    color: #494949;
+}
+
+/* значэнне з зорачкамі побач — у адзін радок */
+.profile-row_value {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.profile-row_hint {
+    margin: 0;
+    font-size: 1rem;
+    color: rgba(73, 73, 73, 0.7);
+}
+
+/* аловачак — той жа, што на «Маіх словах» пры слове: шэры, ажывае пад курсорам */
+.profile-edit {
+    display: inline-flex;
+    padding: 0.25rem;
+    border: none;
+    background: none;
+    color: #868686;
+    cursor: pointer;
+}
+
+.profile-edit svg {
+    height: 1.25rem;
+    width: 1.25rem;
+}
+
+.profile-edit:hover {
+    color: #9442ce;
+}
+
+/* ціхае тэкставае дзеянне — «Адмена» пры праўцы */
+.profile-cancel {
+    padding: 0;
+    border: none;
+    background: none;
+    font-family: 'PT Sans';
+    font-size: 1.25rem;
+    color: rgba(73, 73, 73, 0.7);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.profile-cancel:hover {
+    color: #e0338a;
+}
+
+/* залітыя дзеянні — «Захаваць» і «Выхад» у меню: адзін выгляд */
+.profile-save,
+.person-menu_exit {
+    padding: 0.375rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: #9ffc70;
+    font-family: 'PT Sans';
+    font-size: 1.25rem;
+    color: #2b2b2b;
+    cursor: pointer;
+    transition: transform 0.12s ease;
+}
+
+.profile-save:hover,
+.person-menu_exit:hover {
+    transform: scale(0.96);
+}
+
+/* Акардэон падрабязнай статыстыкі — бібліятэчны, толькі прыведзены да
+   нашых шрыфтоў і шырыні палёў вышэй. Загаловак чорны, як тэкст; пра
+   націскальнасць кажа стрэлка. */
+.profile-collapse {
+    --el-collapse-header-font-size: 1.25rem;
+    /* загаловак чорны, як асноўны тэкст: гэта раздзел, а не спасылка */
+    --el-collapse-header-text-color: #494949;
+    --el-collapse-header-height: 3rem;
+    --el-collapse-border-color: #eaeaea;
+    --el-collapse-content-font-size: 1.25rem;
+    box-sizing: border-box;
+    width: 20rem;
+    max-width: 100%;
+}
+
+.profile-collapse .el-collapse-item__header {
+    font-family: 'PT Sans';
+}
+
+.profile-collapse .el-collapse-item__content {
+    /* міжрадкоўе як у спісе над акардэонам: бібліятэка дае свайму зместу
+       павялічаны line-height, і радкі разыходзіліся шырэй за верхнія */
+    line-height: normal;
+    padding-bottom: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    color: #494949;
 }

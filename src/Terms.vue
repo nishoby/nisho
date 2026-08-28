@@ -149,7 +149,11 @@ import PageContentSpinner from './PageContentSpinner.vue';
 import IconChevron from './icons/IconChevron.vue';
 import IconCross from './icons/IconCross.vue';
 
-const options = [
+// «Мае любімыя» з'яўляецца ў спісе, толькі калі чалавек хоць нешта лайкаў:
+// пункт, за якім заўсёды пуста, — падманка.
+const hasLikes = ref(false);
+
+const options = computed(() => [
     {
         value: 'last',
         label: 'Спачатку новыя',
@@ -162,7 +166,8 @@ const options = [
         value: 'random',
         label: 'Выпадковыя',
     },
-];
+    ...(hasLikes.value ? [{ value: 'favorites', label: 'Мае любімыя' }] : []),
+]);
 
 const router = useRouter();
 const route = useRoute();
@@ -298,6 +303,7 @@ const applyAutarFilter = (query) => {
     }
     return query.eq('user->>user_id', autarQuery);
 };
+
 // людзі часам пакідаюць пустыя радкі напрыканцы тэксту, і картка расце ўвысь
 // упустую (white-space: pre-wrap іх паказвае). Абразаем краі пры паказе.
 const tidy = (text) => (text || '').trim();
@@ -315,10 +321,10 @@ const sort = ref('last');
 // але для гіганцкага слоўніка парадак трэба будзе будаваць на баку базы.
 const idsBySort = ref({});
 
-const currentSortLabel = computed(() => options.find((item) => item.value === sort.value).label);
+const currentSortLabel = computed(() => options.value.find((item) => item.value === sort.value).label);
 
 // бягучы варыянт з меню прыбраны — ён ужо напісаны на кнопцы
-const otherSortOptions = computed(() => options.filter((item) => item.value !== sort.value));
+const otherSortOptions = computed(() => options.value.filter((item) => item.value !== sort.value));
 
 const onSortChange = (value) => {
     currentPage.value = 1;
@@ -339,8 +345,13 @@ const update = async (definition, type) => {
     }
 
     await vote(definition, type);
-    // голас змяніў рэйтынг — парадак «папулярных» трэба перабудаваць
+    // голас змяніў рэйтынг і спіс любімых — абодва парадкі перабудуюцца
     delete idsBySort.value.popular;
+    delete idsBySort.value.favorites;
+
+    if (type === 'upvote') {
+        hasLikes.value = true;
+    }
     await fetchTerms();
 };
 
@@ -418,6 +429,23 @@ const buildIds = async (mode) => {
         return shuffle(rows.map((row) => row.definition_id));
     }
 
+    // «Мае любімыя»: пошук і тэгі ўжо адпрацавалі вышэй, застаецца пакінуць
+    // толькі тое, што я лайкаў. Свежыя лайкі — уверсе.
+    if (mode === 'favorites') {
+        const { data: mine } = await supabase
+            .from('votes')
+            .select('id, definition_id')
+            .eq('user_id', account.value.id)
+            .eq('type', 'upvote');
+
+        const orderOf = new Map((mine || []).map((row, i) => [row.definition_id, row.id ?? i]));
+
+        return rows
+            .filter((row) => orderOf.has(row.definition_id))
+            .sort((a, b) => orderOf.get(b.definition_id) - orderOf.get(a.definition_id))
+            .map((row) => row.definition_id);
+    }
+
     // пры роўным рэйтынгу вышэй ідуць навейшыя словы
     rows.sort((a, b) => score(b) - score(a) || new Date(b.created_at) - new Date(a.created_at));
     return rows.map((row) => row.definition_id);
@@ -440,7 +468,7 @@ const fetchPageByIds = async (mode) => {
 };
 
 const fetchTerms = async () => {
-    if (sort.value === 'random' || sort.value === 'popular') {
+    if (sort.value === 'random' || sort.value === 'popular' || sort.value === 'favorites') {
         await fetchPageByIds(sort.value);
         return;
     }
@@ -476,6 +504,20 @@ watch(sort, () => {
 
 onMounted(async () => {
     account.value = await getUser();
+
+    // адзін лёгкі запыт: ці ёсць хоць адзін лайк — ад гэтага залежыць пункт
+    // «Мае любімыя» ў меню сартавання
+    if (account.value) {
+        supabase
+            .from('votes')
+            .select('id')
+            .eq('user_id', account.value.id)
+            .eq('type', 'upvote')
+            .limit(1)
+            .then(({ data }) => {
+                hasLikes.value = Boolean(data && data.length);
+            });
+    }
 
     // Лічыльнік тэгаў патрэбны толькі для іх колеру — словы не павінны яго чакаць.
     // Раней ён стаяў перад выбаркай, і калі гэты запыт завісаў, спіс не з'яўляўся зусім:

@@ -20,6 +20,7 @@ import SimplifiedLayout from './SimplifiedLayout.vue';
 import ComplainAboutDefinition from './ComplainAboutDefinition.vue';
 import UserWords from './UserWords.vue';
 import Moderation from './Moderation.vue';
+import Profile from './Profile.vue';
 import NotFoundPage from './NotFoundPage.vue';
 import { getUser } from './auth.js';
 import { ElMessage } from 'element-plus';
@@ -182,6 +183,21 @@ const main = [
                 name: 'complaint',
                 path: '',
                 component: ComplainAboutDefinition,
+                beforeEnter: [onlyAuthorized],
+            },
+        ],
+    },
+    // Старонка профілю: імя, пошта, бан цалкам, выхад. У меню пад
+    // чалавечкам засталіся адны спасылкі — змястоўнае жыве тут.
+    {
+        path: '/profil',
+        // без шапкі сайта — як старонка дадавання слова
+        component: SimplifiedLayout,
+        children: [
+            {
+                name: 'profile',
+                path: '',
+                component: Profile,
                 beforeEnter: [onlyAuthorized],
             },
         ],

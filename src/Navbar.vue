@@ -41,62 +41,50 @@
         <router-link class="add-btn" :to="{ name: 'add' }">
             <img class="add-btn-img" src="/assets/img/add.svg" alt="" />
         </router-link>
-        <el-popover
-            placement="bottom"
-            :popper-class="account ? 'dropdown_user_auth' : 'dropdown_user_unauth'"
-            trigger="click"
-        >
-            <template #reference>
-                <button class="person-btn">
-                    <img class="person-btn-img" src="/assets/img/person.svg" alt="" />
-                </button>
+        <!-- Пад чалавечкам — кароткі спіс дзвярэй, а не форма і не двайнік
+             бургера. Спярша «Профіль» — гэта пра самога чалавека (імя, пошта,
+             бан, выхад), потым ягоныя месцы: «Мае словы», а ў мадэратара і
+             «Мадэрацыя». -->
+        <el-dropdown>
+            <button class="person-btn">
+                <img class="person-btn-img" src="/assets/img/person.svg" alt="" />
+            </button>
+            <template #dropdown>
+                <el-dropdown-menu class="hamburger-dropdown">
+                    <template v-if="account">
+                        <!-- адзін радок пра бан — факт, а не пункт меню; поўнае
+                             тлумачэнне ў профілі і на дадаванні слова -->
+                        <el-dropdown-item class="person-menu_ban" disabled v-if="myBanRow">
+                            Ты ў бане да {{ formatLongDate(myBanRow.until) }}
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                            <router-link :to="{ name: 'profile' }">Профіль</router-link>
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                            <router-link :to="{ name: 'current-user-words' }">Мае словы</router-link>
+                        </el-dropdown-item>
+                        <!-- бачная толькі мадэратарам — астатнія пра яе не ведаюць -->
+                        <el-dropdown-item v-if="moderator">
+                            <router-link :to="{ name: 'moderation' }">Мадэрацыя</router-link>
+                        </el-dropdown-item>
+                        <!-- Выхад — кнопка, а не радок спісу: гэта дзеянне, а не
+                             пераход, і блытацца з суседнімі спасылкамі яно не
+                             павінна -->
+                        <el-dropdown-item class="person-menu_exit-item">
+                            <button class="person-menu_exit" type="button" @click="signOut">Выхад</button>
+                        </el-dropdown-item>
+                    </template>
+                    <template v-else>
+                        <el-dropdown-item>
+                            <router-link :to="{ name: 'login' }">Логін</router-link>
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                            <router-link :to="{ name: 'registration' }">Рэгістрацыя</router-link>
+                        </el-dropdown-item>
+                    </template>
+                </el-dropdown-menu>
             </template>
-            <div v-if="account">
-                <!-- Бан — першым радком, да пошты і імя. Чалавек адкрывае
-                     профіль якраз таму, што сайт з ім раптам спрачаецца, і
-                     адказ мусіць стаяць там, дзе вока пачынае.
-
-                     Толькі факт і тэрмін: акно маленькае, і поўнае тлумачэнне
-                     (словы мадэратара, што будзе са словамі) тут рабілася
-                     сачыненнем. Яно жыве на старонцы дадавання — там, дзе бан
-                     чалавека сапраўды спыняе. -->
-                <el-row class="profile-ban" v-if="myBanRow">
-                    <span class="profile-ban_main">
-                        Ты ў бане да {{ formatLongDate(myBanRow.until) }} {{ banPhrase(myBanRow.reason) }}.
-                    </span>
-                </el-row>
-
-                <el-row style="padding-bottom: 10px"> Email: {{ account.email }}</el-row>
-                <el-row style="padding-bottom: 10px">
-                    Ваша імя:
-                    <el-input v-model="accountName">
-                        <template #append v-if="oldAccountName !== accountName">
-                            <el-button :icon="Checked" @click="updateUserName(accountName)">Захаваць</el-button>
-                        </template>
-                    </el-input>
-                </el-row>
-                <el-row style="padding-bottom: 10px">
-                    <router-link style="text-decoration: underline" :to="{ name: 'current-user-words' }">
-                        Мае словы
-                    </router-link>
-                </el-row>
-                <!-- Пункт бачны толькі мадэратарам. Астатнія пра яго не ведаюць:
-                     не «недаступна», а проста няма — прапаноўваць дзверы, у якія
-                     не пусцяць, няма сэнсу. -->
-                <el-row style="padding-bottom: 10px" v-if="moderator">
-                    <router-link style="text-decoration: underline" :to="{ name: 'moderation' }">
-                        Мадэрацыя
-                    </router-link>
-                </el-row>
-                <el-button @click="signOut" type="success">Выхад</el-button>
-            </div>
-            <div v-else>
-                <router-link :to="{ name: 'login' }" style="text-decoration: underline"> Логін</router-link>
-                <router-link :to="{ name: 'registration' }" style="padding-left: 15px; text-decoration: underline">
-                    Рэгістрацыя
-                </router-link>
-            </div>
-        </el-popover>
+        </el-dropdown>
         <el-dropdown>
             <button class="hamburger-btn">
                 <IconHamburger />
@@ -135,32 +123,33 @@ import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getUser } from './auth.js';
 import { isModerator, forgetModerator } from './moderator.js';
-import { myBan, forgetMyBan, banPhrase } from './bans.js';
+import { myBan, forgetMyBan } from './bans.js';
 import { formatLongDate } from './date.js';
 import { supabase } from './supabase.js';
 import IconHamburger from './icons/IconHamburger.vue';
-import { Checked } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
-import { commonError } from './error.js';
 
 const route = useRoute();
 const account = ref();
 const moderator = ref(false);
-// Свой бан, калі ён ёсць. null — значыць, усё добра.
+// свой бан — дзеля аднаго радка ў меню; null значыць, што ўсё добра
 const myBanRow = ref(null);
-const oldAccountName = ref('');
-const accountName = ref('');
 const search = ref(route.query.poshuk?.trim() || '');
 
 supabase.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN') {
         account.value = session.user;
-        // увайшоў іншы чалавек — папярэднія адказы пра правы і пра бан больш
-        // не вартыя нічога
+        // увайшоў іншы чалавек — старыя адказы пра правы і бан нічога не вартыя
         forgetModerator();
         forgetMyBan();
         moderator.value = await isModerator();
         myBanRow.value = await myBan();
+    }
+
+    // выхад робіцца на старонцы профілю — шапка проста даведваецца пра яго
+    if (event === 'SIGNED_OUT') {
+        account.value = null;
+        moderator.value = false;
+        myBanRow.value = null;
     }
 });
 const router = useRouter();
@@ -178,21 +167,6 @@ const querySearchAsync = async (queryString, cb) => {
     cb(data);
 };
 
-const updateUserName = async (username) => {
-    const { data, error } = await supabase.auth.updateUser({
-        data: {
-            username: username.trim(),
-        },
-    });
-    accountName.value = data.user.user_metadata.username;
-    oldAccountName.value = data.user.user_metadata.username;
-    if (error) {
-        ElMessage.error(commonError);
-        throw error;
-    }
-    ElMessage.success('Паспяхова змянілі імя');
-};
-
 const handleSelect = (item) => {
     if (item.id) {
         router.push({ name: 'term', params: { id: item.id } });
@@ -201,41 +175,27 @@ const handleSelect = (item) => {
     }
 };
 
-async function signOut() {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-        console.error(error);
-        return;
-    }
-    account.value = null;
-    forgetModerator();
-    forgetMyBan();
-    moderator.value = false;
-    myBanRow.value = null;
-}
-
 onMounted(async () => {
     account.value = await getUser();
     moderator.value = await isModerator();
     myBanRow.value = account.value ? await myBan() : null;
-
-    oldAccountName.value = account.value ? account.value.user_metadata.username : '';
-    accountName.value = account.value ? account.value.user_metadata.username : '';
 });
+
+async function signOut() {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    account.value = null;
+    moderator.value = false;
+    myBanRow.value = null;
+    forgetModerator();
+    forgetMyBan();
+    await router.push({ name: 'terms' });
+}
 </script>
 
-<style>
-.dropdown_user_unauth {
-    width: 70px !important;
-}
-
-.dropdown_user_auth {
-    width: 300px !important;
-}
-
-@media screen and (max-width: 700px) {
-    .dropdown_user_auth {
-        width: 90% !important;
-    }
-}
-</style>
+<style scoped></style>
