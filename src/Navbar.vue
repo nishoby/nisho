@@ -64,7 +64,11 @@
                     </span>
                     <span class="profile-ban_why" v-if="myBanRow.comment">{{ myBanRow.comment }}</span>
                     <span class="profile-ban_calm">
-                        Словы, з якімі ўсё добра, застаюцца на сайце. Пакуль адпачываеш, можаш пачытаць
+                        Бан не азначае, што ўсе твае словы будуць выдаленыя. Калі са словам усё добра, яно застанецца на
+                        сайце.
+                    </span>
+                    <span class="profile-ban_calm">
+                        Пакуль адпачываеш, можаш пачытаць
                         <router-link :to="{ name: 'rules' }">правілы</router-link>.
                     </span>
                 </el-row>

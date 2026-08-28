@@ -4,7 +4,27 @@
             <img src="/assets/img/back-black.svg" alt="" /></button
         >Дадаць слова
     </h1>
+    <!-- Забаненаму форма не адчыняецца зусім — замест яе адразу тлумачэнне.
+         Паказваць поле, якое нельга адправіць, значыла б дазволіць чалавеку
+         напісаць слова цалкам і толькі потым сказаць «не». -->
+    <div class="add-word_form banned-screen" v-if="ban">
+        <button type="reset" class="cross" @click="router.back()"></button>
+
+        <p class="banned-note_main">
+            На жаль, ты ў бане да {{ formatLongDate(ban.until) }} {{ banPhrase(ban.reason) }}.
+        </p>
+        <p class="banned-note_why" v-if="ban.comment">{{ ban.comment }}</p>
+        <p class="banned-note_calm">
+            Бан не азначае, што ўсе твае словы будуць выдаленыя. Калі са словам усё добра, яно застанецца на сайце.
+        </p>
+        <p class="banned-note_calm">
+            Пакуль адпачываеш, можаш пачытаць
+            <router-link :to="{ name: 'rules' }">правілы</router-link>.
+        </p>
+    </div>
+
     <el-form
+        v-else
         :model="new_term"
         ref="form"
         :rules="rules"
@@ -100,12 +120,11 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { supabase } from './supabase.js';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { commonError } from './error.js';
-import { getUser } from './auth.js';
 import { myBan, forgetMyBan, banPhrase } from './bans.js';
 import { formatLongDate } from './date.js';
 
@@ -151,80 +170,23 @@ const rules = reactive({
         { validator: minIfFilled(10, 'Дадай прыклад ужывання'), trigger: 'blur' },
     ],
 });
-// ── Забаненаму кажам адразу ────────────────────────────────────────────────
-// Пры адкрыцці старонкі, а не пасля адпраўкі. Злавіць памылку базы і растлумачыць
-// яе постфактум было б жорстка: чалавек напісаў бы слова, прыклад і тэгі — і
-// толькі тады даведаўся, што яго не прымуць.
-
-const RULES_LINE = 'Пакуль адпачываеш, можаш пачытаць <a href="/pravily">правілы</a>.';
-
-// Што сказаць пра ўжо напісанае. Маўчаць нельга ні ў адным выпадку, дзе нешта
-// знікла: чалавек убачыць гэта сам і не зразумее чаму — тая ж бяда, што і з
-// нявытлумачаным банам.
-async function wordsLine(userId) {
-    const { data, error } = await supabase.from('definition').select('hidden_at').eq('user_id', userId);
-
-    if (error || !data) {
-        return RULES_LINE;
-    }
-
-    // Фраза пра тое, што застаецца, а не пра тое, што прыбралі: яна гаворыць
-    // пра правіла праекта, а не пра гэты выпадак, і таму супакойвае мацней.
-    if (data.some((row) => !row.hidden_at)) {
-        return `Словы, з якімі ўсё добра, застаюцца на сайце. ${RULES_LINE}`;
-    }
-
-    // А калі не засталося нічога, тая ж фраза гучала б здзекам.
-    if (data.length) {
-        return `Іх выдалілі з сайта. ${RULES_LINE}`;
-    }
-
-    return RULES_LINE;
-}
-
+// ── Забаненаму форма не адчыняецца ─────────────────────────────────────────
+// Пытаемся пра бан пры адкрыцці старонкі, і калі ён ёсць — замест формы
+// стаіць тлумачэнне. Раней тут было ўсплываючае паведамленне па-над формай,
+// але форма пад ім усё адно запрашала пісаць — а напісанае не прынялі б.
+//
 // Тон наўмысна спакойны. Бан часовы, і чалавек часцей за ўсё не злыдзень, а
 // той, хто не разабраўся; злы тэкст на такога дзейнічае не лепш, а горш —
-// пасля яго вяртаюцца спрачацца, а не чытаць правілы.
-//
-// Парадак радкоў не выпадковы: спярша факт і тэрмін, потым словы мадэратара,
-// потым тое, што здымае галоўны страх — «а мае словы выдалілі?».
-// Паведамленне не знікае само, а значыць, яго трэба зачыніць рукамі, калі
-// чалавек сышоў са старонкі. Іначай яно цягнецца за ім па ўсім сайце і вісіць
-// над чужымі старонкамі, дзе яму няма чаго рабіць.
-let banMessage = null;
-
-function showBan(ban, calm) {
-    banMessage = ElMessage({
-        type: 'warning',
-        // не знікае само: тэкст доўгі, і прачытаць яго трэба цалкам
-        duration: 0,
-        showClose: true,
-        dangerouslyUseHTMLString: true,
-        customClass: 'banned-message',
-        message:
-            `<p class="banned-note_main">На жаль, ты ў бане да ${formatLongDate(ban.until)} ${banPhrase(
-                ban.reason
-            )}.</p>` +
-            (ban.comment ? `<p class="banned-note_why">${ban.comment}</p>` : '') +
-            `<p class="banned-note_calm">${calm}</p>`,
-    });
-}
+// пасля яго вяртаюцца спрачацца, а не чытаць правілы. Парадак радкоў: спярша
+// факт і тэрмін, потым словы мадэратара, потым тое, што здымае галоўны
+// страх — «а мае словы выдалілі?».
+// Радок пра словы — правіла праекта, а не падлік гэтага выпадку: «калі са
+// словам усё добра, яно застанецца». Так фраза праўдзівая заўсёды — і калі
+// ўсё на месцы, і калі частку прыбралі, — і нічога не трэба пытацца ў базы.
+const ban = ref(null);
 
 onMounted(async () => {
-    const ban = await myBan();
-
-    if (!ban) {
-        return;
-    }
-
-    const user = await getUser();
-
-    showBan(ban, user ? await wordsLine(user.id) : RULES_LINE);
-});
-
-onUnmounted(() => {
-    banMessage?.close();
-    banMessage = null;
+    ban.value = await myBan();
 });
 
 const form = ref();
@@ -252,16 +214,15 @@ const submit = async () => {
             await router.push({ name: 'term', params: { id: data } });
         } catch (error) {
             // Замок у базе спрацаваў — значыць, бан з'явіўся ўжо пасля таго,
-            // як старонка адкрылася. Кажам тое ж, што сказалі б пры заходзе:
+            // як старонка адкрылася. Форма проста саступае месца тлумачэнню:
             // «нешта пайшло не так» тут было б чыстай няпраўдай.
             if (String(error?.message || '').includes('BANNED')) {
                 forgetMyBan();
 
-                const ban = await myBan();
-                const user = await getUser();
+                const found = await myBan();
 
-                if (ban) {
-                    showBan(ban, user ? await wordsLine(user.id) : RULES_LINE);
+                if (found) {
+                    ban.value = found;
                     return;
                 }
             }

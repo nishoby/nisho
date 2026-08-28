@@ -2785,32 +2785,6 @@ body.is-moderating #bmc-wbtn {
    Усплывае пры заходзе на старонку дадавання. Без чырвані і клічнікаў: бан
    часовы, і задача тэксту — растлумачыць, а не пакараць яшчэ раз. Само не
    знікае: тры сказы за тры секунды не прачытаць. */
-.banned-message.el-message {
-    /* Шырэй за звычайнае паведамленне: тут не радок, а тры. Задаём менавіта
-       width — у бібліятэкі свая мінімальная шырыня 380px, і адным max-width
-       акно не разышлося б. */
-    width: min(34rem, calc(100vw - 2rem));
-    max-width: calc(100vw - 2rem);
-    box-sizing: border-box;
-    align-items: flex-start;
-    padding: 1.25rem 3rem 1.25rem 1.5rem;
-    background-color: white;
-    border-color: #eaeaea;
-}
-
-.banned-message .el-message__content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    color: #3a3a3a;
-}
-
-.banned-message .el-message__closeBtn {
-    top: 1.25rem;
-    right: 1.25rem;
-    font-size: 1.25rem;
-}
-
 .banned-note_main {
     margin: 0;
     font-family: 'PT Sans';
@@ -2825,13 +2799,6 @@ body.is-moderating #bmc-wbtn {
     font-size: 1.25rem;
     line-height: 1.5;
     color: #494949;
-}
-
-.banned-note_next {
-    margin: 0;
-    font-size: 1.25rem;
-    line-height: 1.5;
-    color: rgba(73, 73, 73, 0.7);
 }
 
 /* значок папярэджання прыбраны: аранжавы кружок робіць паведамленне строгім,
@@ -3933,4 +3900,18 @@ body.is-moderating #bmc-wbtn {
     width: 2rem;
     height: 2rem;
     flex: none;
+}
+
+/* ── Экран бана замест формы дадавання ──────────────────────────────────────
+   Тая ж белая картка, што і форма (клас add-word_form дае шырыню і падушкі),
+   толькі ўнутры не палі, а тлумачэнне. Раней гэта было ўсплываючае
+   паведамленне па-над формай — але форма пад ім усё адно запрашала пісаць. */
+.banned-screen {
+    gap: 0.75rem;
+}
+
+.banned-screen .banned-note_main {
+    /* месца пад крыжык у правым верхнім куце, каб доўгі першы радок
+       не заходзіў пад яго */
+    padding-right: 2.5rem;
 }
