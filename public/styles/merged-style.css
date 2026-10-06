@@ -384,7 +384,9 @@ button {
     --el-tag-hover-color: #7df93f;
     --el-tag-text-color: #494949;
     --el-color-white: #494949;
-    --el-tag-border-radius: 16px;
+    /* 999px, а не палова вышыні лічбай: капсула мусіць заставацца капсулай,
+       нават калі бібліятэка ці памер шрыфта зменяць вышыню пілюлі */
+    --el-tag-border-radius: 999px;
     --el-tag-font-size: 16px;
     --el-icon-size: 18px;
 }
@@ -1081,7 +1083,10 @@ a.user-tag:active {
        Зрух на 2px выправіў бы адно і сапсаваў другое; 1px трымае абодва
        выпадкі ў межах паўпіксэля. */
     padding: 0.1875rem 0.625rem 0.3125rem;
-    border-radius: 0.75rem;
+    /* канцы заўсёды паўкруглыя, як у капсулы, — як у воблаку тэгаў. Было
+       0.75rem: пры вышыні пілюлі ~26px куты выходзілі падагнутыя, а не
+       круглыя, і на старонцы тэгаў тыя ж пілюлі выглядалі інакш. */
+    border-radius: 999px;
 }
 .card-info {
     display: flex;
@@ -4844,7 +4849,8 @@ body.is-moderating #bmc-wbtn {
 .tag-suggest_item {
     padding: 0.1875rem 0.625rem 0.3125rem;
     border: none;
-    border-radius: 0.75rem;
+    /* капсула, як усе тэгавыя пілюлі сайта */
+    border-radius: 999px;
     background: #eaeaea;
     font-family: 'PT Sans';
     font-size: 1rem;
@@ -5267,4 +5273,24 @@ form.complaint_form .reason-choose .el-radio.reason-gap {
    бургер-меню картка кожны раз скача ўбок, хоць сама яна ўсюды роўна 680px. */
 html {
     scrollbar-gutter: stable;
+}
+
+/* Кнопка сартавання — цяпер значок, а не надпіс. Памеры як у суседніх
+   іконак шапкі, колер бярэ ад кнопкі (белы). */
+.sort-trigger-sort {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+/* Бягучы парадак у меню: тлусты і з галачкай. Спіс цяпер поўны і пункты
+   не скачуць месцамі — вока шукае галачку, а не чытае ўсё нанова. */
+.sort-dropdown .sort-item--on {
+    font-weight: 700;
+}
+
+.sort-dropdown .sort-item_check {
+    width: 0.875rem;
+    height: 0.875rem;
+    margin-left: 0.375rem;
+    flex: none;
 }

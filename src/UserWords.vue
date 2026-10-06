@@ -17,14 +17,27 @@
                     popper-class="sort-dropdown"
                     @command="onSortChange"
                 >
-                    <button class="sort-trigger" type="button">
-                        {{ currentSortLabel }}
+                    <!-- Значок замест надпісу: подпіс «Спачатку новыя» на вузкіх
+                         экранах не змяшчаўся ў радок з загалоўкам. Бягучы парадак
+                         кажа само меню — галачкай насупраць пункта, а поўны надпіс
+                         жыве ў падказцы пры навядзенні. -->
+                    <button class="sort-trigger" type="button" :title="'Парадак: ' + currentSortLabel">
+                        <IconSort class="sort-trigger-sort" />
                         <IconChevron class="sort-trigger-icon" />
                     </button>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item v-for="item in otherSortOptions" :key="item.value" :command="item.value">
+                            <!-- Відаць увесь спіс, а бягучы пазначаны галачкай. Раней
+                                 бягучы хаваўся, і пункты скакалі месцамі пры кожным
+                                 выбары — рука не магла запомніць, дзе што. -->
+                            <el-dropdown-item
+                                v-for="item in options"
+                                :key="item.value"
+                                :command="item.value"
+                                :class="{ 'sort-item--on': item.value === sort }"
+                            >
                                 {{ item.label }}
+                                <IconCheck v-if="item.value === sort" class="sort-item_check" />
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
@@ -146,6 +159,8 @@ import { formatShortDate } from './date.js';
 import PageContentSpinner from './PageContentSpinner.vue';
 import IconEdit from './icons/IconEdit.vue';
 import IconChevron from './icons/IconChevron.vue';
+import IconSort from './icons/IconSort.vue';
+import IconCheck from './icons/IconCheck.vue';
 
 const PAGE_SIZE = 15;
 
@@ -240,9 +255,6 @@ const header = ref('Словы');
 const canEdit = ref(false);
 
 const currentSortLabel = computed(() => options.find((item) => item.value === sort.value).label);
-
-// бягучы варыянт з меню прыбраны — ён ужо напісаны на кнопцы
-const otherSortOptions = computed(() => options.filter((item) => item.value !== sort.value));
 
 // Што паказваем пасля адбору і ў якім парадку.
 //

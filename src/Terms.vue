@@ -2,14 +2,27 @@
     <div class="main-container container">
         <div class="sort-settings">
             <el-dropdown trigger="click" placement="bottom-end" popper-class="sort-dropdown" @command="onSortChange">
-                <button class="sort-trigger" type="button">
-                    {{ currentSortLabel }}
+                <!-- Значок замест надпісу: подпіс «Спачатку новыя» на вузкіх
+                     экранах не змяшчаўся ў радок з загалоўкам. Бягучы парадак
+                     кажа само меню — галачкай насупраць пункта, а поўны надпіс
+                     жыве ў падказцы пры навядзенні. -->
+                <button class="sort-trigger" type="button" :title="'Парадак: ' + currentSortLabel">
+                    <IconSort class="sort-trigger-sort" />
                     <IconChevron class="sort-trigger-icon" />
                 </button>
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item v-for="item in otherSortOptions" :key="item.value" :command="item.value">
+                        <!-- Відаць увесь спіс, а бягучы пазначаны галачкай. Раней
+                             бягучы хаваўся, і пункты скакалі месцамі пры кожным
+                             выбары — рука не магла запомніць, дзе што. -->
+                        <el-dropdown-item
+                            v-for="item in options"
+                            :key="item.value"
+                            :command="item.value"
+                            :class="{ 'sort-item--on': item.value === sort }"
+                        >
                             {{ item.label }}
+                            <IconCheck v-if="item.value === sort" class="sort-item_check" />
                         </el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
@@ -139,19 +152,41 @@
     </div>
 </template>
 
+<script>
+// Пабудаваныя ў браўзеры парадкі — калода «Выпадковых», рэйтынг, любімыя —
+// жывуць на ўзроўні модуля, а не асобніка кампанента. App.vue перастварае
+// кампанент на КОЖНУЮ змену адраса (:key="$route.fullPath"), у тым ліку на
+// перагортванне старонак; калода ў асобніку тасавалася б нанова на кожнай
+// старонцы, і словы паўтараліся б. Ключ уключае ўсе ўмовы, пры якіх спіс
+// будаваўся: іншы пошук ці выключаны 18+ — гэта іншы спіс. Жыве да
+// перазагрузкі — толькі так «назад» вяртае тое, што чалавек ужо чытаў.
+const idsCache = new Map();
+
+// голас мяняе рэйтынг і спіс любімых — гэтыя парадкі будуюцца нанова
+function forgetVoteOrders() {
+    for (const key of [...idsCache.keys()]) {
+        if (key.startsWith('popular|') || key.startsWith('favorites|')) {
+            idsCache.delete(key);
+        }
+    }
+}
+</script>
+
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { supabase } from './supabase.js';
 import { formatLongDate, formatLocalDateTime } from './date.js';
-import { hiddenByAdult, adultFilterOn } from './adult.js';
+import { hiddenByAdult, adultFilterOn, showMat, showSex } from './adult.js';
 import { vote, getVoteResult } from './vote.js';
 import { getUser } from './auth.js';
 import IconDislike from './icons/IconDislike.vue';
 import IconLike from './icons/IconLike.vue';
 import PageContentSpinner from './PageContentSpinner.vue';
 import IconChevron from './icons/IconChevron.vue';
+import IconSort from './icons/IconSort.vue';
+import IconCheck from './icons/IconCheck.vue';
 import IconCross from './icons/IconCross.vue';
 
 // «Мае любімыя» з'яўляецца ў спісе, толькі калі чалавек хоць нешта лайкаў:
@@ -316,31 +351,49 @@ const tidy = (text) => (text || '').trim();
 const terms = ref(null);
 const count = ref(0);
 const account = ref();
-const sort = ref('last');
+// Парадак жыве ў адрасе (?parad=...), як і нумар старонкі. Кампанент
+// перастворыцца на любую змену адраса, і ўсё, што было толькі ў памяці, згарае:
+// раней ад аднаго перагортвання парадак скідаўся на «Спачатку новыя», а чужая
+// спасылка з нумарам старонкі адкрывала старонку зусім іншых слоў.
+const SORTS = ['last', 'popular', 'random', 'favorites'];
+const sort = ref(SORTS.includes(route.query.parad) ? route.query.parad : 'last');
 
 // «Выпадковыя» і «Спачатку папулярныя» будуюцца аднолькава: спачатку бяром у базы
 // нумары ўсіх слоў, выстройваем іх у патрэбны парадак у браўзеры і далей падгружаем
-// старонкамі. Спіс жыве да перазагрузкі — толькі так «назад» вяртае тое, што чалавек
-// ужо чытаў, і ніводнае слова не паўтараецца.
+// старонкамі. Самі спісы ляжаць у idsCache на ўзроўні модуля (гл. верхні блок).
 // Увага: сюды трапляюць нумары ЎСІХ слоў. Пры некалькіх тысячах гэта дробязь,
 // але для гіганцкага слоўніка парадак трэба будзе будаваць на баку базы.
-const idsBySort = ref({});
+const idsKey = (mode) =>
+    [
+        mode,
+        searchQuery || '',
+        tagQuery || '',
+        autarQuery || '',
+        noTagsQuery ? 'biez' : '',
+        showMat.value,
+        showSex.value,
+    ].join('|');
 
 const currentSortLabel = computed(() => options.value.find((item) => item.value === sort.value).label);
 
-// бягучы варыянт з меню прыбраны — ён ужо напісаны на кнопцы
-const otherSortOptions = computed(() => options.value.filter((item) => item.value !== sort.value));
-
 const onSortChange = (value) => {
-    currentPage.value = 1;
-
-    if (route.query.staronka) {
-        const query = { ...route.query };
-        delete query.staronka;
-        router.replace({ name: 'terms', query });
+    if (value === sort.value) {
+        return;
     }
 
-    sort.value = value;
+    // Мяняем толькі адрас: App.vue на гэта перастворыць кампанент, і новы сам
+    // прачытае парадак з адраса і пачне з першай старонкі. «Спачатку новыя» —
+    // змаўчанне, яго ў адрасе не пішам, каб галоўная заставалася чыстым «/».
+    const query = { ...route.query };
+    delete query.staronka;
+
+    if (value === 'last') {
+        delete query.parad;
+    } else {
+        query.parad = value;
+    }
+
+    router.push({ name: 'terms', query });
 };
 
 const update = async (definition, type) => {
@@ -351,8 +404,7 @@ const update = async (definition, type) => {
 
     await vote(definition, type);
     // голас змяніў рэйтынг і спіс любімых — абодва парадкі перабудуюцца
-    delete idsBySort.value.popular;
-    delete idsBySort.value.favorites;
+    forgetVoteOrders();
 
     if (type === 'upvote') {
         hasLikes.value = true;
@@ -472,10 +524,12 @@ const buildIds = async (mode) => {
 };
 
 const fetchPageByIds = async (mode) => {
-    if (!idsBySort.value[mode]) {
-        idsBySort.value[mode] = await buildIds(mode);
+    const key = idsKey(mode);
+
+    if (!idsCache.has(key)) {
+        idsCache.set(key, await buildIds(mode));
     }
-    const ids = idsBySort.value[mode];
+    const ids = idsCache.get(key);
     const pageIds = ids.slice((currentPage.value - 1) * 15, currentPage.value * 15);
     const { data, error } = await supabase.from('terms').select('*').in('definition_id', pageIds);
     if (error) {
@@ -488,6 +542,12 @@ const fetchPageByIds = async (mode) => {
 };
 
 const fetchTerms = async () => {
+    // «Мае любімыя» па чужой спасылцы без уваходу: у госця любімых няма,
+    // паказваем звычайны парадак, а не пустую старонку
+    if (sort.value === 'favorites' && !account.value) {
+        sort.value = 'last';
+    }
+
     // пры схаваным 18+ і звычайны парадак будуецца спісам нумароў: інакш
     // старонкі атрымліваліся б дзіравыя пасля адсейвання
     if (sort.value === 'random' || sort.value === 'popular' || sort.value === 'favorites' || adultFilterOn.value) {
