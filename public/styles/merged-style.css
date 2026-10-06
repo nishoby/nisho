@@ -795,8 +795,18 @@ button {
     color: rgb(255, 255, 255);
 }
 
+/* рэагуе як іконкі шапкі: той жа сціск. Падкрэсліванне засталося ад часоў,
+   калі трыгер быў надпісам «Спачатку новыя», — на значку яно нічога не значыла */
+.sort-trigger {
+    transition: transform 0.12s ease;
+}
+
 .sort-trigger:hover {
-    text-decoration: underline;
+    transform: scale(0.94);
+}
+
+.sort-trigger:active {
+    transform: scale(0.88);
 }
 
 .sort-trigger-icon {
