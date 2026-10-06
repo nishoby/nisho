@@ -8,7 +8,6 @@
                      жыве ў падказцы пры навядзенні. -->
                 <button class="sort-trigger" type="button" :title="'Парадак: ' + currentSortLabel">
                     <IconSort class="sort-trigger-sort" />
-                    <IconChevron class="sort-trigger-icon" />
                 </button>
                 <template #dropdown>
                     <el-dropdown-menu>
@@ -184,7 +183,6 @@ import { getUser } from './auth.js';
 import IconDislike from './icons/IconDislike.vue';
 import IconLike from './icons/IconLike.vue';
 import PageContentSpinner from './PageContentSpinner.vue';
-import IconChevron from './icons/IconChevron.vue';
 import IconSort from './icons/IconSort.vue';
 import IconCheck from './icons/IconCheck.vue';
 import IconCross from './icons/IconCross.vue';

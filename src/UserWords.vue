@@ -23,7 +23,6 @@
                          жыве ў падказцы пры навядзенні. -->
                     <button class="sort-trigger" type="button" :title="'Парадак: ' + currentSortLabel">
                         <IconSort class="sort-trigger-sort" />
-                        <IconChevron class="sort-trigger-icon" />
                     </button>
                     <template #dropdown>
                         <el-dropdown-menu>
@@ -158,7 +157,6 @@ import { useRoute, useRouter } from 'vue-router';
 import { formatShortDate } from './date.js';
 import PageContentSpinner from './PageContentSpinner.vue';
 import IconEdit from './icons/IconEdit.vue';
-import IconChevron from './icons/IconChevron.vue';
 import IconSort from './icons/IconSort.vue';
 import IconCheck from './icons/IconCheck.vue';
 
